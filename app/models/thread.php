@@ -11,7 +11,7 @@ class Thread extends AppModel
         $rows = $db->rows('SELECT * FROM thread');
         
         foreach ($rows as $row) {                    
-            $threads[] = new Thread($row);
+            $threads[] = new self($row);
         }
                 
         return $threads;
@@ -29,7 +29,7 @@ class Thread extends AppModel
 
         return new self($row);                    
     }
-    
+
     public function getComments()
     {
         $comments = array();
@@ -43,4 +43,10 @@ class Thread extends AppModel
         
         return $comments;
     }
+    
+    public function write(Comment $comment)                    
+    {
+        $db = DB::conn();
+        $db->query('INSERT INTO comment SET thread_id = ?, username = ?, body = ?, created = NOW()', array($this->id, $comment->username, $comment->body));                    
+    } 
 }
