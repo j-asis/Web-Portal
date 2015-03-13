@@ -1,6 +1,6 @@
 
 <?php if(isset($register->created)): ?>
-<h1>You Have Successfully Logged In! </h1>
+<h1>You Have Successfully Registered an Account! </h1>
 <p>You can now go back to the <a href="/">log in</a> page</p>
 <?php 
 return;

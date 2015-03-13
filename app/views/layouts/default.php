@@ -31,7 +31,7 @@
             <div class="navbar-inner">
                 <div class="container">
                     <div class='navbar-header'>
-                    <a class="brand" href="/">DietCake Hello</a>
+                    <a class="brand" href="<?php echo isset($home) ? $home : '/'; ?>">DietCake Hello</a>
                     <?php if(isset($_SESSION['username'])):?>
 
                     <p class="navbar-text navbar-right">Signed in as <a href="/user/index"><?php eh($_SESSION['username']); ?></a> <a style="margin-left:20px;" href='/user/logout'>Log out</a></p>
