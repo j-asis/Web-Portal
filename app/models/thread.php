@@ -1,93 +1,95 @@
 <?php
-
-class Thread extends AppModel                    
+class Thread extends AppModel
 {
-    public $validation = array(            
+    public $validation = array(
        'title' => array(
-            'length' => array(            
+            'length' => array(
                'validate_between', 1, 30,
-            ),        
+            ),
         ),
     );
-
-    public static function getAll($offset, $limit)                
+    public static function getAll($offset, $limit)
     {
         $threads = array();
         $db = DB::conn();
         $rows = $db->rows("SELECT * FROM thread LIMIT {$offset}, {$limit}");
-        
-        foreach ($rows as $row) {                    
+        foreach ($rows as $row) {
             $threads[] = new self($row);
         }
-                
         return $threads;
     }
-
     public static function countAll()
     {
         $db = DB::conn();
         return (int) $db->value("SELECT COUNT(*) FROM thread");
     }
-
-    public static function get($id)            
+    public static function get($id)
     {
         $db = DB::conn();
- 
         $row = $db->row('SELECT * FROM thread WHERE id = ?', array($id));
-
         if (!$row) {
             throw new RecordNotFoundException('no record found');
         }
-
-        return new self($row);                    
+        return new self($row);
     }
-
     public function getComments()
     {
         $comments = array();
-                    
         $db = DB::conn();
         $rows = $db->rows('SELECT * FROM comment WHERE thread_id = ? ORDER BY created ASC', array($this->id));
-        
-        foreach ($rows as $row) {                        
+        foreach ($rows as $row) {
+            $row['username'] = $this->getUserName($row['user_id']);
             $comments[] = new Comment($row);
         }
-        
         return $comments;
     }
-    
-    public function write(Comment $comment)                    
+    public function write(Comment $comment)
     {
-        if (!$comment->validate()) {                        
+        if (!$comment->validate()) {
             throw new ValidationException('invalid comment');
-        }    
+        }
         $db = DB::conn();
-        $db->query('INSERT INTO comment SET thread_id = ?, username = ?, body = ?, created = NOW()', array($this->id, $comment->username, $comment->body));                    
+        $db->query('INSERT INTO comment SET thread_id = ?, user_id = ?, body = ?, created = NOW()', array($this->id, $comment->user_id, $comment->body));
     }
-
-    public function create(Comment $comment)                    
+    public function create(Comment $comment)
     {
         $this->validate();
         $comment->validate();
-        if ($this->hasError() || $comment->hasError()) {                    
+        if ($this->hasError() || $comment->hasError()) {
             throw new ValidationException('invalid thread or comment');
         }
-        
         $db = DB::conn();
         $db->begin();
-
         $params = array(
             'title' => $this->title,
         );
         $db->insert('thread', $params);
-        // or    
-        #$db->query('INSERT INTO thread SET title = ?, created = NOW()', array($this->title));
-
         $this->id = $db->lastInsertId();
-                    
-        // write first comment at the same time
         $this->write($comment);
-                    
         $db->commit();
+    }
+    public function getThreadInfo()
+    {
+        $threadUserId = array();
+        $db = DB::conn();
+        $rows = $db->rows('SELECT * FROM thread WHERE id = ?', array($this->id));
+        foreach ($rows as $row) {
+            $threadUserId[0] = $row['user_id'];
+            $threadUserId[1] = $row['created'];
+        }
+        $threadUsername = $db->row('SELECT username FROM user WHERE id = ?', array($threadUserId[0]));
+        return array('username'=>$threadUsername['username'],'date'=>$threadUserId[1]);
+    }
+    public function getUserName($user_id)
+    {
+        $db = DB::conn();
+        $row = $db->row('SELECT username FROM user WHERE id = ?', array($user_id));
+        return $row['username'];
+    }
+    public function getUserId($username)
+    {
+        $db = DB::conn();
+        $row = $db->row('SELECT id FROM user WHERE username = ?', array($username));
+        return $row['id'];
     }
 }

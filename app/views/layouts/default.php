@@ -23,6 +23,13 @@
             .navbar a{
                 color:#F6EA00;
             }
+            .topic{
+                border-bottom: 1px solid #CCC;
+                padding: 10px;
+                background: #F6F6F6;
+                border-radius: 3px;
+                margin-bottom:10px;
+            }
         </style>
     </head>
 

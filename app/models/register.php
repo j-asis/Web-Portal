@@ -1,34 +1,35 @@
 <?php
-
 class Register extends AppModel
 {
     public $validation = array(
         'password' => array(
-                        'match' => array('validate_password'),
-                        'length' => array(
-                            'validate_between', 8, 50
-                        ),
-        ),
+            'length' => array(
+                'validate_between', 8, 50
+                ),
+            ),
         'username' => array(
-                        'length' => array(
-                            'validate_between', 1, 50
-                        ),
-        ),
+            'length' => array(
+                'validate_between', 1, 50
+                ),
+            ),
         'first_name' => array(
-                            'length' => array(
-                                'validate_between', 1, 50)
-                            ),
+            'length' => array(
+                'validate_between', 1, 50
+                ),
+            ),
         'last_name' => array(
-                            'length' => array(
-                                'validate_between', 1, 50)
-                            ),
+            'length' => array(
+                'validate_between', 1, 50
+                ),
+            ),
         'email' => array(
-                        'length' => array(
-                            'validate_between', 1, 50)
-                        ),
+            'length' => array(
+                'validate_between', 1, 50
+                ),
+            ),
     );
 
-     public function create()
+    public function create()
     {
         $this->validate();
         if ($this->hasError()) {                    
@@ -42,7 +43,7 @@ class Register extends AppModel
                 'first_name' => $this->first_name,
                 'last_name' => $this->last_name,
                 'email' => $this->email,
-                'password' => md5($this->password) // use MD5 to encrypt
+                'password' => md5($this->password)
             );
             $db->insert('user', $params);
             $db->commit();
@@ -53,7 +54,11 @@ class Register extends AppModel
         }
     }
 
-    public static function getPasswords(){
-        return array(Param::get('password'), Param::get('cpassword'));
+    public function validate_password()
+    {
+        $is_match = $this->password == $this->cpassword;
+        if(!$is_match){
+            $this->validation_errors['password']['match'] = true;
+        }
     }
 }

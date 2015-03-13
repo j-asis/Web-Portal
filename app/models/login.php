@@ -1,5 +1,4 @@
 <?php
-
 class Login extends AppModel
 {
     public $validation = array(
@@ -12,16 +11,13 @@ class Login extends AppModel
                 'validate_between',1,50)
             ),
         );
-
-
-    public function check_input(){
+    public function checkInput(){
         $this->validate();
         if ($this->hasError()) {
             throw new ValidationException('invalid Input');
         }
     }
-
-    public function log_in()
+    public function loginAction()
     {
         $db = DB::conn();
         $db->begin();
@@ -34,5 +30,4 @@ class Login extends AppModel
             throw new RecordNotFoundException('no record found');
         }
     }
-
 }

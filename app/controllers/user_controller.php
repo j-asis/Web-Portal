@@ -1,5 +1,5 @@
 <?php
-session_start();
+
 class UserController extends AppController 
 {
     public function index()
@@ -11,8 +11,7 @@ class UserController extends AppController
         }
         $home = '/user/index';
         $user->username = $_SESSION['username'];
-
-        //-/-/-/-/-/-/-/-/-/-/   From thread Controller
+        //-*-*-*-*-*-*-*-*-*-*-*-*   From thread Controller   *-*-*-*-*-*-*-*-*-*-*-//
         $page = Param::get('page', 1);
         $per_page = 5;
         $pagination = new SimplePagination($page, $per_page);
@@ -20,16 +19,13 @@ class UserController extends AppController
         $pagination->checkLastPage($threads);
         $total = Thread::countAll();
         $pages = ceil($total / $per_page);
-        //-/-/-/-/-/-/-/-/-/-/   From thread Controller
-
+        //-*-*-*-*-*-*-*-*-*-*-*-*   From thread Controller   *-*-*-*-*-*-*-*-*-*-*-//
         $this->set(get_defined_vars());
         $this->render('/thread/index');
     }
-
     public function logout(){
         session_unset('username');
         session_destroy();
         redirect('/');
     }
-
 }

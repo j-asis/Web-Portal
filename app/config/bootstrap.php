@@ -8,7 +8,6 @@ require_once APP_DIR.'app_exception.php';
 // helpers
 require_once HELPERS_DIR.'html_helper.php';
 require_once HELPERS_DIR.'validation_helper.php';
-require_once HELPERS_DIR.'login_helper.php';
 require_once HELPERS_DIR.'user_helper.php';
 
 // vendor
