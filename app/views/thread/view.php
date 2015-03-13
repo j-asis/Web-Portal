@@ -8,7 +8,7 @@
     <?php eh($k + 1) ?>: <?php eh($v->username) ?> <?php eh($v->created) ?>            
 </div>
 
-<div><?php eh($v->body) ?></div>
+<div><?php echo readable_text($v->body) ?></div>
 
 </div>
 
