@@ -15,7 +15,7 @@ class RegisterController extends AppController
             $register->password = Param::get('password');
             $register->cpassword = Param::get('cpassword');
             $register->validate_password();
-            try{
+            try {
                 $register->create();
             } catch (ValidationException $e) {
                 $error = true;
@@ -23,6 +23,8 @@ class RegisterController extends AppController
 
         }
         $this->set(get_defined_vars());
-        if($error){$this->render('index');}
+        if ($error) {
+            $this->render('index');
+        }
     }
 }

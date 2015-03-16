@@ -8,6 +8,7 @@ class Thread extends AppModel
             ),
         ),
     );
+
     public static function getAll($offset, $limit)
     {
         $threads = array();
@@ -18,11 +19,19 @@ class Thread extends AppModel
         }
         return $threads;
     }
+
     public static function countAll()
     {
         $db = DB::conn();
         return (int) $db->value("SELECT COUNT(*) FROM thread");
     }
+
+    public static function countAllComments($thread_id)
+    {
+        $db = DB::conn();
+        return (int) $db->value("SELECT COUNT(*) FROM comment WHERE thread_id = {$thread_id}");
+    }
+
     public static function get($id)
     {
         $db = DB::conn();
@@ -32,17 +41,19 @@ class Thread extends AppModel
         }
         return new self($row);
     }
-    public function getComments()
+
+    public function getComments($offset, $limit)
     {
         $comments = array();
         $db = DB::conn();
-        $rows = $db->rows('SELECT * FROM comment WHERE thread_id = ? ORDER BY created ASC', array($this->id));
+        $rows = $db->rows("SELECT * FROM comment WHERE thread_id = ? ORDER BY created ASC LIMIT {$offset}, {$limit}", array($this->id));
         foreach ($rows as $row) {
             $row['username'] = $this->getUserName($row['user_id']);
             $comments[] = new Comment($row);
         }
         return $comments;
     }
+
     public function write(Comment $comment)
     {
         if (!$comment->validate()) {
@@ -51,6 +62,7 @@ class Thread extends AppModel
         $db = DB::conn();
         $db->query('INSERT INTO comment SET thread_id = ?, user_id = ?, body = ?, created = NOW()', array($this->id, $comment->user_id, $comment->body));
     }
+
     public function create(Comment $comment)
     {
         $this->validate();
@@ -68,6 +80,7 @@ class Thread extends AppModel
         $this->write($comment);
         $db->commit();
     }
+
     public function getThreadInfo()
     {
         $threadUserId = array();
@@ -80,12 +93,14 @@ class Thread extends AppModel
         $threadUsername = $db->row('SELECT username FROM user WHERE id = ?', array($threadUserId[0]));
         return array('username'=>$threadUsername['username'],'date'=>$threadUserId[1]);
     }
+
     public function getUserName($user_id)
     {
         $db = DB::conn();
         $row = $db->row('SELECT username FROM user WHERE id = ?', array($user_id));
         return $row['username'];
     }
+    
     public function getUserId($username)
     {
         $db = DB::conn();

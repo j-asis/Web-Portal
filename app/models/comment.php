@@ -3,9 +3,9 @@ class Comment extends AppModel
 {
     public $validation = array(
         'body' => array(
-               'length' => array(
-                      'validate_between', 1, 200,
+            'length' => array(
+                'validate_between', 1, 200,
                 ),
-        ),
-    );
+            ),
+        );
 }

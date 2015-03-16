@@ -6,6 +6,7 @@
     <?php eh($v->title) ?></a></li>
     <?php endforeach ?>
 </ul>
+<?php if ($total > 5): ?>
     <!-- pagination -->
 <div class='pagination pagination-small'>
     <ul>
@@ -30,5 +31,6 @@
         <?php endif ?>
     </ul>   
 </div>
+<?php endif ?>
 
 <a class="btn btn-large btn-primary" href="<?php eh(url('thread/create')) ?>">Create</a>

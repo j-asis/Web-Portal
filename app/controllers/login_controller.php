@@ -9,15 +9,15 @@ class LoginController extends AppController
         $login->error = false;
         $error = false;
         $message = 'Welcome, please Log In';
-        if($check){
+        if ($check) {
             $login->username = Param::get('username');
             $login->password = Param::get('password');
-            try{
+            try {
                 $login->checkInput();
             } catch (ValidationException $e) {
                 $error = true;
             }
-            try{
+            try {
                 $login->loginAction();
             } catch (RecordNotFoundException $e) {
                 $login->error = true;

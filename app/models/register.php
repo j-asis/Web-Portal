@@ -57,7 +57,7 @@ class Register extends AppModel
     public function validate_password()
     {
         $is_match = $this->password == $this->cpassword;
-        if(!$is_match){
+        if (!$is_match) {
             $this->validation_errors['password']['match'] = true;
         }
     }
