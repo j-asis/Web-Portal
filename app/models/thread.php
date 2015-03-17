@@ -1,10 +1,13 @@
 <?php
 class Thread extends AppModel
 {
+    const MIN_STRING_LENGTH = 1;
+    const MAX_STRING_LENGTH = 50;
+
     public $validation = array(
        'title' => array(
             'length' => array(
-               'validate_between', 1, 30,
+               'validate_between', self::MIN_STRING_LENGTH, self::MAX_STRING_LENGTH,
             ),
         ),
     );
@@ -73,6 +76,7 @@ class Thread extends AppModel
         $db = DB::conn();
         $db->begin();
         $params = array(
+            'user_id' => $comment->user_id,
             'title' => $this->title,
         );
         $db->insert('thread', $params);
@@ -91,7 +95,7 @@ class Thread extends AppModel
             $threadUserId[1] = $row['created'];
         }
         $threadUsername = $db->row('SELECT username FROM user WHERE id = ?', array($threadUserId[0]));
-        return array('username'=>$threadUsername['username'],'date'=>$threadUserId[1]);
+        return array('username'=>$threadUsername['username'],'date'=>$threadUserId[1],'user_id'=>$threadUserId[0]);
     }
 
     public function getUserName($user_id)

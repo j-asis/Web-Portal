@@ -22,36 +22,36 @@ endif;
 
     <?php if (!empty($register->validation_errors['password']['length'])): ?>
     <div><em>Password</em> must be between
-        <?php eh($register->validation['password']['length'][1]) ?> and
-        <?php eh($register->validation['password']['length'][2]) ?> characters in length.
+        <?php readable_text($register->validation['password']['length'][1]) ?> and
+        <?php readable_text($register->validation['password']['length'][2]) ?> characters in length.
     </div>
     <?php endif ?>
 
     <?php if (!empty($register->validation_errors['first_name']['length'])): ?>
     <div><em>First Name</em> must be between
-        <?php eh($register->validation['first_name']['length'][1]) ?> and
-        <?php eh($register->validation['first_name']['length'][2]) ?> characters in length.
+        <?php readable_text($register->validation['first_name']['length'][1]) ?> and
+        <?php readable_text($register->validation['first_name']['length'][2]) ?> characters in length.
     </div>
     <?php endif ?>
 
     <?php if (!empty($register->validation_errors['last_name']['length'])): ?>
     <div><em>Last Name</em> must be between
-        <?php eh($register->validation['last_name']['length'][1]) ?> and
-        <?php eh($register->validation['last_name']['length'][2]) ?> characters in length.
+        <?php readable_text($register->validation['last_name']['length'][1]) ?> and
+        <?php readable_text($register->validation['last_name']['length'][2]) ?> characters in length.
     </div>
     <?php endif ?>
 
     <?php if (!empty($register->validation_errors['username']['length'])): ?>
     <div><em>Username</em> must be between
-        <?php eh($register->validation['username']['length'][1]) ?> and
-        <?php eh($register->validation['username']['length'][2]) ?> characters in length.
+        <?php readable_text($register->validation['username']['length'][1]) ?> and
+        <?php readable_text($register->validation['username']['length'][2]) ?> characters in length.
     </div>
     <?php endif ?>
 
     <?php if (!empty($register->validation_errors['email']['length'])): ?>
     <div><em>Email</em> must be between
-        <?php eh($register->validation['email']['length'][1]) ?> and
-        <?php eh($register->validation['email']['length'][2]) ?> characters in length.
+        <?php readable_text($register->validation['email']['length'][1]) ?> and
+        <?php readable_text($register->validation['email']['length'][2]) ?> characters in length.
     </div>
     <?php endif ?>
 
@@ -60,7 +60,7 @@ endif;
 
 <?php endif ?>
 
-<form action='<?php eh(url('')) ?>' method='post'>
+<form action='<?php readable_text(url('')) ?>' method='post'>
     <input class="span2" type='text' placeholder='First Name' name='first_name'>
     <input class="span2" type='text' placeholder='Last Name' name='last_name'>
     <input class="span2" class="span2" type='text' placeholder='Username' name='username'>

@@ -4,6 +4,7 @@ class ThreadController extends AppController
 {
     public function index()
     {
+        $title = 'Threads';
         $page = Param::get('page', 1);
         $per_page = 5;
         $pagination = new SimplePagination($page, $per_page);

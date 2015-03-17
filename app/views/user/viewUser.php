@@ -1,4 +1,4 @@
-<h1>Welcome <?php readable_text($user->username); ?></h1>
+<h1>Welcome <?php readable_text($user->username); ?>, this is the profile of <?php readable_text($user_details['username']); ?></h1>
 <hr />
 <h3>User Details</h3>
 <div>

@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
         <meta charset="utf-8">
-        <title>DietCake <?php eh(isset($thread->title) ? $thread->title : ( !empty($title) ? $title : 'Hello') ) ?></title>
+        <title>DietCake <?php readable_text( !empty($title) ? $title : ( isset($thread->title) ? $thread->title : 'Hello') ) ?></title>
         <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet">
         <style>
             body {
@@ -30,6 +30,17 @@
                 border-radius: 3px;
                 margin-bottom:10px;
             }
+            .comment{
+                padding: 20px;
+                box-shadow: 0px 5px 5px #DEDEDE;
+                border-radius: 3px;
+            }
+            .comment-body{
+                padding-left:10px;
+            }
+            .menu{
+                float:left;
+            }
         </style>
     </head>
 
@@ -40,8 +51,7 @@
                     <div class='navbar-header'>
                     <a class="brand" href="<?php echo isset($home) ? $home : '/'; ?>">DietCake Hello</a>
                     <?php if(isset($_SESSION['username'])):?>
-
-                    <p class="navbar-text navbar-right">Signed in as <a href="/user/index"><?php eh($_SESSION['username']); ?></a> <a style="margin-left:20px;" href='/user/logout'>Log out</a></p>
+                    <p class="navbar-text navbar-right"><a class="menu" href="/thread/index">Threads</a> Logged in as <a href="/user/index"><?php readable_text($_SESSION['username']); ?></a> <a style="margin-left:20px;" href='/user/logout'>Log out</a></p>
                     <?php endif ?>
                     </div>
                     
@@ -56,7 +66,7 @@
         </div>
 
         <script>
-            console.log(<?php eh(round(microtime(true) - TIME_START, 3)) ?> + 'sec');
+            console.log(<?php readable_text(round(microtime(true) - TIME_START, 3)) ?> + 'sec');
         </script>
 
     </body>

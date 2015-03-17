@@ -2,8 +2,8 @@
 <hr></hr>
 <ul class="list-unstyled">
     <?php foreach ($threads as $thread): ?>
-    <li><a href="<?php eh(url('thread/view', array('thread_id' => $thread->id))) ?>">
-    <?php eh($thread->title) ?></a></li>
+    <li><a href="<?php readable_text(url('thread/view', array('thread_id' => $thread->id))) ?>">
+    <?php readable_text($thread->title) ?></a></li>
     <?php endforeach ?>
 </ul>
 <?php if ($total > 5): ?>
@@ -33,4 +33,4 @@
 </div>
 <?php endif ?>
 
-<a class="btn btn-large btn-primary" href="<?php eh(url('thread/create')) ?>">Create</a>
+<a class="btn btn-large btn-primary" href="<?php readable_text(url('thread/create')) ?>">Create</a>

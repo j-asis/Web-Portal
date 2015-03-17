@@ -1,30 +1,35 @@
 <?php
 class Register extends AppModel
 {
+    const MIN_STRING_LENGTH = 1;
+    const MAX_STRING_LENGTH = 80;
+    const MIN_PASSWORD_LENGTH = 8;
+    const MAX_PASSWORD_LENGTH = 50;
+
     public $validation = array(
         'password' => array(
             'length' => array(
-                'validate_between', 8, 50
+                'validate_between', self::MIN_PASSWORD_LENGTH, self::MAX_PASSWORD_LENGTH
                 ),
             ),
         'username' => array(
             'length' => array(
-                'validate_between', 1, 50
+                'validate_between', self::MIN_STRING_LENGTH, self::MAX_STRING_LENGTH
                 ),
             ),
         'first_name' => array(
             'length' => array(
-                'validate_between', 1, 50
+                'validate_between', self::MIN_STRING_LENGTH, self::MAX_STRING_LENGTH
                 ),
             ),
         'last_name' => array(
             'length' => array(
-                'validate_between', 1, 50
+                'validate_between', self::MIN_STRING_LENGTH, self::MAX_STRING_LENGTH
                 ),
             ),
         'email' => array(
             'length' => array(
-                'validate_between', 1, 50
+                'validate_between', self::MIN_STRING_LENGTH, self::MAX_STRING_LENGTH
                 ),
             ),
     );
