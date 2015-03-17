@@ -13,45 +13,44 @@ endif;
 <div class="alert alert-block">
     <h4 class="alert-heading">Validation error!</h4>
 
-    <?php if (!empty($login->validation_errors['password']['match'])): ?>    
+    <?php if (!empty($login->validation_errors['password']['match'])): ?>
     <div><em>Password Did Not Match!</em></div>
     <?php endif ?>
 
-    <?php if (!empty($login->validation_errors['password']['length'])): ?>    
+    <?php if (!empty($login->validation_errors['password']['length'])): ?>
     <div><em>Password</em> must be between
         <?php eh($login->validation['password']['length'][1]) ?> and
         <?php eh($login->validation['password']['length'][2]) ?> characters in length.
     </div>
     <?php endif ?>
 
-    <?php if (!empty($login->validation_errors['first_name']['length'])): ?>    
+    <?php if (!empty($login->validation_errors['first_name']['length'])): ?>
     <div><em>First Name</em> must be between
         <?php eh($login->validation['first_name']['length'][1]) ?> and
         <?php eh($login->validation['first_name']['length'][2]) ?> characters in length.
     </div>
     <?php endif ?>
 
-    <?php if (!empty($login->validation_errors['last_name']['length'])): ?>    
+    <?php if (!empty($login->validation_errors['last_name']['length'])): ?>
     <div><em>Last Name</em> must be between
         <?php eh($login->validation['last_name']['length'][1]) ?> and
         <?php eh($login->validation['last_name']['length'][2]) ?> characters in length.
     </div>
     <?php endif ?>
 
-    <?php if (!empty($login->validation_errors['username']['length'])): ?>    
+    <?php if (!empty($login->validation_errors['username']['length'])): ?>
     <div><em>Username</em> must be between
         <?php eh($login->validation['username']['length'][1]) ?> and
         <?php eh($login->validation['username']['length'][2]) ?> characters in length.
     </div>
     <?php endif ?>
 
-    <?php if (!empty($login->validation_errors['email']['length'])): ?>    
+    <?php if (!empty($login->validation_errors['email']['length'])): ?>
     <div><em>Email</em> must be between
         <?php eh($login->validation['email']['length'][1]) ?> and
         <?php eh($login->validation['email']['length'][2]) ?> characters in length.
     </div>
     <?php endif ?>
-
 
 </div>
 

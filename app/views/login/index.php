@@ -4,14 +4,14 @@
     <?php if($login->error): ?>
             <h4 class="alert-heading">Wrong Username or Password</h4>
     <?php endif ?>
-    <?php if (!empty($login->validation_errors['password']['length'])): ?>    
+    <?php if (!empty($login->validation_errors['password']['length'])): ?>
     <div><em>Password</em> must be between
         <?php eh($login->validation['password']['length'][1]) ?> and
         <?php eh($login->validation['password']['length'][2]) ?> characters in length.
     </div>
     <?php endif ?>
 
-    <?php if (!empty($login->validation_errors['username']['length'])): ?>    
+    <?php if (!empty($login->validation_errors['username']['length'])): ?>
     <div><em>Username</em> must be between
         <?php eh($login->validation['username']['length'][1]) ?> and
         <?php eh($login->validation['username']['length'][2]) ?> characters in length.
