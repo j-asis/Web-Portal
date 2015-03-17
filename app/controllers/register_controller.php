@@ -15,6 +15,7 @@ class RegisterController extends AppController
             $register->password = Param::get('password');
             $register->cpassword = Param::get('cpassword');
             $register->validate_password();
+            $register->user_exists();
             try {
                 $register->create();
             } catch (ValidationException $e) {

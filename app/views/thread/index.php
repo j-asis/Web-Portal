@@ -1,9 +1,9 @@
 <h1>All threads</h1>
 <hr></hr>
 <ul class="list-unstyled">
-    <?php foreach ($threads as $v): ?>
-    <li><a href="<?php eh(url('thread/view', array('thread_id' => $v->id))) ?>">
-    <?php eh($v->title) ?></a></li>
+    <?php foreach ($threads as $thread): ?>
+    <li><a href="<?php eh(url('thread/view', array('thread_id' => $thread->id))) ?>">
+    <?php eh($thread->title) ?></a></li>
     <?php endforeach ?>
 </ul>
 <?php if ($total > 5): ?>

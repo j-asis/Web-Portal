@@ -56,9 +56,17 @@ class Register extends AppModel
 
     public function validate_password()
     {
-        $is_match = $this->password == $this->cpassword;
-        if (!$is_match) {
+        if (!($this->password === $this->cpassword)) {
             $this->validation_errors['password']['match'] = true;
+        }
+    }
+
+    public function user_exists(){
+        $db = DB::conn();
+        $db->begin();
+        $row = $db->row('SELECT * FROM user WHERE username = ? ', array($this->username));
+        if (!empty($row)) {
+            $this->validation_errors['username']['exists'] = true;
         }
     }
 }

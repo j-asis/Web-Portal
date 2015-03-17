@@ -16,6 +16,9 @@ endif;
     <?php if (!empty($register->validation_errors['password']['match'])): ?>    
     <div><em>Password Did Not Match!</em></div>
     <?php endif ?>
+    <?php if (!empty($register->validation_errors['username']['exists'])): ?>    
+    <div><em>Username Already Taken!</em></div>
+    <?php endif ?>
 
     <?php if (!empty($register->validation_errors['password']['length'])): ?>    
     <div><em>Password</em> must be between

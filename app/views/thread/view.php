@@ -3,19 +3,19 @@
     Created By : <?php eh($thread_info['username']); ?> <br>
     Date : <?php eh($thread_info['date']); ?> 
 </p>
-<?php foreach ($comments as $k => $v): ?>
+<?php foreach ($comments as $key => $comment): ?>
 
 <div class="comment">
 
 <div class="meta">
 
-    <?php eh($k + 1) ?> :
-    <?php eh($v->username) ?> <?php eh($v->created) ?>    
+    <?php eh($key + 1) ?> :
+    <?php eh($comment->username) ?> <?php eh($comment->created) ?>    
 
 </div>
 
 
-<div><?php echo readable_text($v->body) ?></div>
+<div><?php echo readable_text($comment->body) ?></div>
 
 </div>
 
@@ -53,7 +53,7 @@
 
 <form class="well" method="post" action="<?php eh(url('thread/write')) ?>">
     <label>Comment</label>
-    <textarea name="body"><?php eh(Param::get('body')) ?></textarea>
+    <textarea style='padding:1%; width:98%; height:100px;' name="body"><?php eh(Param::get('body')) ?></textarea>
     <br />
     <input type="hidden" name="thread_id" value="<?php eh($thread->id) ?>">
     <input type="hidden" name="page_next" value="write_end">

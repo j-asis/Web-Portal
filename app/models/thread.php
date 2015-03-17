@@ -29,7 +29,7 @@ class Thread extends AppModel
     public static function countAllComments($thread_id)
     {
         $db = DB::conn();
-        return (int) $db->value("SELECT COUNT(*) FROM comment WHERE thread_id = {$thread_id}");
+        return (int) $db->value("SELECT COUNT(*) FROM comment WHERE thread_id = ?", array($thread_id));
     }
 
     public static function get($id)

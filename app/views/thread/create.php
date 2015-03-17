@@ -23,9 +23,9 @@
 
 <form class="well" method="post" action="<?php eh(url('')) ?>">
     <label>Title</label>
-    <input type="text" class="span2" name="title" value="<?php eh(Param::get('title')) ?>">
+    <input style='padding:1%; width:98%' type="text" class="span2" name="title" value="<?php eh(Param::get('title')) ?>">
     <label>Comment</label>
-    <textarea name="body"><?php eh(Param::get('body')) ?></textarea>
+    <textarea style='padding:1%; width:98%; height:200px;' name="body" ><?php eh(Param::get('body')) ?></textarea>
     <br />
     <input type="hidden" name="page_next" value="create_end">
     <button type="submit" class="btn btn-primary">Submit</button>                
