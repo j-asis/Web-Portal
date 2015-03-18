@@ -14,14 +14,30 @@ function redirect($url)
 }
 
 function time_difference($date){
-    $seconds_difference = strtotime(date("Y-m-d H:i:s")) - strtotime($date);
-    if ($seconds_difference > 60*60*24) {
-        return floor($seconds_difference / (60*60*24)) > 1 ? floor($seconds_difference / (60*60*24)) . " Days ago" : floor($seconds_difference / (60*60*24)) . " Day ago";
-    } elseif ($seconds_difference > 60*60) {
-        return floor($seconds_difference / (60*60)) > 1 ? floor($seconds_difference / (60*60)) . " Hours ago" : floor($seconds_difference / (60*60)) . " Hour ago";
-    } elseif ($seconds_difference > 60) {
-        return floor($seconds_difference / (60)) > 1 ? floor($seconds_difference / (60)) . " Minutes ago" : floor($seconds_difference / (60)) . " Minute ago";
-    } else {
-        return floor($seconds_difference) . " Seconds ago";
+    $date = strtotime($date);
+    $now = strtotime(date("Y-m-d H:i:s"));
+    $today = strtotime(date("Y-m-d"));
+    $day = strtotime(date("Y-m-d",$date));
+    $difference = $now - $date;
+    $time = date("h:ia",$date);
+    $date_difference = ($today - $day) / (60*60*24);
+    $time_frame = array(60,60,24);
+    $time_title = array('second','minute','hour');
+    
+    if ($date_difference === 1) {
+        return "yesterday at " . $time;
+    } elseif ($date_difference > 1 && $date_difference < 7) {
+        return $date_difference . " days ago";
     }
+
+    for ($i = 0; $i < 3; $i++) {
+        $difference = $difference / $time_frame[$i];
+        if ($difference > 1) {
+            continue;
+        }
+        $num = floor($difference * $time_frame[$i]);
+        $title = $num > 1 ? $time_title[$i] . "s" : $time_title[$i];
+        return isset($num) ? "$num $title ago" : $day;
+    }
+    
 }

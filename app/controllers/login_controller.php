@@ -8,7 +8,7 @@ class LoginController extends AppController
         $check = Param::get('call');
         $login->error = false;
         $error = false;
-        $message = 'Welcome, please Log In';
+        $message = 'Welcome, please log in';
         if ($check) {
             $login->username = Param::get('username');
             $login->password = Param::get('password');

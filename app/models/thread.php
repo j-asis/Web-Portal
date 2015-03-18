@@ -2,7 +2,7 @@
 class Thread extends AppModel
 {
     const MIN_STRING_LENGTH = 1;
-    const MAX_STRING_LENGTH = 50;
+    const MAX_STRING_LENGTH = 80;
 
     public $validation = array(
        'title' => array(
