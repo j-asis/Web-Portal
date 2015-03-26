@@ -8,16 +8,16 @@ class Login extends AppModel
 
     public $validation = array(
         'password' => array(
-            'length'=>array(
+            'length' => array(
                 'validate_between', self::MIN_PASSWORD_LENGTH, self::MAX_PASSWORD_LENGTH
-                    ),
-                ),
+            ),
+        ),
         'username' => array(
-            'length'=>array(
+            'length' => array(
                 'validate_between', self::MIN_STRING_LENGTH, self::MAX_STRING_LENGTH
-                    ),
-                ),
-            );
+            ),
+        ),
+    );
 
     public function checkInput()
     {
