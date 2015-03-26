@@ -1,3 +1,4 @@
+<?php if (isset($login)): ?>
 <?php if($login->hasError() || $login->error): ?>
 <div class="alert alert-block">
     <h4 class="alert-heading">Error!</h4>
@@ -19,7 +20,8 @@
     <?php endif ?>
 
 </div>
-<?php endif ?>
+<?php endif; ?>
+<?php endif; ?>
 <?php $title='User Log In';?>
 <h1><?php readable_text($message); ?></h1>
 <form action='<?php readable_text(url('')) ?>' method='post'>

@@ -66,11 +66,11 @@ class Register extends AppModel
         }
     }
 
-    public function user_exists(){
+    public function user_exists()
+    {
         $db = DB::conn();
-        $db->begin();
         $row = $db->row('SELECT * FROM user WHERE username = ? ', array($this->username));
-        if (!empty($row)) {
+        if ($row) {
             $this->validation_errors['username']['exists'] = true;
         }
     }

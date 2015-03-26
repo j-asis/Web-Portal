@@ -4,14 +4,16 @@ class LoginController extends AppController
 {
     public function index()
     {
-        $login = new Login;
-        $check = Param::get('call');
-        $login->error = false;
+        $check = Param::get('call',false);
         $error = false;
         $message = 'Welcome, please log in';
         if ($check) {
-            $login->username = Param::get('username');
-            $login->password = Param::get('password');
+            $params = array(
+                'username' => Param::get('username'),
+                'password' => Param::get('password'),
+                'error'    => false,
+            );
+            $login = new Login($params);
             try {
                 $login->checkInput();
                 $login->loginAction();

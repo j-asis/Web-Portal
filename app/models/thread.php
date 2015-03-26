@@ -91,7 +91,7 @@ class Thread extends AppModel
     {
         $thread_user_id = array();
         $db = DB::conn();
-        $rows = $db->rows('SELECT * FROM thread WHERE id = ?', array($this->id));
+        $row = $db->row('SELECT * FROM thread WHERE id = ?', array($this->id));
         foreach ($rows as $row) {
             $thread_user_id[0] = $row['user_id'];
             $thread_user_id[1] = $row['created'];
