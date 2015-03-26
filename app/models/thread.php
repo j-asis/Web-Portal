@@ -16,7 +16,8 @@ class Thread extends AppModel
     {
         $threads = array();
         $db = DB::conn();
-        $rows = $db->rows("SELECT * FROM thread LIMIT {$offset}, {$limit}");
+        $query = sprintf("SELECT * FROM thread LIMIT %d, %d", $offset, $limit);
+        $rows = $db->rows($query);
         foreach ($rows as $row) {
             $threads[] = new self($row);
         }
@@ -49,7 +50,8 @@ class Thread extends AppModel
     {
         $comments = array();
         $db = DB::conn();
-        $rows = $db->rows("SELECT * FROM comment WHERE thread_id = ? ORDER BY created ASC LIMIT {$offset}, {$limit}", array($this->id));
+        $query = sprintf("SELECT * FROM comment WHERE thread_id = ? ORDER BY created ASC LIMIT %d, %d", $offset, $limit);
+        $rows = $db->rows($query, array($this->id));
         foreach ($rows as $row) {
             $row['username'] = $this->getUserName($row['user_id']);
             $comments[] = new Comment($row);
@@ -87,15 +89,19 @@ class Thread extends AppModel
 
     public function getThreadInfo()
     {
-        $threadUserId = array();
+        $thread_user_id = array();
         $db = DB::conn();
         $rows = $db->rows('SELECT * FROM thread WHERE id = ?', array($this->id));
         foreach ($rows as $row) {
-            $threadUserId[0] = $row['user_id'];
-            $threadUserId[1] = $row['created'];
+            $thread_user_id[0] = $row['user_id'];
+            $thread_user_id[1] = $row['created'];
         }
-        $threadUsername = $db->row('SELECT username FROM user WHERE id = ?', array($threadUserId[0]));
-        return array('username'=>$threadUsername['username'],'date'=>$threadUserId[1],'user_id'=>$threadUserId[0]);
+        $thread_username = $db->row('SELECT username FROM user WHERE id = ?', array($thread_user_id[0]));
+        return array(
+            'username' => $thread_username['username'],
+            'date' => $thread_user_id[1],
+            'user_id' => $thread_user_id[0]
+        );
     }
 
     public function getUserName($user_id)

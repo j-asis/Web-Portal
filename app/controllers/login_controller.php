@@ -14,11 +14,9 @@ class LoginController extends AppController
             $login->password = Param::get('password');
             try {
                 $login->checkInput();
+                $login->loginAction();
             } catch (ValidationException $e) {
                 $error = true;
-            }
-            try {
-                $login->loginAction();
             } catch (RecordNotFoundException $e) {
                 $login->error = true;
             }
