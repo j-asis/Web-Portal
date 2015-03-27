@@ -4,7 +4,7 @@ class RegisterController extends AppController
 {
     public function index()
     {
-        $check = Param::get('call',false);
+        $check = Param::get('call', false);
         $error = false;
         if ($check) {
             $params = array(
@@ -16,8 +16,8 @@ class RegisterController extends AppController
                 'cpassword' => Param::get('cpassword'),
             );
             $register = new Register($params);
-            $register->validate_password();
-            $register->user_exists();
+            $register->validatePassword();
+            $register->userExists();
             try {
                 $register->create();
             } catch (ValidationException $e) {

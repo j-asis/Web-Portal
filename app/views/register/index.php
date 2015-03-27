@@ -9,8 +9,6 @@ endif;
 ?>
 <?php endif; ?>
 
-<?php if($error===true){echo "waaaaaaaaaaaaaaaaaaaaaaaaaaaaa";} ?>
-
 
 <?php if(isset($register)): ?>
 <?php if($register->hasError()): ?>

@@ -53,20 +53,20 @@ class Register extends AppModel
             $db->insert('user', $params);
             $db->commit();
             $this->created = true;
-        } catch(Exception $e) {
+        } catch (Exception $e) {
             $db->rollback();
             throw $e;
         }
     }
 
-    public function validate_password()
+    public function validatePassword()
     {
         if (!($this->password === $this->cpassword)) {
             $this->validation_errors['password']['match'] = true;
         }
     }
 
-    public function user_exists()
+    public function userExists()
     {
         $db = DB::conn();
         $row = $db->row('SELECT * FROM user WHERE username = ? ', array($this->username));

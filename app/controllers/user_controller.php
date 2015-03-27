@@ -7,12 +7,12 @@ class UserController extends AppController
         $user = new User;
         $is_logged = isset($_SESSION['username']);
         if (!$is_logged) {
-            redirect('/');
+            redirect(url(''));
         }
         $home = '/user/index';
         $user->username = $_SESSION['username'];
         $user_id = $user->getUserId($user->username);
-        $user_details = $user->getUserDetail($user_id);
+        $user_details = objectToArray($user->getUserDetail($user_id));
 
         $this->set(get_defined_vars());
     }
@@ -20,14 +20,14 @@ class UserController extends AppController
     {
         session_unset('username');
         session_destroy();
-        redirect('/');
+        redirect(url(''));
     }
     public function viewUser()
     {
         $user = new User;
         $is_logged = isset($_SESSION['username']);
         if (!$is_logged) {
-            redirect('/');
+            redirect(url(''));
         }
         $home = '/user/index';
         $user->username = $_SESSION['username'];

@@ -23,9 +23,10 @@ class ThreadController extends AppController
         $comment_page = Param::get('comment_page',1);
         $per_page = 5;
         $pagination = new SimplePagination($comment_page, $per_page);
-        $comments = $thread->getComments($pagination->start_index - 1, $pagination->count + 1);
+        $comment = new Comment;
+        $comments = Comment::getByThreadId($thread_id, $pagination->start_index - 1, $pagination->count + 1);
         $pagination->checkLastPage($comments);
-        $total = Thread::countAllComments($thread_id);
+        $total = Comment::countAllComments($thread_id);
         $pages = ceil($total / $per_page);
 
         $this->set(get_defined_vars());
@@ -39,10 +40,10 @@ class ThreadController extends AppController
             case 'write':
                 break;
             case 'write_end':
-                $comment->user_id = $thread->getUserId($_SESSION['username']);
+                $comment->user_id = User::getUserId($_SESSION['username']);
                 $comment->body = Param::get('body');
                 try {
-                    $thread->write($comment);
+                    $comment->write($thread);
                 } catch (ValidationException $e) {
                     $page = 'write';
                 }
@@ -64,7 +65,7 @@ class ThreadController extends AppController
                 break;
             case 'create_end':
                 $thread->title = Param::get('title');
-                $comment->user_id = $thread->getUserId($_SESSION['username']);
+                $comment->user_id = User::getUserId($_SESSION['username']);
                 $comment->body = Param::get('body');
                 try {
                     $thread->create($comment);

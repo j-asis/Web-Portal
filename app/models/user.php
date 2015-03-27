@@ -4,27 +4,23 @@ class User extends AppModel
 {
     public function getUserDetail($id)
     {
-        try{
+        try {
             $db = DB::conn();
             $row = $db->row('SELECT * FROM user WHERE id = ?', array($id));
         } catch (Exception $e) {
             throw new Exception("Mysql Error, record not found");
         }
-        return $row;
+        return new self($row);
     }
-    public function getUserName($user_id)
+    public static function getUserName($user_id)
     {
-        try{
-            $db = DB::conn();
-            $row = $db->row('SELECT username FROM user WHERE id = ?', array($user_id));
-        } catch (Exception $e) {
-            throw new Exception("Mysql Error, record not found");
-        }
-        return !empty($row['username']) ? $row['username'] : false;
+        $user = new User;
+        $details = $user->getUserDetail($user_id);
+        return $details->username;
     }
-    public function getUserId($username)
+    public static function getUserId($username)
     {
-        try{
+        try {
             $db = DB::conn();
             $row = $db->row('SELECT id FROM user WHERE username = ?', array($username));
         } catch (Exception $e) {

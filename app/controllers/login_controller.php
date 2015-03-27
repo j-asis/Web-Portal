@@ -4,7 +4,7 @@ class LoginController extends AppController
 {
     public function index()
     {
-        $check = Param::get('call',false);
+        $check = Param::get('call', false);
         $error = false;
         $message = 'Welcome, please log in';
         if ($check) {
@@ -28,7 +28,7 @@ class LoginController extends AppController
         }
         $is_logged = isset($_SESSION['username']);
         if ($is_logged) {
-            redirect('/user/index');
+            redirect(url('user/index'));
         }
         $this->set(get_defined_vars());
     }
