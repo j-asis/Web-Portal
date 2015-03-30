@@ -112,4 +112,71 @@ class User extends AppModel
             throw $e;
         }
     }
+    public function deleteComment($id)
+    {
+        $is_authenticated = false;
+        $db = DB::conn();
+        $db->begin();
+        $row = $db->row("SELECT * FROM comment WHERE id = ? ", array($id));
+        if ($this->user_id===$row['user_id']) {
+            $is_authenticated = true;
+        }
+        if ($is_authenticated) {
+            $db->query("DELETE FROM comment WHERE id = ? ", array($id));
+            $db->commit();
+            return true;
+        } else {
+            $this->error_message = "Authentication Failed! You are not allowed to delete this Comment!";
+            return false;
+        }
+    }
+    public function deleteThread($id)
+    {
+        $is_authenticated = false;
+        $db = DB::conn();
+        $db->begin();
+        $row = $db->row("SELECT * FROM thread WHERE id = ? ", array($id));
+        if ($this->user_id===$row['user_id']) {
+            $is_authenticated = true;
+        }
+        if ($is_authenticated) {
+            $db->query("DELETE FROM thread WHERE id = ? ", array($id));
+            $db->query("DELETE FROM follow WHERE thread_id = ? ", array($id));
+            $comments = $db->rows("SELECT id FROM comment WHERE thread_id = ? ", array($id));
+                foreach ($comments as $comment) {
+                    $db->query("DELETE FROM comment WHERE id = ? ", array($comment['id']));
+                }
+            $db->commit();
+            return true;
+        } else {
+            $this->error_message = "Authentication Failed! You are not allowed to delete this thread!";
+            return false;
+        }
+    }
+    public function deleteUser($id)
+    {
+        $is_authenticated = false;
+        $db = DB::conn();
+        $db->begin();
+        $row = $db->row("SELECT * FROM user WHERE id = ? ", array($id));
+        if ($this->user_id===$row['id']) {
+            $is_authenticated = true;
+        }
+        if ($is_authenticated) {
+            $threads = $db->rows("SELECT id FROM thread WHERE user_id = ? ", array($id));
+            foreach ($threads as $thread) {
+                $comments = $db->rows("SELECT id FROM comment WHERE thread_id = ? ", array($thread['id']));
+                foreach ($comments as $comment) {
+                    $db->query("DELETE FROM comment WHERE id = ? ", array($comment['id']));
+                }
+                $db->query("DELETE FROM thread WHERE id = ? ", array($thread['id']));
+            }
+            $db->query("DELETE FROM user WHERE id = ? ", array($id));
+            $db->commit();
+            return true;
+        } else {
+            $this->error_message = "Authentication Failed! You are not allowed to delete this User!";
+            return false;
+        }
+    }
 }

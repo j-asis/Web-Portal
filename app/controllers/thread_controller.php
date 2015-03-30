@@ -23,6 +23,7 @@ class ThreadController extends AppController
         $thread_info = $thread->getThreadInfo($thread_id);
 
         $comment = new Comment;
+        $comment->id = $thread_id;
         $comment_page = Param::get('comment_page',1);
         $per_page = 5;
         $pagination = new SimplePagination($comment_page, $per_page);

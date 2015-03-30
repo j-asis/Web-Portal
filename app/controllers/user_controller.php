@@ -12,7 +12,7 @@ class UserController extends AppController
     {
         session_unset('username');
         session_destroy();
-        redirect(url(''));
+        redirect(url('/'));
     }
     public function viewUser()
     {
@@ -78,6 +78,40 @@ class UserController extends AppController
 
             } else {
                 $error_message = "Wrong Password!";
+            }
+        }
+        $this->set(get_defined_vars());
+    }
+    public function delete()
+    {
+        $user = new User;
+        $type = Param::get('type');
+        $id = Param::get('id');
+        $url_back = urldecode(Param::get('url_back'));
+        $password = Param::get('password','');
+        $confirm = Param::get('confirm','false');
+        $is_success = false;
+        
+        if (($type === 'comment') && $confirm === 'true') {
+
+            $is_success = $user->deleteComment($id);
+
+        } elseif (($type === 'thread') && $confirm === 'true') {
+
+            $is_success = $user->deleteThread($id);
+
+        } elseif ($type === 'user') {
+
+            $check = Param::get('check');
+            if ($check) {
+
+                $password = Param::get('password');
+                if ( md5($password) === $user->user_details['password'] ) {
+
+                    $is_success = $user->deleteUser($id);
+                    $url_back = '/user/logout';
+
+                }
             }
         }
         $this->set(get_defined_vars());

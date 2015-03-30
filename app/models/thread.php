@@ -62,13 +62,13 @@ class Thread extends AppModel
         $db->commit();
     }
 
-    public function getThreadInfo($id = NULL)
+    public static function getThreadInfo($id = NULL)
     {
         if (empty($id)) {
             return false;
         }
         $db = DB::conn();
-        $row = $db->row('SELECT * FROM thread WHERE id = ?', array($this->id));
+        $row = $db->row('SELECT * FROM thread WHERE id = ?', array($id));
         $thread_username = $db->row('SELECT username,avatar FROM user WHERE id = ?', array($row['user_id']));
         $num_comment = $db->value('SELECT COUNT(*) FROM comment WHERE thread_id = ?', array($id));
         $num_follow = $db->value('SELECT COUNT(*) FROM follow WHERE thread_id = ?', array($id));

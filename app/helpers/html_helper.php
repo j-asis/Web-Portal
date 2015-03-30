@@ -39,5 +39,5 @@ function time_difference($date){
         $title = $num > 1 ? $time_title[$i] . "s" : $time_title[$i];
         return isset($num) ? "$num $title ago" : $day;
     }
-    
+    return date("Y-m-d h:ia",$date);
 }
