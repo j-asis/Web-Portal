@@ -2,6 +2,7 @@
 
 class UserController extends AppController 
 {
+    const MAX_POST_SIZE = 8000000;
     public function index()
     {
         $user = new User;
@@ -113,6 +114,42 @@ class UserController extends AppController
 
                 }
             }
+        }
+        $this->set(get_defined_vars());
+    }
+    public function uploadImage()
+    {
+        $user = new User;
+        $this->set(get_defined_vars());
+    }
+    public function upload()
+    {
+        $user = new User;
+        if (self::MAX_POST_SIZE < $_SERVER['CONTENT_LENGTH']) {
+            $error = "Error! File Size too big! Can only upload 2 Mega Bytes";
+        }
+        if (isset($_FILES['avatar']) && $_FILES['avatar']['error'] === 0) {
+            $file = $_FILES['avatar'];
+            $upload = new UploadImg($file);
+            if ($upload->isFileAccepted()) {
+                $upload->rename($user->username);
+                if (strpos($user->user_details['avatar'], 'default') === false) {
+                    unlink(APP_DIR.'webroot'.$user->user_details['avatar']);
+                }
+                $saved = $upload->save('webroot/public_images/');
+                if ($saved) {
+                    $user->saveAvatar($saved);
+                    chmod(APP_DIR.'webroot'.$saved, 0755);
+                } else {
+                    $error = "Unexpected Error Occured";
+                }
+            } else {
+                $error = "File Upload Error";
+            }
+        } elseif ($_FILES['avatar']['error'] > 0) {
+            $error = "Error! File Size too big! Can only upload 2 Mega Bytes";
+        } elseif (!isset($error)) {
+            redirect('/');
         }
         $this->set(get_defined_vars());
     }
