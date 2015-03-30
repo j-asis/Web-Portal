@@ -3,24 +3,19 @@
 class UserController extends AppController 
 {
     const MAX_POST_SIZE = 8000000;
-    public function index()
-    {
-        $user = new User;
-        $home = '/user/index';
-        $this->set(get_defined_vars());
-    }
     public function logout()
     {
         session_unset('username');
         session_destroy();
         redirect(url('/'));
     }
-    public function viewUser()
+    public function profile()
     {
         $user = new User;
-        $home = '/user/index';
-        $user_id = Param::get('user_id',0);
-        $other_user = $user->getUserDetail($user_id);
+        $home = '/user/profile';
+        $user_id = Param::get('user_id', $user->user_id);
+        $user_info = $user->getUserDetail($user_id);
+        $title = $user_info['username'];
         $this->set(get_defined_vars());
     }
     public function update()

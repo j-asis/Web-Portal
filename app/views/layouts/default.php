@@ -23,8 +23,8 @@
                                 </a>
                                 <ul class="dropdown-menu">
                                     <li><a href="/thread/index"><i class="icon-calendar"></i> Most Recent</a></li>
-                                    <li><a href="/thread/mostComment"><i class="icon-comment"></i> Most Comments</a></li>
-                                    <li><a href="/thread/mostFollowed"><i class="icon-thumbs-up"></i> Most Followed</a></li>
+                                    <li><a href="/thread/topThreads?type=comment"><i class="icon-comment"></i> Most Comments</a></li>
+                                    <li><a href="/thread/topThreads?type=follow"><i class="icon-thumbs-up"></i> Most Followed</a></li>
                                 </ul>
                             </li>
                         </ul>
@@ -45,7 +45,7 @@
                                 
                             </li>
                             <li>
-                                <a href="/user/index">
+                                <a href="/user/profile">
                                     <?php readable_text($_SESSION['username']); ?>
                                     <span class="icon-user icon-white"></span>
                                 </a>

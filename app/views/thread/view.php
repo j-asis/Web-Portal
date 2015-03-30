@@ -1,6 +1,6 @@
 <h1><?php readable_text($thread->title);?></h1>
 <p>
-    Created By : <a href='<?php readable_text('/user/viewUser?user_id=' . $thread_info['user_id']); ?>'>
+    Created By : <a href='<?php readable_text('/user/profile?user_id=' . $thread_info['user_id']); ?>'>
                     <img class="img-rounded" height="20" width="20" src="<?php echo $thread_info['avatar']; ?>">
                     <?php readable_text($thread_info['username']); ?>
                 </a><br>
@@ -34,7 +34,7 @@
 
 <div class="meta">
 
-    by : <a href='<?php readable_text('/user/viewUser?user_id=' . $comment->user_id); ?>'>
+    by : <a href='<?php readable_text('/user/profile?user_id=' . $comment->user_id); ?>'>
                     <img class="img-rounded" height="20" width="20" src="<?php echo $comment->avatar; ?>" alt="user avatar">
                     <?php readable_text($comment->username) ?>
                 </a> <br />

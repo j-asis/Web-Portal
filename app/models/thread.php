@@ -17,7 +17,7 @@ class Thread extends AppModel
     {
         $threads = array();
         $db = DB::conn();
-        $query = sprintf("SELECT * FROM thread LIMIT %d, %d", $offset, $limit);
+        $query = sprintf("SELECT * FROM thread ORDER BY created DESC LIMIT %d, %d", $offset, $limit);
         $rows = $db->rows($query);
         foreach ($rows as $row) {
             $thread_info = self::getThreadInfo($row['id']);
@@ -81,6 +81,7 @@ class Thread extends AppModel
             'num_comment' => $num_comment,
             'avatar' => $thread_username['avatar'],
             'num_follow' => $num_follow,
+            'title' => $row['title'],
         );
         return $returns;
     }
@@ -98,5 +99,35 @@ class Thread extends AppModel
             $db->rollback();
             throw $e;
         }
+    }
+    public function topThreads($table)
+    {
+        $top_threads = array();
+        $db = DB::conn();
+        $rows = $db->rows("SELECT thread_id, COUNT(*) as num FROM {$table} GROUP BY thread_id ORDER BY num DESC LIMIT 0,10");
+        foreach ($rows as $row) {
+            $info = self::getThreadInfo($row['thread_id']);
+            $top_threads[] = new self($info);
+        }
+        return $top_threads;
+    }
+    public static function userThread($id, $offset, $limit)
+    {
+        $threads = array();
+        $db = DB::conn();
+        $query = sprintf("SELECT * FROM thread WHERE user_id = %d ORDER BY created DESC LIMIT %d, %d", $id, $offset, $limit);
+        $rows = $db->rows($query);
+        foreach ($rows as $row) {
+            $thread_info = self::getThreadInfo($row['id']);
+            $row = array_merge($row,$thread_info);
+            $threads[] = new self($row);
+        }
+        return $threads;
+    }
+    public static function countByUser($user_id)
+    {
+        $db = DB::conn();
+        $value = $db->value('SELECT COUNT(*) FROM thread WHERE user_id = ?', array($user_id));
+        return $value;
     }
 }

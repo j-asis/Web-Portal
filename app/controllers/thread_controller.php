@@ -5,7 +5,8 @@ class ThreadController extends AppController
     public function index()
     {
         $user = new User;
-        $title = 'Threads';
+        $title = 'All Threads';
+        $url_params = '?';
         $page = Param::get('page', 1);
         $per_page = 5;
         $pagination = new SimplePagination($page, $per_page);
@@ -13,6 +14,7 @@ class ThreadController extends AppController
         $pagination->checkLastPage($threads);
         $total = Thread::countAll();
         $pages = ceil($total / $per_page);
+        $sub_title = 'Total of '.$total.' threads';
         $this->set(get_defined_vars());
     }
     public function view()
@@ -118,5 +120,46 @@ class ThreadController extends AppController
             }
         }
         $this->set(get_defined_vars());
+    }
+    public function topThreads()
+    {
+        $type = Param::get('type', '');
+        if ($type === '') {
+            redirect(url('/'));
+        }
+        switch ($type) {
+            case 'comment':
+                $title = 'Most Commented Thread';
+                $sub_title = 'Showing top %d most commented threads';
+                break;
+            case 'follow':
+                $title = 'Most Followed Thread';
+                $sub_title = 'Showing top %dmost followed threads';
+                break;
+            default:
+                break;
+        }
+        $user = new User;
+        $thread = new Thread;
+        $top_threads = $thread->topThreads($type);
+        $sub_title = sprintf($sub_title, count($top_threads));
+        $this->set(get_defined_vars());
+        $this->render('topThreads');
+    }
+    public function userThread()
+    {
+        $user = new User;
+        $user_id = Param::get('user_id', $user->user_id);
+        $url_params = '?user_id='.$user_id.'&';
+        $title = $user->username . ' Threads';
+        $page = Param::get('page', 1);
+        $per_page = 5;
+        $pagination = new SimplePagination($page, $per_page);
+        $threads = Thread::userThread($user_id, $pagination->start_index - 1, $pagination->count + 1);
+        $pagination->checkLastPage($threads);
+        $total = Thread::countByUser($user_id);
+        $pages = ceil($total / $per_page);
+        $this->set(get_defined_vars());
+        $this->render('index');
     }
 }
