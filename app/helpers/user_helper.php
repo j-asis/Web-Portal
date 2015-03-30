@@ -1,5 +1,4 @@
 <?php
-session_start();
 
 function objectToArray($obj){
     if (!is_object($obj)) {
@@ -10,4 +9,11 @@ function objectToArray($obj){
         $array[$key] = $value;
     }
     return $array;
+}
+
+function securedPage(){
+    $is_logged = isset($_SESSION['username']);
+    if (!$is_logged) {
+        redirect('/');
+    }
 }

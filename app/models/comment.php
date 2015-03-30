@@ -27,7 +27,9 @@ class Comment extends AppModel
         $query = sprintf("SELECT * FROM comment WHERE thread_id = ? ORDER BY created ASC LIMIT %d, %d", $offset, $limit);
         $rows = $db->rows($query, array($id));
         foreach ($rows as $row) {
-            $row['username'] = User::getUserName($row['user_id']);
+            $user_detail = User::getUserDetail($row['user_id']);
+            $row['username'] = $user_detail['username'];
+            $row['avatar'] = $user_detail['avatar'];
             $comments[] = new Comment($row);
         }
         return $comments;

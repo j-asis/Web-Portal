@@ -34,10 +34,25 @@ INDEX (thread_id, created)
 
 CREATE TABLE IF NOT EXISTS user (
 id                      INT UNSIGNED NOT NULL AUTO_INCREMENT,
-username                VARCHAR(50) UNIQUE NOT NULL,
+username                VARCHAR(50) NOT NULL,
 first_name              VARCHAR(50) NOT NULL,
 last_name               VARCHAR(50) NOT NULL,
-email                   VARCHAR(50) UNIQUE NOT NULL,
+email                   VARCHAR(50) NOT NULL,
 password                VARCHAR(100) NOT NULL,
+avatar                  VARCHAR(200),
 PRIMARY KEY (id)
+)ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS follow (
+id                      INT UNSIGNED NOT NULL AUTO_INCREMENT,
+user_id                 INT UNSIGNED NOT NULL,
+thread_id               INT UNSIGNED NOT NULL,
+PRIMARY KEY (id)
+)ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS likes (
+id                      INT UNSIGNED NOT NULL AUTO_INCREMENT,
+user_id                 INT UNSIGNED NOT NULL,
+comment_id               INT UNSIGNED NOT NULL,
+PRIMARY KEY(id)
 )ENGINE=InnoDB;

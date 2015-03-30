@@ -20,6 +20,8 @@ class Thread extends AppModel
         $query = sprintf("SELECT * FROM thread LIMIT %d, %d", $offset, $limit);
         $rows = $db->rows($query);
         foreach ($rows as $row) {
+            $thread_info = self::getThreadInfo($row['id']);
+            $row = array_merge($row,$thread_info);
             $threads[] = new self($row);
         }
         return $threads;
@@ -60,15 +62,26 @@ class Thread extends AppModel
         $db->commit();
     }
 
-    public function getThreadInfo()
+    public function getThreadInfo($id = NULL)
     {
+        if (empty($id)) {
+            return false;
+        }
         $db = DB::conn();
         $row = $db->row('SELECT * FROM thread WHERE id = ?', array($this->id));
-        $thread_username = $db->row('SELECT username FROM user WHERE id = ?', array($row['user_id']));
-        return array(
+        $thread_username = $db->row('SELECT username,avatar FROM user WHERE id = ?', array($row['user_id']));
+        $num_comment = $db->value('SELECT COUNT(*) FROM comment WHERE thread_id = ?', array($id));
+        $num_follow = $db->value('SELECT COUNT(*) FROM follow WHERE thread_id = ?', array($id));
+        $thread_username['avatar'] = empty($thread_username['avatar']) ? '/public_images/default.jpg' : $thread_username['avatar'];
+        $returns = array(
+            'id' => $id,
             'username' => $thread_username['username'],
             'date' => $row['created'],
-            'user_id' => $row['user_id']
+            'user_id' => $row['user_id'],
+            'num_comment' => $num_comment,
+            'avatar' => $thread_username['avatar'],
+            'num_follow' => $num_follow,
         );
+        return $returns;
     }
 }

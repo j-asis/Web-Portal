@@ -4,6 +4,7 @@ class ThreadController extends AppController
 {
     public function index()
     {
+        $user = new User;
         $title = 'Threads';
         $page = Param::get('page', 1);
         $per_page = 5;
@@ -16,14 +17,15 @@ class ThreadController extends AppController
     }
     public function view()
     {
+        $user = new User;
         $thread = Thread::get(Param::get('thread_id'));
-        $thread_info = $thread->getThreadInfo();
         $thread_id = Param::get('thread_id');
+        $thread_info = $thread->getThreadInfo($thread_id);
 
+        $comment = new Comment;
         $comment_page = Param::get('comment_page',1);
         $per_page = 5;
         $pagination = new SimplePagination($comment_page, $per_page);
-        $comment = new Comment;
         $comments = Comment::getByThreadId($thread_id, $pagination->start_index - 1, $pagination->count + 1);
         $pagination->checkLastPage($comments);
         $total = Comment::countAllComments($thread_id);
@@ -33,6 +35,7 @@ class ThreadController extends AppController
     }
     public function write()
     {
+        $user = new User;
         $thread = Thread::get(Param::get('thread_id'));
         $comment = new Comment;
         $page = Param::get('page_next','write');
@@ -57,6 +60,7 @@ class ThreadController extends AppController
     }
     public function create()
     {
+        $user = new User;
         $thread = new Thread;
         $comment = new Comment;
         $page = Param::get('page_next', 'create');
