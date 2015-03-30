@@ -84,4 +84,19 @@ class Thread extends AppModel
         );
         return $returns;
     }
+    public function editThread()
+    {
+        if (!$this->validate()) {
+            throw new ValidationException('invalid comment');
+        }
+        $db = DB::conn();
+        try {
+            $db->begin();
+            $db->update('thread', array('title'=>$this->title), array('id'=>$this->thread_id));
+            $db->commit();
+        } catch (Exception $e) {
+            $db->rollback();
+            throw $e;
+        }
+    }
 }

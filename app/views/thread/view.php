@@ -23,6 +23,9 @@
         <a class="btn btn-small" href='/user/delete?type=thread&url_back=<?php echo urlencode('/'); ?>&id=<?php echo $comment->id; ?>'>
         <span class='icon-trash'></span> Delete
         </a>
+        <a class="btn btn-small" href="<?php echo url('thread/edit', array('id'=>$thread->id)); ?>">
+            <span class='icon-pencil'></span> Edit
+        </a>
     <?php endif; ?>
 </p>
 <?php foreach ($comments as $key => $comment): ?>
@@ -39,7 +42,10 @@
     <?php if ($user->user_id === $comment->user_id): ?>
         <br />
         <a class="btn btn-small" href='/user/delete?type=comment&url_back=<?php echo urlencode($_SERVER['REQUEST_URI']); ?>&id=<?php echo $comment->id; ?>'>
-        <span class='icon-trash'></span> Delete
+            <span class='icon-trash'></span> Delete
+        </a>
+        <a class="btn btn-small" href="<?php echo url('comment/edit', array('id'=>$comment->id, 'thread_id'=>$comment->thread_id)); ?>">
+            <span class='icon-pencil'></span> Edit
         </a>
     <?php endif; ?>
 </div>

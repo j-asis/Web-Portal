@@ -85,4 +85,38 @@ class ThreadController extends AppController
         $this->set(get_defined_vars());
         $this->render($page);
     }
+    public function edit()
+    {
+        $check = Param::get('check', false);
+        $title = " | Edit thread";
+        $user = new User;
+        try {
+            $thread_content = Thread::get(Param::get('id'));
+        } catch (RecordNotFoundException $e) {
+            $error = "Not Exsisting Thread";
+        }
+        if (!isset($error)) {
+            if ($thread_content->user_id !== $user->user_id) {
+                $thread->error = 'Cannot edit other user\'s thread';
+            }
+            $params = array(
+                'thread_id' => Param::get('id'),
+                'user_id' => $user->user_id,
+                );
+            if ($check) {
+                $params['title'] = Param::get('new_thread', '');
+                $thread = new Thread($params);
+                try {
+                    $thread->editThread();
+                } catch (ValidationException $e) {
+                    $thread->error = 'Input Error, Please enter at from 1 to 200 charcters';
+                } catch (Exception $e) {
+                    $thread->error = 'Unexpected Error occured';
+                }
+            } else {
+                $thread = new Comment($params);
+            }
+        }
+        $this->set(get_defined_vars());
+    }
 }
