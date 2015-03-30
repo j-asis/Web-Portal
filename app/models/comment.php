@@ -39,4 +39,28 @@ class Comment extends AppModel
         $db = DB::conn();
         return (int) $db->value("SELECT COUNT(*) FROM comment WHERE thread_id = ?", array($thread_id));
     }
+    public static function getCommentContent($id)
+    {
+        $db = DB::conn();
+        $row = $db->row('SELECT * FROM comment WHERE id = ? ', array($id));
+        if (!$row) {
+            throw new RecordNotFoundException('no record found');
+        }
+        return new self($row);
+    }
+    public function editComment()
+    {
+        if (!$this->validate()) {
+            throw new ValidationException('invalid comment');
+        }
+        $db = DB::conn();
+        try {
+            $db->begin();
+            $db->update('comment', array('body'=>$this->body), array('id'=>$this->comment_id));
+            $db->commit();
+        } catch (Exception $e) {
+            $db->rollback();
+            throw $e;
+        }
+    }
 }

@@ -4,7 +4,7 @@ function readable_text($string)
 {
     if (!isset($string)) return;
     $string = htmlspecialchars($string, ENT_QUOTES);
-    $string = nl2br($string);
+    $string = nl2br(trim($string));
     echo $string;
 }
 

@@ -1,0 +1,40 @@
+<?php
+
+class CommentController extends AppController 
+{
+    public function edit()
+    {
+        $check = Param::get('check', false);
+        $title = " | Edit comment";
+        $user = new User;
+        try {
+            $comment_content = Comment::getCommentContent(Param::get('id'));
+        } catch (RecordNotFoundException $e) {
+            $error = "Not Exsisting Comment";
+        }
+        if (!isset($error)) {
+            if ($comment_content->user_id !== $user->user_id) {
+                $comment->error = 'Cannot edit other user\'s comment';
+            }
+            $params = array(
+                'comment_id' => Param::get('id'),
+                'thread_id' => Param::get('thread_id'),
+                'user_id' => $user->user_id,
+                );
+            if ($check) {
+                $params['body'] = Param::get('new_comment', '');
+                $comment = new Comment($params);
+                try {
+                    $comment->editComment();
+                } catch (ValidationException $e) {
+                    $comment->error = 'Input Error, Please enter at from 1 to 200 charcters';
+                } catch (Exception $e) {
+                    $comment->error = 'Unexpected Error occured';
+                }
+            } else {
+                $comment = new Comment($params);
+            }
+        }
+        $this->set(get_defined_vars());
+    }
+}
