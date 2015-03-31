@@ -37,6 +37,28 @@
                         <ul class="nav navbar-nav navbar-right">
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                                    <span class="icon-search icon-white"></span> Search <span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <form style="padding:5px 10px; margin:auto;" action="/user/search" method="get">
+                                            <div class="input-append">
+                                                <select name="type" style="width:110px;">
+                                                    <option value="user">by user</option>
+                                                    <option value="thread">by thread</option>
+                                                    <option value="comment">by comment</option>
+                                                </select>
+                                                <input type="text" name="query" class="span2">
+                                                <button type="submit" class="btn btn-success">
+                                                    <span class="icon-search icon-white"></span>
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
                                     <span class="caret"></span>
                                     <img class='avatar-icon' src='<?php echo $user->user_details['avatar'] ?>' height='30' width='30' />
                                 </a>

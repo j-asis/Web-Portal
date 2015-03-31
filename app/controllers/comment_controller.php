@@ -61,5 +61,6 @@ class CommentController extends AppController
         $title = "Most Liked Comment";
         $sub_title = sprintf("Showing top %d most liked comments", count($comments));
         $this->set(get_defined_vars());
+        $this->render('view');
     }
 }

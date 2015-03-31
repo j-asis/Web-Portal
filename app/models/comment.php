@@ -93,10 +93,12 @@ class Comment extends AppModel
         $db = DB::conn();
         $row = $db->row('SELECT * FROM comment WHERE id = ? ', array($id));
         $user_detail = $db->row('SELECT username,avatar FROM user WHERE id = ? ', array($row['user_id']));
+        $like_count = $db->value('SELECT COUNT(*) FROM likes WHERE comment_id = ?', array($id));
         $user_detail['avatar'] = empty($user_detail['avatar']) ? '/public_images/default.jpg' : $user_detail['avatar'];
         $returns = array(
             'username' => $user_detail['username'],
             'avatar' => $user_detail['avatar'],
+            'like_count' => $like_count,
         );
         $returns = array_merge($returns, $row);
         return $returns;
@@ -108,7 +110,6 @@ class Comment extends AppModel
         $comments = array();
         foreach ($rows as $row) {
             $params = self::getCommentInfo($row['comment_id']);
-            $params['like_count'] = $row['num'];
             $comments[] = new self($params);
         }
         return $comments;

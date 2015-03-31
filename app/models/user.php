@@ -200,4 +200,39 @@ class User extends AppModel
         }
         return $liked;
     }
+    public static function search($type, $query)
+    {
+        $results = array();
+        $query = "%{$query}%";
+        $db = DB::conn();
+        switch ($type) {
+            case ('user'):
+                $rows = $db->rows('SELECT * FROM user
+                    WHERE username LIKE ? OR first_name LIKE ? OR last_name LIKE ? OR email LIKE ? ',
+                    array($query, $query, $query, $query) );
+                foreach ($rows as $row) {
+                    $row['avatar'] = empty($row['avatar']) ? '/public_images/default.jpg' : $row['avatar'];
+                    $results[] = $row;
+                }
+                break;
+            case ('thread'):
+                $rows = $db->rows('SELECT * FROM thread WHERE title LIKE ? ', array($query));
+                foreach ($rows as $row) {
+                    $thread_info = Thread::getThreadInfo($row['id']);
+                    $row = array_merge($row, $thread_info);
+                    $results[] = new Thread($row);
+                }
+                break;
+            case ('comment'):
+                $rows = $db->rows('SELECT * FROM comment WHERE body LIKE ? ', array($query));
+                foreach ($rows as $row) {
+                    $results[] = new Comment(Comment::getCommentInfo($row['id']));
+                }
+                break;
+            default:
+                throw new NotFoundException("{$type} is not found");
+                break;
+        }
+        return $results;
+    }
 }

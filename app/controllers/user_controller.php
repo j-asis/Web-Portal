@@ -148,4 +148,57 @@ class UserController extends AppController
         }
         $this->set(get_defined_vars());
     }
+    public function search()
+    {
+        $type = Param::get('type', false);
+        $query = Param::get('query', false);
+        if (!$type || !$query) {
+            redirect(url('/'));
+        }
+        $user = new User;
+        switch ($type) {
+            case ('user'):
+                $url_params = "?type=user&query={$query}";
+                $title = sprintf("Search for '%s' in users", $query);
+                $render_page = '/user/search';
+                $query_results = $user->search($type, $query);
+                $varname = 'query_results';
+                break;
+            case ('thread'):
+                $url_params = "?type=thread&query={$query}";
+                $title = sprintf("Search for '%s' in threads", $query);
+                $query_results = $user->search($type, $query);
+                $render_page = '/thread/index';
+                $varname = 'threads';
+                break;
+            case ('comment'):
+                $url_params = "?type=comment&query={$query}";
+                $query_results = $user->search($type, $query);
+                $title = sprintf("Search for '%s' in comments", $query);
+                $render_page = '/comment/view';
+                $varname = 'comments';
+                break;
+            default:
+                redirect(url('/'));
+                break;
+        }
+        $page = Param::get('page', 1);
+        $page = (int) $page;
+        $per_page = 5;
+        $pagination = new SimplePagination($page, $per_page);
+        $results = array();
+        for ($i = ($pagination->start_index - 1); $i < (($pagination->count)*$page); $i++) {
+            if (isset($query_results[$i])) {
+                $results[] = $query_results[$i];
+            }
+        }
+        $total = count($query_results);
+        ${$varname} = $results;
+        $pages = (int) ceil($total / $per_page);
+        $pagination->is_last_page = $pages === $page ? true : false;
+        $sub_title = sprintf("Showing %d results found", $total);
+        
+        $this->set(get_defined_vars());
+        $this->render($render_page);
+    }
 }

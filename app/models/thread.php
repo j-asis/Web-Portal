@@ -21,7 +21,7 @@ class Thread extends AppModel
         $rows = $db->rows($query);
         foreach ($rows as $row) {
             $thread_info = self::getThreadInfo($row['id']);
-            $row = array_merge($row,$thread_info);
+            $row = array_merge($row, $thread_info);
             $threads[] = new self($row);
         }
         return $threads;
