@@ -11,7 +11,7 @@
         <em>Username Name</em> : <?php readable_text($user_info['username']); ?> <br />
         <em>Email Address</em> : <?php readable_text($user_info['email']); ?> <br />
     </div>
-    <a href="<?php echo url('thread/userThread', array('user_id'=>$user_info['id'])) ?>" class="btn btn-success btn-small">
+    <a href="<?php echo url('thread/user_thread', array('user_id'=>$user_info['id'])) ?>" class="btn btn-success btn-small">
         <span class="icon-th-list icon-white"></span>
         View <?php echo $user_info['username'] ?>'s thread
     </a>

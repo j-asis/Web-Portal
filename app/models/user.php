@@ -34,7 +34,7 @@ class User extends AppModel
         $this->username = $_SESSION['username'];
         $this->user_id = $this->getUserId($this->username);
         $this->user_details = $this->getUserDetail($this->user_id);
-        //$this->followed_threads = $this->followedThreads();
+        $this->followed_threads = $this->followedThreads();
     }
     public static function getUserDetail($id)
     {
@@ -178,5 +178,15 @@ class User extends AppModel
             $this->error_message = "Authentication Failed! You are not allowed to delete this User!";
             return false;
         }
+    }
+    public function followedThreads()
+    {
+        $followed = array();
+        $db = DB::conn();
+        $rows = $db->rows('SELECT * FROM follow WHERE user_id = ?', array($this->user_id));
+        foreach ($rows as $row) {
+            $followed[$row['thread_id']] = true;
+        }
+        return $followed;
     }
 }

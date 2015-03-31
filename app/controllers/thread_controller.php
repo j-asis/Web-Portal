@@ -163,4 +163,19 @@ class ThreadController extends AppController
         $this->set(get_defined_vars());
         $this->render('index');
     }
+    public function follow()
+    {
+        $user = new User;
+        $thread = new Thread;
+        $thread->follow_id= Param::get('id');
+        $thread->user_id= $user->user_id;
+        $thread->follow_type = Param::get('type');
+        $back = Param::get('back');
+        try{
+            $thread->follow();
+        } catch(Exception $e) {
+            $error = true;
+        }
+        $this->set(get_defined_vars());
+    }
 }

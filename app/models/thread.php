@@ -130,4 +130,27 @@ class Thread extends AppModel
         $value = $db->value('SELECT COUNT(*) FROM thread WHERE user_id = ?', array($user_id));
         return $value;
     }
+    public function follow()
+    {
+        $db = DB::conn();
+        try {
+            $db->begin();
+            if ($this->follow_type === 'follow') {
+                $row = $db->row('SELECT * FROM follow WHERE user_id = ? AND thread_id = ?', array($this->user_id, $this->follow_id));
+                if (empty($row)) {
+                    $params = array(
+                        'user_id' => $this->user_id,
+                        'thread_id' => $this->follow_id,
+                        );
+                    $db->replace('follow',$params);
+                }
+            } elseif ($this->follow_type === 'unfollow') {
+                $db->query('DELETE FROM follow WHERE user_id = ? AND thread_id = ?', array($this->user_id, $this->follow_id));
+            }
+            $db->commit();
+        } catch (Exception $e) {
+            $db->rollback();
+            throw $e;
+        }
+    }
 }
