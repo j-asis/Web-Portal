@@ -24,7 +24,7 @@
                                 <ul class="dropdown-menu">
                                     <li><a href="/thread/index"><i class="icon-calendar"></i> Most Recent</a></li>
                                     <li><a href="/thread/top_threads?type=comment"><i class="icon-comment"></i> Most Comments</a></li>
-                                    <li><a href="/thread/top_threads?type=follow"><i class="icon-thumbs-up"></i> Most Followed</a></li>
+                                    <li><a href="/thread/top_threads?type=follow"><i class="icon-eye-open"></i> Most Followed</a></li>
                                 </ul>
                             </li>
                         </ul>

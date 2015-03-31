@@ -10,12 +10,12 @@
     <br />
     <?php if (isset($user->followed_threads[$thread_info['id']])): ?>
     <a class="btn btn-small btn-success" href="<?php echo '/thread/follow?id='.$thread_info['id'].'&type=unfollow&back='.urlencode($_SERVER['REQUEST_URI']); ?>">
-        <span class="icon-eye-open"></span>
+        <span class="icon-eye-close"></span>
             unfollow thread
     </a>
     <?php else: ?>
     <a class="btn btn-small btn-success" href="<?php echo '/thread/follow?id='.$thread_info['id'].'&type=follow&back='.urlencode($_SERVER['REQUEST_URI']); ?>">
-        <span class="icon-eye-close"></span>
+        <span class="icon-eye-open"></span>
             follow thread
     </a>
     <?php endif; ?>
@@ -39,8 +39,19 @@
                     <?php readable_text($comment->username) ?>
                 </a> <br />
     <em style='font-size:10px; color:#999;'><?php echo time_difference($comment->created) ?></em>
+    <br />
+    <em style='font-size:10px; color:#999;'>Liked by <?php echo $comment->like_count; ?> people</em>
+    <br />
+    <?php if(isset($user->liked_comments[$comment->id])): ?>
+        <a class="btn btn-small btn-success" href="<?php echo url('comment/like', array('comment_id'=>$comment->id, 'type'=>'unlike', 'back'=>url(''))); ?>">
+                <span class='icon-thumbs-down icon-white'></span> Unlike
+        </a>
+    <?php else: ?>
+        <a class="btn btn-small btn-success" href="<?php echo url('comment/like', array('comment_id'=>$comment->id, 'type'=>'like', 'back'=>url(''))); ?>">
+                <span class='icon-thumbs-up icon-white'></span> Like
+        </a>
+    <?php endif; ?>
     <?php if ($user->user_id === $comment->user_id): ?>
-        <br />
         <a class="btn btn-small" href='/user/delete?type=comment&url_back=<?php echo urlencode($_SERVER['REQUEST_URI']); ?>&id=<?php echo $comment->id; ?>'>
             <span class='icon-trash'></span> Delete
         </a>

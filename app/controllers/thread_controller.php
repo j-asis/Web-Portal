@@ -167,8 +167,8 @@ class ThreadController extends AppController
     {
         $user = new User;
         $thread = new Thread;
-        $thread->follow_id= Param::get('id');
-        $thread->user_id= $user->user_id;
+        $thread->follow_id = Param::get('id');
+        $thread->user_id = $user->user_id;
         $thread->follow_type = Param::get('type');
         $back = Param::get('back');
         try{

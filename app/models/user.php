@@ -35,6 +35,7 @@ class User extends AppModel
         $this->user_id = $this->getUserId($this->username);
         $this->user_details = $this->getUserDetail($this->user_id);
         $this->followed_threads = $this->followedThreads();
+        $this->liked_comments = $this->likedComments();
     }
     public static function getUserDetail($id)
     {
@@ -188,5 +189,15 @@ class User extends AppModel
             $followed[$row['thread_id']] = true;
         }
         return $followed;
+    }
+    public function likedComments()
+    {
+        $liked = array();
+        $db = DB::conn();
+        $rows = $db->rows('SELECT * FROM likes WHERE user_id = ?', array($this->user_id));
+        foreach ($rows as $row) {
+            $liked[$row['comment_id']] = true;
+        }
+        return $liked;
     }
 }

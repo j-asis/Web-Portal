@@ -16,7 +16,8 @@ id                      INT UNSIGNED NOT NULL AUTO_INCREMENT,
 user_id                 INT UNSIGNED NOT NULL,
 title                   VARCHAR(255) NOT NULL,
 created                 TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-PRIMARY KEY (id)
+PRIMARY KEY (id),
+FOREIGN KEY (user_id) REFERENCES user(id)
 )ENGINE=InnoDB;
 
 
@@ -28,7 +29,9 @@ user_id                 INT UNSIGNED NOT NULL,
 body                    TEXT NOT NULL,
 created                 TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 PRIMARY KEY (id),
-INDEX (thread_id, created)
+INDEX (thread_id, created),
+FOREIGN KEY (user_id) REFERENCES user(id),
+FOREIGN KEY (thread_id) REFERENCES thread(id)
 )ENGINE=InnoDB;
 
 
@@ -47,12 +50,16 @@ CREATE TABLE IF NOT EXISTS follow (
 id                      INT UNSIGNED NOT NULL AUTO_INCREMENT,
 user_id                 INT UNSIGNED NOT NULL,
 thread_id               INT UNSIGNED NOT NULL,
-PRIMARY KEY (id)
+PRIMARY KEY (id),
+FOREIGN KEY (user_id) REFERENCES user(id),
+FOREIGN KEY (thread_id) REFERENCES thread(id)
 )ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS likes (
 id                      INT UNSIGNED NOT NULL AUTO_INCREMENT,
 user_id                 INT UNSIGNED NOT NULL,
 comment_id               INT UNSIGNED NOT NULL,
-PRIMARY KEY(id)
+PRIMARY KEY(id),
+FOREIGN KEY (user_id) REFERENCES user(id),
+FOREIGN KEY (comment_id) REFERENCES comment(id)
 )ENGINE=InnoDB;

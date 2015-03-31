@@ -37,4 +37,21 @@ class CommentController extends AppController
         }
         $this->set(get_defined_vars());
     }
+    public function like()
+    {
+        $user = new User;
+        $params = array(
+            'comment_id' => Param::get('comment_id', 0),
+            'type' => Param::get('type', 'like'),
+            'back' => Param::get('back', '/'),
+            'user_id' => $user->user_id,
+        );
+        if ($params['comment_id'] === 0) {
+            redirect(url('/'));
+            return;
+        }
+        $comment = new Comment($params);
+        $comment->like();
+        redirect($comment->back);
+    }
 }
