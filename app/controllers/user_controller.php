@@ -45,7 +45,7 @@ class UserController extends AppController
         }
         $this->set(get_defined_vars());
     }
-    public function changePassword()
+    public function change_password()
     {
         $user = new User;
         $check = Param::get('check');
@@ -112,7 +112,7 @@ class UserController extends AppController
         }
         $this->set(get_defined_vars());
     }
-    public function uploadImage()
+    public function upload_image()
     {
         $user = new User;
         $this->set(get_defined_vars());

@@ -121,7 +121,7 @@ class ThreadController extends AppController
         }
         $this->set(get_defined_vars());
     }
-    public function topThreads()
+    public function top_threads()
     {
         $type = Param::get('type', '');
         if ($type === '') {
@@ -144,9 +144,9 @@ class ThreadController extends AppController
         $top_threads = $thread->topThreads($type);
         $sub_title = sprintf($sub_title, count($top_threads));
         $this->set(get_defined_vars());
-        $this->render('topThreads');
+        $this->render('top_threads');
     }
-    public function userThread()
+    public function user_thread()
     {
         $user = new User;
         $user_id = Param::get('user_id', $user->user_id);
@@ -159,6 +159,7 @@ class ThreadController extends AppController
         $pagination->checkLastPage($threads);
         $total = Thread::countByUser($user_id);
         $pages = ceil($total / $per_page);
+        $sub_title = "total of $total threads";
         $this->set(get_defined_vars());
         $this->render('index');
     }

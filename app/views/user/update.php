@@ -47,7 +47,7 @@
 
 
 Avatar : <br />
-<a title='click to change' href='/user/uploadImage'><img style='border:2px solid #DEDEDE; border-radius:6px; height:200px; width:200px;' src='<?php echo $user->user_details['avatar']; ?>' /></a>
+<a title='click to change' href='/user/upload_image'><img style='border:2px solid #DEDEDE; border-radius:6px; height:200px; width:200px;' src='<?php echo $user->user_details['avatar']; ?>' /></a>
 <br />
 <em style='font-size:10px; color:#333;'>Click Image to Edit</em>
 

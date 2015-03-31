@@ -23,8 +23,8 @@
                                 </a>
                                 <ul class="dropdown-menu">
                                     <li><a href="/thread/index"><i class="icon-calendar"></i> Most Recent</a></li>
-                                    <li><a href="/thread/topThreads?type=comment"><i class="icon-comment"></i> Most Comments</a></li>
-                                    <li><a href="/thread/topThreads?type=follow"><i class="icon-thumbs-up"></i> Most Followed</a></li>
+                                    <li><a href="/thread/top_threads?type=comment"><i class="icon-comment"></i> Most Comments</a></li>
+                                    <li><a href="/thread/top_threads?type=follow"><i class="icon-thumbs-up"></i> Most Followed</a></li>
                                 </ul>
                             </li>
                         </ul>
@@ -36,7 +36,7 @@
                                 </a>
                                 <ul class="dropdown-menu">
                                     <li><a href="/user/update"><i class="icon-pencil"></i> Edit Profile</a></li>
-                                    <li><a href="/user/changePassword"><i class="icon-lock"></i> Change Password</a></li>
+                                    <li><a href="/user/change_password"><i class="icon-lock"></i> Change Password</a></li>
                                     <li class="divider"></li>
                                     <li>
                                     <a href="/user/delete?type=user&url_back=/&id=<?php echo $user->user_id; ?>">
