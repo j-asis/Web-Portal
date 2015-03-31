@@ -5,6 +5,7 @@
         <title>Web Portal <?php readable_text( !empty($title) ? $title : ( isset($thread->title) ? $thread->title : ' | Welcome') ) ?></title>
         <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet">
         <link href="/bootstrap/css/custom.css" rel="stylesheet">
+        <link rel="shortcut icon" href="public_images/favicon.ico">
     </head>
 
     <body>
@@ -26,6 +27,11 @@
                                     <li><a href="/thread/top_threads?type=comment"><i class="icon-comment"></i> Most Comments</a></li>
                                     <li><a href="/thread/top_threads?type=follow"><i class="icon-eye-open"></i> Most Followed</a></li>
                                 </ul>
+                            </li>
+                            <li>
+                                <a href="/comment/most_liked">
+                                <span class="icon-thumbs-up icon-white"></span> Most Liked Comment
+                                </a>
                             </li>
                         </ul>
                         <ul class="nav navbar-nav navbar-right">

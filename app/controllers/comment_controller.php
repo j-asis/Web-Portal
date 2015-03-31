@@ -54,4 +54,12 @@ class CommentController extends AppController
         $comment->like();
         redirect($comment->back);
     }
+    public function most_liked()
+    {
+        $user = new User;
+        $comments = Comment::getMostLiked();
+        $title = "Most Liked Comment";
+        $sub_title = sprintf("Showing top %d most liked comments", count($comments));
+        $this->set(get_defined_vars());
+    }
 }

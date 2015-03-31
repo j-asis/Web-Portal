@@ -10,12 +10,12 @@
     <br />
     <?php if (isset($user->followed_threads[$thread_info['id']])): ?>
     <a class="btn btn-small btn-success" href="<?php echo '/thread/follow?id='.$thread_info['id'].'&type=unfollow&back='.urlencode($_SERVER['REQUEST_URI']); ?>">
-        <span class="icon-eye-close"></span>
+        <span class="icon-eye-close icon-white"></span>
             unfollow thread
     </a>
     <?php else: ?>
     <a class="btn btn-small btn-success" href="<?php echo '/thread/follow?id='.$thread_info['id'].'&type=follow&back='.urlencode($_SERVER['REQUEST_URI']); ?>">
-        <span class="icon-eye-open"></span>
+        <span class="icon-eye-open icon-white"></span>
             follow thread
     </a>
     <?php endif; ?>

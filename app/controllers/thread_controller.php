@@ -151,7 +151,7 @@ class ThreadController extends AppController
         $user = new User;
         $user_id = Param::get('user_id', $user->user_id);
         $url_params = '?user_id='.$user_id.'&';
-        $title = $user->username . ' Threads';
+        $title = $user->username . '\'s Threads';
         $page = Param::get('page', 1);
         $per_page = 5;
         $pagination = new SimplePagination($page, $per_page);

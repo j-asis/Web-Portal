@@ -88,4 +88,30 @@ class Comment extends AppModel
             throw $e;
         }
     }
+    public static function getCommentInfo($id)
+    {
+        $db = DB::conn();
+        $row = $db->row('SELECT * FROM comment WHERE id = ? ', array($id));
+        $user_detail = $db->row('SELECT username,avatar FROM user WHERE id = ? ', array($row['user_id']));
+        $user_detail['avatar'] = empty($user_detail['avatar']) ? '/public_images/default.jpg' : $user_detail['avatar'];
+        $returns = array(
+            'username' => $user_detail['username'],
+            'avatar' => $user_detail['avatar'],
+        );
+        $returns = array_merge($returns, $row);
+        return $returns;
+    }
+    public static function getMostLiked()
+    {
+        $db = DB::conn();
+        $rows = $db->rows('SELECT comment_id, COUNT(*) as num FROM likes GROUP BY comment_id ORDER BY num DESC LIMIT 0,10');
+        $comments = array();
+        foreach ($rows as $row) {
+            $params = self::getCommentInfo($row['comment_id']);
+            $params['like_count'] = $row['num'];
+            $comments[] = new self($params);
+        }
+        return $comments;
+    }
+
 }
