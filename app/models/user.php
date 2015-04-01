@@ -143,10 +143,7 @@ class User extends AppModel
         if ($is_authenticated) {
             $db->query("DELETE FROM thread WHERE id = ? ", array($id));
             $db->query("DELETE FROM follow WHERE thread_id = ? ", array($id));
-            $comments = $db->rows("SELECT id FROM comment WHERE thread_id = ? ", array($id));
-                foreach ($comments as $comment) {
-                    $db->query("DELETE FROM comment WHERE id = ? ", array($comment['id']));
-                }
+            $db->query("DELETE FROM comment WHERE thread_id = ? ", array($id));
             $db->commit();
             return true;
         } else {
@@ -166,11 +163,7 @@ class User extends AppModel
         if ($is_authenticated) {
             $threads = $db->rows("SELECT id FROM thread WHERE user_id = ? ", array($id));
             foreach ($threads as $thread) {
-                $comments = $db->rows("SELECT id FROM comment WHERE thread_id = ? ", array($thread['id']));
-                foreach ($comments as $comment) {
-                    $db->query("DELETE FROM comment WHERE id = ? ", array($comment['id']));
-                }
-                $db->query("DELETE FROM thread WHERE id = ? ", array($thread['id']));
+                $this->deleteThread($thread['id']);
             }
             $db->query("DELETE FROM user WHERE id = ? ", array($id));
             $db->commit();

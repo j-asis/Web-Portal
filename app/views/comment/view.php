@@ -1,5 +1,6 @@
 <h1><?php readable_text($title); ?></h1>
 <em><?php readable_text($sub_title); ?> </em>
+<?php if (isset($total)): ?>
 <?php if ($total > 5): ?>
     <!-- pagination -->
 <div class='pagination pagination-small'>
@@ -26,6 +27,8 @@
     </ul>   
 </div>
 <?php endif ?>
+<?php endif ?>
+
 <hr></hr>
     <?php foreach ($comments as $comment): ?>    
     <div class="comment">
