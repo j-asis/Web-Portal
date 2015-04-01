@@ -104,7 +104,19 @@ class Thread extends AppModel
     {
         $top_threads = array();
         $db = DB::conn();
-        $rows = $db->rows("SELECT thread_id, COUNT(*) as num FROM {$table} GROUP BY thread_id ORDER BY num DESC LIMIT 0,10");
+        $nums = $db->rows("SELECT COUNT(*) as num FROM {$table} GROUP BY thread_id ORDER BY num DESC");
+        $last = 0;
+        $limit = 0;
+        foreach ($nums as $num) {
+            if ($last > $num['num']) {
+                continue;
+            }
+            if ($limit >= 10) {
+                $last = $num['num'];
+            }
+            $limit++;
+        }
+        $rows = $db->rows("SELECT thread_id, COUNT(*) as num FROM {$table} GROUP BY thread_id ORDER BY num DESC LIMIT 0, {$limit}");
         foreach ($rows as $row) {
             $info = self::getThreadInfo($row['thread_id']);
             $top_threads[] = new self($info);

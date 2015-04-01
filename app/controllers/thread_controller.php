@@ -5,7 +5,7 @@ class ThreadController extends AppController
     public function index()
     {
         $user = new User;
-        $title = 'All Threads';
+        $title = 'Most Recent Threads';
         $url_params = '?';
         $page = Param::get('page', 1);
         $per_page = 5;
@@ -134,7 +134,7 @@ class ThreadController extends AppController
                 break;
             case 'follow':
                 $title = 'Most Followed Thread';
-                $sub_title = 'Showing top %dmost followed threads';
+                $sub_title = 'Showing top %d most followed threads';
                 break;
             default:
                 break;

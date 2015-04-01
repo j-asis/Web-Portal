@@ -17,7 +17,12 @@ class RegisterController extends AppController
             );
             $register = new Register($params);
             $register->validatePassword();
-            $register->userExists();
+            if ($register->userExists($register->username)) {
+                $register->validation_errors['username']['exists'] = true;
+            }
+            if ($register->emailExists($register->email)) {
+                $register->validation_errors['email']['exists'] = true;
+            }
             try {
                 $register->create();
             } catch (ValidationException $e) {

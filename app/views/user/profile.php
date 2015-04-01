@@ -20,8 +20,11 @@
 <div class="comment">
     <div class="recent">
         <h4>Recent Threads : </h4>
+        <?php if (count($recent_threads) === 0): ?>
+        <h6><em>No Threads yet<em></h6>
+        <?php endif; ?>
         <?php foreach ($recent_threads as $thread): ?>
-        <div class="thread-list" style="height:100px;">
+        <div class="thread-list">
             <a href="<?php readable_text(url('thread/view', array('thread_id'=>$thread->id))); ?>"><?php readable_text($thread->title); ?></a>
             <br />
             Author :
@@ -39,8 +42,11 @@
     </div>
     <div class="recent">
         <h4>Recent Comments : </h4>
+        <?php if (count($recent_comments) === 0): ?>
+        <h6><em>No Comments yet<em></h6>
+        <?php endif; ?>
         <?php foreach ($recent_comments as $comment): ?>
-        <div class="thread-list" style="height:100px;">
+        <div class="thread-list">
             <div class="meta">
             by :
                 <img class="img-rounded" height="20" width="20" src="<?php echo $comment->avatar; ?>" alt="user avatar">

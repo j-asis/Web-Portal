@@ -48,7 +48,7 @@
                                                     <option value="thread">by thread</option>
                                                     <option value="comment">by comment</option>
                                                 </select>
-                                                <input type="text" name="query" class="span2">
+                                                <input type="text" name="query" class="span2" maxlength="30" required>
                                                 <button type="submit" class="btn btn-success">
                                                     <span class="icon-search icon-white"></span>
                                                 </button>

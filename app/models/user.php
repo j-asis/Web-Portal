@@ -123,6 +123,7 @@ class User extends AppModel
             $is_authenticated = true;
         }
         if ($is_authenticated) {
+            $db->query("DELETE FROM likes WHERE comment_id = ? ", array($id));
             $db->query("DELETE FROM comment WHERE id = ? ", array($id));
             $db->commit();
             return true;
@@ -141,9 +142,12 @@ class User extends AppModel
             $is_authenticated = true;
         }
         if ($is_authenticated) {
-            $db->query("DELETE FROM thread WHERE id = ? ", array($id));
+            $rows = $db->rows('SELECT * FROM comment WHERE thread_id = ?', array($id));
+            foreach ($rows as $row) {
+                $this->deleteComment($row['id']);
+            }
             $db->query("DELETE FROM follow WHERE thread_id = ? ", array($id));
-            $db->query("DELETE FROM comment WHERE thread_id = ? ", array($id));
+            $db->query("DELETE FROM thread WHERE id = ? ", array($id));
             $db->commit();
             return true;
         } else {
@@ -165,6 +169,9 @@ class User extends AppModel
             foreach ($threads as $thread) {
                 $this->deleteThread($thread['id']);
             }
+            $db->query("DELETE FROM follow WHERE user_id = ? ", array($id));
+            $db->query("DELETE FROM likes WHERE user_id = ? ", array($id));
+            $db->query("DELETE FROM thread WHERE user_id = ? ", array($id));
             $db->query("DELETE FROM user WHERE id = ? ", array($id));
             $db->commit();
             return true;

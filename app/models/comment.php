@@ -106,7 +106,19 @@ class Comment extends AppModel
     public static function getMostLiked()
     {
         $db = DB::conn();
-        $rows = $db->rows('SELECT comment_id, COUNT(*) as num FROM likes GROUP BY comment_id ORDER BY num DESC LIMIT 0,10');
+        $nums = $db->rows('SELECT COUNT(*) as num FROM likes GROUP BY comment_id ORDER BY num DESC');
+        $last = 0;
+        $limit = 0;
+        foreach ($nums as $num) {
+            if ($last > $num['num']) {
+                continue;
+            }
+            if ($limit >= 10) {
+                $last = $num['num'];
+            }
+            $limit++;
+        }
+        $rows = $db->rows("SELECT comment_id, COUNT(*) as num FROM likes GROUP BY comment_id ORDER BY num DESC LIMIT 0, {$limit}");
         $comments = array();
         foreach ($rows as $row) {
             $params = self::getCommentInfo($row['comment_id']);

@@ -12,6 +12,9 @@ Successfully deleted <?php echo $type; ?>!
 <div class="alert alert-danger">
 <?php if ($type === 'user'): ?>
     <h4>Are you sure? Please enter password for confirmation</h4>
+    <?php if ($password !== ''): ?>
+        <h6>Wrong Password</h6>
+    <?php endif; ?>
     <br />
     <form action='<?php readable_text(url('')); ?>' method='post'>
     <input class="input-block-level" type="password" name='password' placeholder='Confirm Delete Account' />

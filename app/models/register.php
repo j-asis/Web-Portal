@@ -66,12 +66,22 @@ class Register extends AppModel
         }
     }
 
-    public function userExists()
-    {
+    public static function userExists($username){
         $db = DB::conn();
-        $row = $db->row('SELECT * FROM user WHERE username = ? ', array($this->username));
-        if ($row) {
-            $this->validation_errors['username']['exists'] = true;
+        $row = $db->row('SELECT * FROM user WHERE username = ? ', array($username));
+        if (!empty($row)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    public static function emailExists($email){
+        $db = DB::conn();
+        $row = $db->row('SELECT * FROM user WHERE email = ? ', array($email));
+        if (!empty($row)) {
+            return true;
+        } else {
+            return false;
         }
     }
 }

@@ -23,13 +23,12 @@
 </div>
 <?php return; endif; ?>
 
-<span>Old Comment: <em>&quot;<?php readable_text($comment_content->body); ?>&quot;</em></span>
 <br /><br />
 <form action="<?php readable_text(url('')); ?>" class="form-horizontal" method="post">
         <div class="control-group">
             <label class="control-label">New Comment: </label>
             <div class="controls">
-                <textarea name="new_comment" placeholder="New Comment" class="input-block-level"></textarea>
+                <textarea name="new_comment" placeholder="New Comment" class="input-block-level"><?php readable_text($comment_content->body); ?></textarea>
             </div>
         </div>
         <div class="control-group">

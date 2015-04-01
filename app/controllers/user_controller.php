@@ -7,7 +7,7 @@ class UserController extends AppController
     {
         session_unset('username');
         session_destroy();
-        redirect(url('/'));
+        redirect(url('login/index'));
     }
     public function profile()
     {
@@ -23,7 +23,12 @@ class UserController extends AppController
     public function update()
     {
         $user = new User;
-        $update = Param::get('update');
+        $update = Param::get('update', false);
+        $same_data = true;
+        $same_data = (Param::get('username') === $user->user_details['username'] && $same_data) ? true : false;
+        $same_data = (Param::get('first_name') === $user->user_details['first_name'] && $same_data) ? true : false;
+        $same_data = (Param::get('last_name') === $user->user_details['last_name'] && $same_data) ? true : false;
+        $same_data = (Param::get('email') === $user->user_details['email'] && $same_data) ? true : false;
         if ($update) {
             $user->new_username = Param::get('username');
             $user->new_first_name = Param::get('first_name');
@@ -31,7 +36,7 @@ class UserController extends AppController
             $user->new_email = Param::get('email');
             if (!($user->new_username === $user->username)) {
 
-                if (Register::user_exists($user->new_username)) {
+                if (Register::userExists($user->new_username)) {
                     $user->validation_errors['new_username']['exists'] = true;
                 }
                 
@@ -52,14 +57,15 @@ class UserController extends AppController
         $user = new User;
         $check = Param::get('check');
         if ($check) {
-
             $password = Param::get('old_password');
             $new_password = Param::get('new_password');
             $cnew_password = Param::get('cnew_password');
 
             if (md5($password) === $user->user_details['password']) {
-
-                if ($new_password === $cnew_password) {
+                if ($new_password === '' || $cnew_password === '') {
+                    $error_message = "Please enter new password";
+                }
+                elseif ($new_password === $cnew_password) {
 
                     $user->new_password = $new_password;
 
@@ -155,7 +161,7 @@ class UserController extends AppController
         $type = Param::get('type', false);
         $query = Param::get('query', false);
         if (!$type || !$query) {
-            redirect(url('/'));
+            redirect(url('user/profile'));
         }
         $user = new User;
         switch ($type) {
@@ -181,7 +187,7 @@ class UserController extends AppController
                 $varname = 'comments';
                 break;
             default:
-                redirect(url('/'));
+                redirect(url('user/profile'));
                 break;
         }
         $page = Param::get('page', 1);

@@ -22,6 +22,9 @@ endif;
     <?php if (!empty($register->validation_errors['username']['exists'])): ?>
     <div><em>Username Already Taken!</em></div>
     <?php endif ?>
+    <?php if (!empty($register->validation_errors['email']['exists'])): ?>
+    <div><em>Email Already Registered!</em></div>
+    <?php endif ?>
 
     <?php if (!empty($register->validation_errors['password']['length'])): ?>
     <div><em>Password</em> must be between

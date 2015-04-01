@@ -39,7 +39,7 @@
 </div>
 
 <?php endif; ?>
-<?php if (isset($update) && !isset($error) && !isset($db_error)): ?>
+<?php if ($update === 'true' && !isset($error) && !isset($db_error) && !$same_data): ?>
     <div class="alert alert-success">
         Successfully Updated profile! refresh to see changes
     </div>
