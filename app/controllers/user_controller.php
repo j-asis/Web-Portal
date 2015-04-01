@@ -15,6 +15,8 @@ class UserController extends AppController
         $home = '/user/profile';
         $user_id = Param::get('user_id', $user->user_id);
         $user_info = $user->getUserDetail($user_id);
+        $recent_threads = $user->getRecent('thread', $user_info['id']);
+        $recent_comments = $user->getRecent('comment', $user_info['id']);
         $title = $user_info['username'];
         $this->set(get_defined_vars());
     }

@@ -228,4 +228,14 @@ class User extends AppModel
         }
         return $results;
     }
+    public function getRecent($table, $id)
+    {
+        $recent = array();
+        $db = DB::conn();
+        $rows = $db->rows("SELECT * FROM {$table} WHERE user_id = ? ORDER BY created DESC LIMIT 0, 3 ", array($id));
+        foreach ($rows as $row) {
+            $recent[] = $table === 'thread' ? new Thread(Thread::getThreadInfo($row['id'])) : new Comment(Comment::getCommentInfo($row['id']));
+        }
+        return $recent;
+    }
 }
