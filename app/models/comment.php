@@ -8,9 +8,9 @@ class Comment extends AppModel
         'body' => array(
             'length' => array(
                 'validate_between', self::MIN_STRING_LENGTH, self::MAX_STRING_LENGTH,
-                ),
             ),
-        );
+        ),
+    );
 
     public function write($thread)
     {
@@ -20,6 +20,7 @@ class Comment extends AppModel
         $db = DB::conn();
         $db->query('INSERT INTO comment SET thread_id = ?, user_id = ?, body = ?, created = NOW()', array($thread->id, $this->user_id, $this->body));
     }
+
     public static function getByThreadId($id, $offset, $limit)
     {
         $comments = array();
@@ -28,7 +29,7 @@ class Comment extends AppModel
         $rows = $db->rows($query, array($id));
         foreach ($rows as $row) {
             $like_count = $db->value('SELECT COUNT(*) FROM likes WHERE comment_id = ?', array($row['id']));
-            $user_detail = User::getUserDetail($row['user_id']);
+            $user_detail = objectToArray(User::getUserDetail($row['user_id']));
             $row['username'] = $user_detail['username'];
             $row['avatar'] = $user_detail['avatar'];
             $row['like_count'] = $like_count;
@@ -36,11 +37,13 @@ class Comment extends AppModel
         }
         return $comments;
     }
+
     public static function countAllComments($thread_id)
     {
         $db = DB::conn();
         return (int) $db->value("SELECT COUNT(*) FROM comment WHERE thread_id = ?", array($thread_id));
     }
+
     public static function getCommentContent($id)
     {
         $db = DB::conn();
@@ -50,6 +53,7 @@ class Comment extends AppModel
         }
         return new self($row);
     }
+
     public function editComment()
     {
         if (!$this->validate()) {
@@ -65,6 +69,7 @@ class Comment extends AppModel
             throw $e;
         }
     }
+
     public function like()
     {
         $db = DB::conn();
@@ -88,6 +93,7 @@ class Comment extends AppModel
             throw $e;
         }
     }
+
     public static function getCommentInfo($id)
     {
         $db = DB::conn();
@@ -101,8 +107,9 @@ class Comment extends AppModel
             'like_count' => $like_count,
         );
         $returns = array_merge($returns, $row);
-        return $returns;
+        return new self($returns);
     }
+
     public static function getMostLiked()
     {
         $db = DB::conn();
@@ -121,10 +128,9 @@ class Comment extends AppModel
         $rows = $db->rows("SELECT comment_id, COUNT(*) as num FROM likes GROUP BY comment_id ORDER BY num DESC LIMIT 0, {$limit}");
         $comments = array();
         foreach ($rows as $row) {
-            $params = self::getCommentInfo($row['comment_id']);
+            $params = objectToArray(self::getCommentInfo($row['comment_id']));
             $comments[] = new self($params);
         }
         return $comments;
     }
-
 }

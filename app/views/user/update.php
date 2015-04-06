@@ -41,7 +41,7 @@
 <?php endif; ?>
 <?php if ($update === 'true' && !isset($error) && !isset($db_error) && !$same_data): ?>
     <div class="alert alert-success">
-        Successfully Updated profile! refresh to see changes
+        Successfully Updated profile!
     </div>
 <?php endif; ?>
 

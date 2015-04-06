@@ -20,7 +20,7 @@ class Thread extends AppModel
         $query = sprintf("SELECT * FROM thread ORDER BY created DESC LIMIT %d, %d", $offset, $limit);
         $rows = $db->rows($query);
         foreach ($rows as $row) {
-            $thread_info = self::getThreadInfo($row['id']);
+            $thread_info = objectToArray(self::getThreadInfo($row['id']));
             $row = array_merge($row, $thread_info);
             $threads[] = new self($row);
         }
@@ -54,7 +54,7 @@ class Thread extends AppModel
         $db->begin();
         $params = array(
             'user_id' => $comment->user_id,
-            'title' => $this->title,
+            'title'   => $this->title,
         );
         $db->insert('thread', $params);
         $this->id = $db->lastInsertId();
@@ -74,17 +74,18 @@ class Thread extends AppModel
         $num_follow = $db->value('SELECT COUNT(*) FROM follow WHERE thread_id = ?', array($id));
         $thread_username['avatar'] = empty($thread_username['avatar']) ? '/public_images/default.jpg' : $thread_username['avatar'];
         $returns = array(
-            'id' => $id,
-            'username' => $thread_username['username'],
-            'date' => $row['created'],
-            'user_id' => $row['user_id'],
+            'id'          => $id,
+            'username'    => $thread_username['username'],
+            'date'        => $row['created'],
+            'user_id'     => $row['user_id'],
             'num_comment' => $num_comment,
-            'avatar' => $thread_username['avatar'],
-            'num_follow' => $num_follow,
-            'title' => $row['title'],
+            'avatar'      => $thread_username['avatar'],
+            'num_follow'  => $num_follow,
+            'title'       => $row['title'],
         );
-        return $returns;
+        return new self($returns);
     }
+
     public function editThread()
     {
         if (!$this->validate()) {
@@ -100,6 +101,7 @@ class Thread extends AppModel
             throw $e;
         }
     }
+
     public function topThreads($table)
     {
         $top_threads = array();
@@ -107,22 +109,24 @@ class Thread extends AppModel
         $nums = $db->rows("SELECT COUNT(*) as num FROM {$table} GROUP BY thread_id ORDER BY num DESC");
         $last = 0;
         $limit = 0;
+        $max_thread = 10;
         foreach ($nums as $num) {
             if ($last > $num['num']) {
                 continue;
             }
-            if ($limit >= 10) {
+            if ($limit >= $max_thread) {
                 $last = $num['num'];
             }
             $limit++;
         }
         $rows = $db->rows("SELECT thread_id, COUNT(*) as num FROM {$table} GROUP BY thread_id ORDER BY num DESC LIMIT 0, {$limit}");
         foreach ($rows as $row) {
-            $info = self::getThreadInfo($row['thread_id']);
+            $info = objectToArray(self::getThreadInfo($row['thread_id']));
             $top_threads[] = new self($info);
         }
         return $top_threads;
     }
+
     public static function userThread($id, $offset, $limit)
     {
         $threads = array();
@@ -130,18 +134,20 @@ class Thread extends AppModel
         $query = sprintf("SELECT * FROM thread WHERE user_id = %d ORDER BY created DESC LIMIT %d, %d", $id, $offset, $limit);
         $rows = $db->rows($query);
         foreach ($rows as $row) {
-            $thread_info = self::getThreadInfo($row['id']);
+            $thread_info = objectToArray(self::getThreadInfo($row['id']));
             $row = array_merge($row,$thread_info);
             $threads[] = new self($row);
         }
         return $threads;
     }
+
     public static function countByUser($user_id)
     {
         $db = DB::conn();
         $value = $db->value('SELECT COUNT(*) FROM thread WHERE user_id = ?', array($user_id));
         return $value;
     }
+
     public function follow()
     {
         $db = DB::conn();
@@ -151,7 +157,7 @@ class Thread extends AppModel
                 $row = $db->row('SELECT * FROM follow WHERE user_id = ? AND thread_id = ?', array($this->user_id, $this->follow_id));
                 if (empty($row)) {
                     $params = array(
-                        'user_id' => $this->user_id,
+                        'user_id'   => $this->user_id,
                         'thread_id' => $this->follow_id,
                         );
                     $db->replace('follow',$params);

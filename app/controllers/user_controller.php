@@ -3,23 +3,26 @@
 class UserController extends AppController 
 {
     const MAX_POST_SIZE = 8000000;
+
     public function logout()
     {
         session_unset('username');
         session_destroy();
         redirect(url('login/index'));
     }
+
     public function profile()
     {
         $user = new User;
         $home = '/user/profile';
         $user_id = Param::get('user_id', $user->user_id);
-        $user_info = $user->getUserDetail($user_id);
+        $user_info = objectToArray($user->getUserDetail($user_id));
         $recent_threads = $user->getRecent('thread', $user_info['id']);
         $recent_comments = $user->getRecent('comment', $user_info['id']);
         $title = $user_info['username'];
         $this->set(get_defined_vars());
     }
+
     public function update()
     {
         $user = new User;
@@ -30,16 +33,17 @@ class UserController extends AppController
         $same_data = (Param::get('last_name') === $user->user_details['last_name'] && $same_data) ? true : false;
         $same_data = (Param::get('email') === $user->user_details['email'] && $same_data) ? true : false;
         if ($update) {
-            $user->new_username = Param::get('username');
-            $user->new_first_name = Param::get('first_name');
-            $user->new_last_name = Param::get('last_name');
-            $user->new_email = Param::get('email');
+            $params = array(
+                'new_username'   => Param::get('username', ''),
+                'new_first_name' => Param::get('first_name', ''),
+                'new_last_name'  => Param::get('last_name', ''),
+                'new_email'      => Param::get('email', ''),
+            );
+            $user = new User($params);
             if (!($user->new_username === $user->username)) {
-
                 if (Register::userExists($user->new_username)) {
                     $user->validation_errors['new_username']['exists'] = true;
                 }
-                
             }
             try {
                 $user->updateUser();
@@ -49,82 +53,74 @@ class UserController extends AppController
             } catch (Exception $e) {
                 $db_error = true; 
             }
+            $user = new User;
         }
         $this->set(get_defined_vars());
     }
+
     public function change_password()
     {
         $user = new User;
-        $check = Param::get('check');
+        $check = Param::get('check', false);
         if ($check) {
-            $password = Param::get('old_password');
-            $new_password = Param::get('new_password');
-            $cnew_password = Param::get('cnew_password');
+            $password = Param::get('old_password', '');
+            $new_password = Param::get('new_password', '');
+            $cnew_password = Param::get('cnew_password', '');
 
             if (md5($password) === $user->user_details['password']) {
                 if ($new_password === '' || $cnew_password === '') {
                     $error_message = "Please enter new password";
-                }
-                elseif ($new_password === $cnew_password) {
-
+                } elseif ($new_password === $cnew_password) {
                     $user->new_password = $new_password;
-
                     try {
                         $user->changePassword();
                         $change_success = true;
                     } catch(Exception $e) {
                         $error_message = "Unexpected Error!";
                     }
-
                 } else {
                     $error_message = "New Password did not match!";
                 }
-
             } else {
                 $error_message = "Wrong Password!";
             }
         }
         $this->set(get_defined_vars());
     }
+
     public function delete()
     {
         $user = new User;
-        $type = Param::get('type');
-        $id = Param::get('id');
-        $url_back = urldecode(Param::get('url_back'));
+        $type = Param::get('type', '');
+        $id = Param::get('id', '');
+        $url_back = urldecode(Param::get('url_back', '/'));
         $password = Param::get('password','');
-        $confirm = Param::get('confirm','false');
+        $confirm = Param::get('confirm', 'false');
         $is_success = false;
         
         if (($type === 'comment') && $confirm === 'true') {
-
             $is_success = $user->deleteComment($id);
-
         } elseif (($type === 'thread') && $confirm === 'true') {
-
             $is_success = $user->deleteThread($id);
-
         } elseif ($type === 'user') {
-
-            $check = Param::get('check');
+            $check = Param::get('check', false);
             if ($check) {
-
-                $password = Param::get('password');
+                $password = Param::get('password', '');
                 if ( md5($password) === $user->user_details['password'] ) {
-
                     $is_success = $user->deleteUser($id);
                     $url_back = '/user/logout';
-
                 }
             }
         }
         $this->set(get_defined_vars());
     }
+
     public function upload_image()
     {
         $user = new User;
         $this->set(get_defined_vars());
     }
+
     public function upload()
     {
         $user = new User;
@@ -156,6 +152,7 @@ class UserController extends AppController
         }
         $this->set(get_defined_vars());
     }
+
     public function search()
     {
         $type = Param::get('type', false);
@@ -205,7 +202,6 @@ class UserController extends AppController
         $pages = (int) ceil($total / $per_page);
         $pagination->is_last_page = $pages === $page ? true : false;
         $sub_title = sprintf("Showing %d results found", $total);
-        
         $this->set(get_defined_vars());
         $this->render($render_page);
     }

@@ -1,5 +1,5 @@
-<h1><?php readable_text($title); ?></h1>
-<em><?php readable_text($sub_title); ?> </em>
+<h1><?php echo $title; ?></h1>
+<em><?php echo $sub_title; ?> </em>
 <?php if (isset($total)): ?>
 <?php if ($total > 5): ?>
     <!-- pagination -->

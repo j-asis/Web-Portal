@@ -28,15 +28,21 @@ class User extends AppModel
             ),
 
         );
-    public function __construct()
+
+    public function __construct(array $data = array())
     {
-        securedPage();
-        $this->username = $_SESSION['username'];
-        $this->user_id = $this->getUserId($this->username);
-        $this->user_details = $this->getUserDetail($this->user_id);
-        $this->followed_threads = $this->followedThreads();
-        $this->liked_comments = $this->likedComments();
+        if (empty($data)) {
+            securedPage();
+            $this->username         = $_SESSION['username'];
+            $this->user_id          = $this->getUserId($this->username);
+            $this->user_details     = objectToArray($this->getUserDetail($this->user_id));
+            $this->followed_threads = $this->followedThreads();
+            $this->liked_comments   = $this->likedComments();
+        } else {
+            $this->set($data);
+        }
     }
+
     public static function getUserDetail($id)
     {
         try {
@@ -48,36 +54,38 @@ class User extends AppModel
         if (empty($row['avatar'])) {
             $row['avatar'] = '/public_images/default.jpg';
         }
-        return $row;
+        return new self($row);
     }
+
     public static function getUserName($user_id)
     {
-        $db = DB::conn();
-        $row = $db->row('SELECT username FROM user WHERE id = ?', array($user_id));
-        return $row['username'];
+        $data = self::getUserDetail($user_id);
+        return $data->username;
     }
+
     public static function getUserId($username)
     {
-        try {
-            $db = DB::conn();
-            $row = $db->row('SELECT id FROM user WHERE username = ?', array($username));
-        } catch (Exception $e) {
-            throw new Exception("Mysql Error, record not found");
+        $db = DB::conn();
+        $row = $db->row('SELECT id FROM user WHERE username = ?', array($username));
+        if (!$row) {
+            throw new RecordNotFoundException("Mysql Error, record not found");
         }
-        return !empty($row['id']) ? $row['id'] : false;
+        return $row['id'];
     }
+
     public function saveAvatar($dir)
     {
         try {
             $db = DB::conn();
             $db->begin();
-            $db->update('user', array('avatar'=>$dir), array('id'=>$this->user_id));
+            $db->update('user', array('avatar' => $dir), array('id' => $this->user_id));
             $db->commit();
         } catch(Exception $e) {
             $db->rollback();
             throw $e;
         }
     }
+
     public function updateUser()
     {
         $this->validate();
@@ -88,12 +96,12 @@ class User extends AppModel
             $db = DB::conn();
             $db->begin();
             $params = array(
-                'username'=>$this->new_username,
-                'first_name'=>$this->new_first_name,
-                'last_name'=>$this->new_last_name,
-                'email'=>$this->new_email,
+                'username'   => $this->new_username,
+                'first_name' => $this->new_first_name,
+                'last_name'  => $this->new_last_name,
+                'email'      => $this->new_email,
                 );
-            $db->update('user', $params, array('id'=>$this->user_id));
+            $db->update('user', $params, array('id' => $this->user_id));
             $db->commit();
 
         } catch(Exception $e) {
@@ -101,25 +109,27 @@ class User extends AppModel
             throw $e;
         }
     }
+
     public function changePassword()
     {
         try {
         $db = DB::conn();
         $db->begin();
-        $db->update('user', array('password'=>md5($this->new_password)), array('id'=>$this->user_id));
+        $db->update('user', array('password' => md5($this->new_password)), array('id' => $this->user_id));
         $db->commit();
         } catch (Exception $e) {
             $db->rollback();
             throw $e;
         }
     }
+
     public function deleteComment($id)
     {
         $is_authenticated = false;
         $db = DB::conn();
         $db->begin();
         $row = $db->row("SELECT * FROM comment WHERE id = ? ", array($id));
-        if ($this->user_id===$row['user_id']) {
+        if ($this->user_id === $row['user_id']) {
             $is_authenticated = true;
         }
         if ($is_authenticated) {
@@ -132,13 +142,14 @@ class User extends AppModel
             return false;
         }
     }
+
     public function deleteThread($id)
     {
         $is_authenticated = false;
         $db = DB::conn();
         $db->begin();
         $row = $db->row("SELECT * FROM thread WHERE id = ? ", array($id));
-        if ($this->user_id===$row['user_id']) {
+        if ($this->user_id === $row['user_id']) {
             $is_authenticated = true;
         }
         if ($is_authenticated) {
@@ -155,13 +166,14 @@ class User extends AppModel
             return false;
         }
     }
+
     public function deleteUser($id)
     {
         $is_authenticated = false;
         $db = DB::conn();
         $db->begin();
         $row = $db->row("SELECT * FROM user WHERE id = ? ", array($id));
-        if ($this->user_id===$row['id']) {
+        if ($this->user_id === $row['id']) {
             $is_authenticated = true;
         }
         if ($is_authenticated) {
@@ -180,6 +192,7 @@ class User extends AppModel
             return false;
         }
     }
+
     public function followedThreads()
     {
         $followed = array();
@@ -190,6 +203,7 @@ class User extends AppModel
         }
         return $followed;
     }
+
     public function likedComments()
     {
         $liked = array();
@@ -200,6 +214,7 @@ class User extends AppModel
         }
         return $liked;
     }
+
     public static function search($type, $query)
     {
         $results = array();
@@ -218,7 +233,7 @@ class User extends AppModel
             case ('thread'):
                 $rows = $db->rows('SELECT * FROM thread WHERE title LIKE ? ', array($query));
                 foreach ($rows as $row) {
-                    $thread_info = Thread::getThreadInfo($row['id']);
+                    $thread_info = objectToArray(Thread::getThreadInfo($row['id']));
                     $row = array_merge($row, $thread_info);
                     $results[] = new Thread($row);
                 }
@@ -226,7 +241,7 @@ class User extends AppModel
             case ('comment'):
                 $rows = $db->rows('SELECT * FROM comment WHERE body LIKE ? ', array($query));
                 foreach ($rows as $row) {
-                    $results[] = new Comment(Comment::getCommentInfo($row['id']));
+                    $results[] = new Comment(objectToArray(Comment::getCommentInfo($row['id'])));
                 }
                 break;
             default:
@@ -235,13 +250,14 @@ class User extends AppModel
         }
         return $results;
     }
+    
     public function getRecent($table, $id)
     {
         $recent = array();
         $db = DB::conn();
         $rows = $db->rows("SELECT * FROM {$table} WHERE user_id = ? ORDER BY created DESC LIMIT 0, 3 ", array($id));
         foreach ($rows as $row) {
-            $recent[] = $table === 'thread' ? new Thread(Thread::getThreadInfo($row['id'])) : new Comment(Comment::getCommentInfo($row['id']));
+            $recent[] = $table === 'thread' ? new Thread(objectToArray(Thread::getThreadInfo($row['id']))) : new Comment(objectToArray(Comment::getCommentInfo($row['id'])));
         }
         return $recent;
     }

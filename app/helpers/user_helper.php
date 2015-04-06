@@ -1,6 +1,7 @@
 <?php
 
-function objectToArray($obj){
+function objectToArray($obj)
+{
     if (!is_object($obj)) {
         return false;
     }
@@ -11,7 +12,8 @@ function objectToArray($obj){
     return $array;
 }
 
-function securedPage(){
+function securedPage()
+{
     $is_logged = isset($_SESSION['username']);
     if (!$is_logged) {
         redirect('/');

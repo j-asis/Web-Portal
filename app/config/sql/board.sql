@@ -37,10 +37,10 @@ FOREIGN KEY (thread_id) REFERENCES thread(id)
 
 CREATE TABLE IF NOT EXISTS user (
 id                      INT UNSIGNED NOT NULL AUTO_INCREMENT,
-username                VARCHAR(50) NOT NULL,
+username                VARCHAR(50) NOT NULL UNIQUE,
 first_name              VARCHAR(50) NOT NULL,
 last_name               VARCHAR(50) NOT NULL,
-email                   VARCHAR(50) NOT NULL,
+email                   VARCHAR(50) NOT NULL UNIQUE,
 password                VARCHAR(100) NOT NULL,
 avatar                  VARCHAR(200),
 PRIMARY KEY (id)
@@ -58,7 +58,7 @@ FOREIGN KEY (thread_id) REFERENCES thread(id)
 CREATE TABLE IF NOT EXISTS likes (
 id                      INT UNSIGNED NOT NULL AUTO_INCREMENT,
 user_id                 INT UNSIGNED NOT NULL,
-comment_id               INT UNSIGNED NOT NULL,
+comment_id              INT UNSIGNED NOT NULL,
 PRIMARY KEY(id),
 FOREIGN KEY (user_id) REFERENCES user(id),
 FOREIGN KEY (comment_id) REFERENCES comment(id)

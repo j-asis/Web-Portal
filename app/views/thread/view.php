@@ -1,3 +1,9 @@
+<?php if (isset($error)): ?>
+<h1 class="alert alert-danger">Thread Not found!</h1>
+<?php
+return;
+endif;
+?>
 <h1><?php readable_text($thread->title);?></h1>
 <p>
     Created By : <a href='<?php readable_text('/user/profile?user_id=' . $thread_info['user_id']); ?>'>

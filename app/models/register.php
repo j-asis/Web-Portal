@@ -10,28 +10,28 @@ class Register extends AppModel
         'password' => array(
             'length' => array(
                 'validate_between', self::MIN_PASSWORD_LENGTH, self::MAX_PASSWORD_LENGTH
-                ),
             ),
+        ),
         'username' => array(
             'length' => array(
                 'validate_between', self::MIN_STRING_LENGTH, self::MAX_STRING_LENGTH
-                ),
             ),
+        ),
         'first_name' => array(
             'length' => array(
                 'validate_between', self::MIN_STRING_LENGTH, self::MAX_STRING_LENGTH
-                ),
             ),
+        ),
         'last_name' => array(
             'length' => array(
                 'validate_between', self::MIN_STRING_LENGTH, self::MAX_STRING_LENGTH
-                ),
             ),
+        ),
         'email' => array(
             'length' => array(
                 'validate_between', self::MIN_STRING_LENGTH, self::MAX_STRING_LENGTH
-                ),
             ),
+        ),
     );
 
     public function create()
@@ -44,11 +44,11 @@ class Register extends AppModel
             $db = DB::conn();
             $db->begin();
             $params = array(
-                'username' => $this->username,
+                'username'   => $this->username,
                 'first_name' => $this->first_name,
-                'last_name' => $this->last_name,
-                'email' => $this->email,
-                'password' => md5($this->password)
+                'last_name'  => $this->last_name,
+                'email'      => $this->email,
+                'password'   => md5($this->password)
             );
             $db->insert('user', $params);
             $db->commit();
@@ -75,6 +75,7 @@ class Register extends AppModel
             return false;
         }
     }
+    
     public static function emailExists($email){
         $db = DB::conn();
         $row = $db->row('SELECT * FROM user WHERE email = ? ', array($email));

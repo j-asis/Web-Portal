@@ -23,13 +23,25 @@
                                     <span class="icon-list icon-white"></span> Threads <span class="caret"></span>
                                 </a>
                                 <ul class="dropdown-menu">
-                                    <li><a href="/thread/index"><i class="icon-calendar"></i> Most Recent</a></li>
-                                    <li><a href="/thread/top_threads?type=comment"><i class="icon-comment"></i> Most Comments</a></li>
-                                    <li><a href="/thread/top_threads?type=follow"><i class="icon-eye-open"></i> Most Followed</a></li>
+                                    <li>
+                                        <a href="<?php readable_text(url('thread/index')) ?>">
+                                            <i class="icon-calendar"></i> Most Recent
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="<?php readable_text(url('thread/top_threads', array('type'=>'comment'))) ?>">
+                                            <i class="icon-comment"></i> Most Comments
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="<?php readable_text(url('thread/top_threads', array('type'=>'follow'))) ?>">
+                                            <i class="icon-eye-open"></i> Most Followed
+                                        </a>
+                                    </li>
                                 </ul>
                             </li>
                             <li>
-                                <a href="/comment/most_liked">
+                                <a href="<?php readable_text(url('comment/most_liked')) ?>">
                                 <span class="icon-thumbs-up icon-white"></span> Most Liked Comment
                                 </a>
                             </li>
@@ -63,22 +75,22 @@
                                     <img class='avatar-icon' src='<?php echo $user->user_details['avatar'] ?>' height='30' width='30' />
                                 </a>
                                 <ul class="dropdown-menu">
-                                    <li><a href="/user/update"><i class="icon-pencil"></i> Edit Profile</a></li>
-                                    <li><a href="/user/change_password"><i class="icon-lock"></i> Change Password</a></li>
+                                    <li><a href="<?php readable_text(url('user/update')) ?>"><i class="icon-pencil"></i> Edit Profile</a></li>
+                                    <li><a href="<?php readable_text(url('user/change_password')) ?>"><i class="icon-lock"></i> Change Password</a></li>
                                     <li class="divider"></li>
                                     <li>
-                                    <a href="/user/delete?type=user&url_back=/&id=<?php echo $user->user_id; ?>">
+                                    <a href="<?php readable_text(url('user/delete', array('type'=>'user', 'url_back'=>'/', 'id'=> $user->user_id))) ?>">
                                     <i class="icon-remove-sign"></i> Delete Account</a></li>
                                 </ul>
                                 
                             </li>
                             <li>
-                                <a href="/user/profile">
+                                <a href="<?php readable_text(url('user/profile')) ?>">
                                     <?php readable_text($_SESSION['username']); ?>
                                     <span class="icon-user icon-white"></span>
                                 </a>
                             </li>
-                            <li><a href='/user/logout'>Log out <span class="icon-off icon-white"></span></a></li>
+                            <li><a href="<?php readable_text(url('user/logout')) ?>">Log out <span class="icon-off icon-white"></span></a></li>
                         </ul>
                         <?php endif ?>
 

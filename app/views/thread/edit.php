@@ -23,13 +23,11 @@
 </div>
 <?php return; endif; ?>
 
-<span>Old Thread Title: <em>&quot;<?php readable_text($thread_content->title); ?>&quot;</em></span>
-<br /><br />
 <form action="<?php readable_text(url('')); ?>" class="form-horizontal" method="post">
         <div class="control-group">
-            <label class="control-label">New Thread Title: </label>
+            <label class="control-label">Thread Title: </label>
             <div class="controls">
-                <textarea name="new_thread" placeholder="New Thread Title" class="input-block-level"></textarea>
+                <textarea name="new_thread" class="input-block-level"><?php readable_text($thread_content->title); ?></textarea>
             </div>
         </div>
         <div class="control-group">

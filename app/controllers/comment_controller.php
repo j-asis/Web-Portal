@@ -8,7 +8,7 @@ class CommentController extends AppController
         $title = " | Edit comment";
         $user = new User;
         try {
-            $comment_content = Comment::getCommentContent(Param::get('id'));
+            $comment_content = Comment::getCommentContent(Param::get('id', 0));
         } catch (RecordNotFoundException $e) {
             $error = "Not Exsisting Comment";
         }
@@ -17,10 +17,10 @@ class CommentController extends AppController
                 $comment->error = 'Cannot edit other user\'s comment';
             }
             $params = array(
-                'comment_id' => Param::get('id'),
-                'thread_id' => Param::get('thread_id'),
-                'user_id' => $user->user_id,
-                );
+                'comment_id' => Param::get('id', ''),
+                'thread_id'  => Param::get('thread_id', ''),
+                'user_id'    => $user->user_id,
+            );
             if ($check) {
                 $params['body'] = Param::get('new_comment', '');
                 $comment = new Comment($params);
@@ -37,14 +37,15 @@ class CommentController extends AppController
         }
         $this->set(get_defined_vars());
     }
+
     public function like()
     {
         $user = new User;
         $params = array(
             'comment_id' => Param::get('comment_id', 0),
-            'type' => Param::get('type', 'like'),
-            'back' => Param::get('back', '/'),
-            'user_id' => $user->user_id,
+            'type'       => Param::get('type', 'like'),
+            'back'       => Param::get('back', '/'),
+            'user_id'    => $user->user_id,
         );
         if ($params['comment_id'] === 0) {
             redirect(url('/'));
@@ -54,6 +55,7 @@ class CommentController extends AppController
         $comment->like();
         redirect($comment->back);
     }
+    
     public function most_liked()
     {
         $user = new User;
