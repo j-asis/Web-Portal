@@ -184,6 +184,7 @@ class User extends AppModel
             $db->query("DELETE FROM follow WHERE user_id = ? ", array($id));
             $db->query("DELETE FROM likes WHERE user_id = ? ", array($id));
             $db->query("DELETE FROM thread WHERE user_id = ? ", array($id));
+            $db->query("DELETE FROM comment WHERE user_id = ? ", array($id));
             $db->query("DELETE FROM user WHERE id = ? ", array($id));
             $db->commit();
             return true;

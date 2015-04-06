@@ -66,14 +66,48 @@ endif;
 </div>
 
 <?php endif ?>
-
-<form action='<?php url(''); ?>' method='post'>
-    <input class="span2" type='text' placeholder='First Name' name='first_name'>
-    <input class="span2" type='text' placeholder='Last Name' name='last_name'>
-    <input class="span2" class="span2" type='text' placeholder='Username' name='username'>
-    <input class="span2" type='email' placeholder='Email' name='email'>
-    <input class="span2" type='password' placeholder='Password' name='password'>
-    <input class="span2" type='password' placeholder='Confirm Password' name='cpassword'>
-    <input type="hidden" name='call' value='true'>
-    <input type='submit' value='Create Account' class='btn btn-primary'>
+<h2>Registration Form</h2>
+<form class="form-horizontal" action="<?php readable_text(url('')) ?>" method="post">
+    <div class="control-group">
+        <label class="control-label">First Name: </label>
+        <div class="controls">
+            <input type='text' placeholder='First Name' name='first_name'>
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label">Last Name: </label>
+        <div class="controls">
+            <input type='text' placeholder='Last Name' name='last_name'>
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label">Username: </label>
+        <div class="controls">
+            <input type='text' placeholder='Username' name='username'>
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label">Email: </label>
+        <div class="controls">
+            <input type='email' placeholder='Email' name='email'>
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label">Password: </label>
+        <div class="controls">
+            <input type='password' placeholder='Password' name='password'>
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label">Confirm Password: </label>
+        <div class="controls">
+            <input type='password' placeholder='Confirm Password' name='cpassword'>
+        </div>
+    </div>
+    <div class="control-group">
+        <div class="controls">
+            <input type="hidden" name='call' value='true'>
+            <input type='submit' value='Create Account' class='btn btn-primary'> 
+        </div>
+    </div>
 </form>

@@ -7,6 +7,10 @@
     <div><em>Username Already Taken!</em></div>
     <?php endif ?>
 
+    <?php if (!empty($user->validation_errors['new_email']['exists'])): ?>
+    <div><em>Username Already Taken!</em></div>
+    <?php endif ?>
+
     <?php if (!empty($user->validation_errors['new_first_name']['length'])): ?>
     <div><em>First Name</em> must be between
         <?php readable_text($user->validation['new_first_name']['length'][1]) ?> and

@@ -38,16 +38,22 @@ class UserController extends AppController
                 'new_first_name' => Param::get('first_name', ''),
                 'new_last_name'  => Param::get('last_name', ''),
                 'new_email'      => Param::get('email', ''),
+                'user_id'        => $user->user_id,
             );
-            $user = new User($params);
-            if (!($user->new_username === $user->username)) {
-                if (Register::userExists($user->new_username)) {
+            $new_user = new User($params);
+            if (!($new_user->new_username === $user->username)) {
+                if (Register::userExists($new_user->new_username)) {
                     $user->validation_errors['new_username']['exists'] = true;
                 }
             }
+            if (!($new_user->new_email === $user->user_details['email'])) {
+                if (Register::emailExists($new_user->new_email)) {
+                    $user->validation_errors['new_email']['exists'] = true;
+                }
+            }
             try {
-                $user->updateUser();
-                $_SESSION['username'] = $user->new_username;
+                $new_user->updateUser();
+                $_SESSION['username'] = $new_user->new_username;
             } catch (ValidationException $e) {
                 $error = true;
             } catch (Exception $e) {
