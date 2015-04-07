@@ -28,12 +28,10 @@ class Comment extends AppModel
         $query = sprintf("SELECT * FROM comment WHERE thread_id = ? ORDER BY created DESC LIMIT %d, %d", $offset, $limit);
         $rows = $db->rows($query, array($id));
         foreach ($rows as $row) {
-            $like_count = $db->value('SELECT COUNT(*) FROM likes WHERE comment_id = ?', array($row['id']));
-            $user_detail = objectToArray(User::getUserDetail($row['user_id']));
-            $row['username'] = $user_detail['username'];
-            $row['avatar'] = $user_detail['avatar'];
-            $row['like_count'] = $like_count;
-            $comments[] = new Comment($row);
+            $row['username'] = User::getUserName($row['user_id']);
+            $row['avatar'] = User::getAvatar($row['user_id']);
+            $row['like_count'] = Like::count($row['id']);
+            $comments[] = new self($row);
         }
         return $comments;
     }
@@ -49,12 +47,12 @@ class Comment extends AppModel
         $db = DB::conn();
         $row = $db->row('SELECT * FROM comment WHERE id = ? ', array($id));
         if (!$row) {
-            throw new RecordNotFoundException('no record found');
+            $row = array('error'=>'Not Exsisting Comment');
         }
         return new self($row);
     }
 
-    public function editComment()
+    public function edit()
     {
         if (!$this->validate()) {
             throw new ValidationException('invalid comment');
@@ -73,20 +71,38 @@ class Comment extends AppModel
     public function like()
     {
         $db = DB::conn();
-        try{
-            $db->begin();
-            if ($this->type === 'like') {
-                $row = $db->row('SELECT * FROM likes WHERE user_id = ? AND comment_id = ?', array($this->user_id, $this->comment_id));
-                if (empty($row)) {
-                    $params = array(
-                        'user_id' => $this->user_id,
-                        'comment_id' => $this->comment_id,
-                    );
-                    $db->replace('likes',$params);
-                }
-            } elseif ($this->type === 'unlike') {
-                $db->query('DELETE FROM likes WHERE user_id = ? AND comment_id = ?', array($this->user_id, $this->comment_id));
-            }
+        $like_id = (int) $db->value('SELECT id FROM likes
+        WHERE user_id = ? AND comment_id = ?', array($this->user_id, $this->comment_id));
+        if ($this->type === 'like' && $like_id === 0) {
+            self::addLike($this->user_id, $this->comment_id);
+        }
+        if ($this->type === 'unlike') {
+            self::removeLike($like_id);
+        }
+    }
+
+    public static function addLike($user_id, $comment_id)
+    {
+        $db = DB::conn();
+        $db->begin();
+        $params = array(
+            'user_id' => $user_id,
+            'comment_id' => $comment_id,
+        );
+        try {
+            $db->insert('likes', $params);
+            $db->commit();
+        } catch (Exception $e) {
+            $db->rollback();
+            throw $e;
+        }
+    }
+    public static function removeLike($id)
+    {
+        $db = DB::conn();
+        $db->begin();
+        try {
+            $db->query('DELETE FROM likes WHERE id = ?', array($id));
             $db->commit();
         } catch (Exception $e) {
             $db->rollback();
@@ -98,9 +114,8 @@ class Comment extends AppModel
     {
         $db = DB::conn();
         $row = $db->row('SELECT * FROM comment WHERE id = ? ', array($id));
-        $user_detail = $db->row('SELECT username,avatar FROM user WHERE id = ? ', array($row['user_id']));
-        $like_count = $db->value('SELECT COUNT(*) FROM likes WHERE comment_id = ?', array($id));
-        $user_detail['avatar'] = empty($user_detail['avatar']) ? '/public_images/default.jpg' : $user_detail['avatar'];
+        $user_detail = objectToArray(User::getUserDetail($row['user_id']));
+        $like_count = Like::count($row['id']);
         $returns = array(
             'username' => $user_detail['username'],
             'avatar' => $user_detail['avatar'],
@@ -116,14 +131,12 @@ class Comment extends AppModel
         $nums = $db->rows('SELECT COUNT(*) as num FROM likes GROUP BY comment_id ORDER BY num DESC');
         $last = 0;
         $limit = 0;
+        $max_comment = 10;
         foreach ($nums as $num) {
-            if ($last > $num['num']) {
-                continue;
-            }
-            if ($limit >= 10) {
+            if ($limit < $max_comment || $last === $num['num']) {
+                $limit++;
                 $last = $num['num'];
             }
-            $limit++;
         }
         $rows = $db->rows("SELECT comment_id, COUNT(*) as num FROM likes GROUP BY comment_id ORDER BY num DESC LIMIT 0, {$limit}");
         $comments = array();

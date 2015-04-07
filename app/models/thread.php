@@ -17,8 +17,7 @@ class Thread extends AppModel
     {
         $threads = array();
         $db = DB::conn();
-        $query = sprintf("SELECT * FROM thread ORDER BY created DESC LIMIT %d, %d", $offset, $limit);
-        $rows = $db->rows($query);
+        $rows = $db->rows("SELECT * FROM thread ORDER BY created DESC LIMIT {$offset}, {$limit}");
         foreach ($rows as $row) {
             $thread_info = objectToArray(self::getThreadInfo($row['id']));
             $row = array_merge($row, $thread_info);
@@ -38,7 +37,7 @@ class Thread extends AppModel
         $db = DB::conn();
         $row = $db->row('SELECT * FROM thread WHERE id = ?', array($id));
         if (!$row) {
-            throw new RecordNotFoundException('no record found');
+            $row = array('error'=>'Not Exsisting Thread');
         }
         return new self($row);
     }
@@ -69,18 +68,14 @@ class Thread extends AppModel
         }
         $db = DB::conn();
         $row = $db->row('SELECT * FROM thread WHERE id = ?', array($id));
-        $thread_username = $db->row('SELECT username,avatar FROM user WHERE id = ?', array($row['user_id']));
-        $num_comment = $db->value('SELECT COUNT(*) FROM comment WHERE thread_id = ?', array($id));
-        $num_follow = $db->value('SELECT COUNT(*) FROM follow WHERE thread_id = ?', array($id));
-        $thread_username['avatar'] = empty($thread_username['avatar']) ? '/public_images/default.jpg' : $thread_username['avatar'];
         $returns = array(
             'id'          => $id,
-            'username'    => $thread_username['username'],
+            'username'    => User::getUserName($row['user_id']),
             'date'        => $row['created'],
             'user_id'     => $row['user_id'],
-            'num_comment' => $num_comment,
-            'avatar'      => $thread_username['avatar'],
-            'num_follow'  => $num_follow,
+            'num_comment' => Comment::countAllComments($id),
+            'avatar'      => User::getAvatar($row['user_id']),
+            'num_follow'  => Follow::count($id),
             'title'       => $row['title'],
         );
         return new self($returns);
@@ -102,7 +97,7 @@ class Thread extends AppModel
         }
     }
 
-    public function topThreads($table)
+    public function top($table)
     {
         $top_threads = array();
         $db = DB::conn();
@@ -111,13 +106,10 @@ class Thread extends AppModel
         $limit = 0;
         $max_thread = 10;
         foreach ($nums as $num) {
-            if ($last > $num['num']) {
-                continue;
-            }
-            if ($limit >= $max_thread) {
+            if ($limit < $max_thread || $last === $num['num']) {
+                $limit++;
                 $last = $num['num'];
             }
-            $limit++;
         }
         $rows = $db->rows("SELECT thread_id, COUNT(*) as num FROM {$table} GROUP BY thread_id ORDER BY num DESC LIMIT 0, {$limit}");
         foreach ($rows as $row) {
@@ -131,12 +123,10 @@ class Thread extends AppModel
     {
         $threads = array();
         $db = DB::conn();
-        $query = sprintf("SELECT * FROM thread WHERE user_id = %d ORDER BY created DESC LIMIT %d, %d", $id, $offset, $limit);
-        $rows = $db->rows($query);
+        $rows = $db->rows("SELECT * FROM thread WHERE user_id = ? ORDER BY created DESC LIMIT {$offset}, {$limit}", array($id));
         foreach ($rows as $row) {
             $thread_info = objectToArray(self::getThreadInfo($row['id']));
-            $row = array_merge($row,$thread_info);
-            $threads[] = new self($row);
+            $threads[] = new self(array_merge($row,$thread_info));
         }
         return $threads;
     }
@@ -151,20 +141,39 @@ class Thread extends AppModel
     public function follow()
     {
         $db = DB::conn();
+        $follow_id = (int) $db->value('SELECT id FROM follow
+        WHERE user_id = ? AND thread_id = ?', array($this->user_id, $this->follow_id));
+        if ($this->follow_type === 'follow' && $follow_id === 0) {
+            self::addFollow($this->user_id, $this->follow_id);
+        }
+        if ($this->follow_type === 'unfollow') {
+            self::removeFollow($follow_id);
+        }
+    }
+
+    public static function addFollow($user_id, $thread_id)
+    {
+        $db = DB::conn();
+        $db->begin();
+        $params = array(
+            'user_id' => $user_id,
+            'thread_id' => $thread_id,
+        );
         try {
-            $db->begin();
-            if ($this->follow_type === 'follow') {
-                $row = $db->row('SELECT * FROM follow WHERE user_id = ? AND thread_id = ?', array($this->user_id, $this->follow_id));
-                if (empty($row)) {
-                    $params = array(
-                        'user_id'   => $this->user_id,
-                        'thread_id' => $this->follow_id,
-                        );
-                    $db->replace('follow',$params);
-                }
-            } elseif ($this->follow_type === 'unfollow') {
-                $db->query('DELETE FROM follow WHERE user_id = ? AND thread_id = ?', array($this->user_id, $this->follow_id));
-            }
+            $db->insert('follow', $params);
+            $db->commit();
+        } catch (Exception $e) {
+            $db->rollback();
+            throw $e;
+        }
+    }
+
+    public static function removeFollow($id)
+    {
+        $db = DB::conn();
+        $db->begin();
+        try {
+            $db->query('DELETE FROM follow WHERE id = ?', array($id));
             $db->commit();
         } catch (Exception $e) {
             $db->rollback();

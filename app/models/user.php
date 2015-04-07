@@ -153,11 +153,11 @@ class User extends AppModel
             $is_authenticated = true;
         }
         if ($is_authenticated) {
+            $db->query("DELETE FROM follow WHERE thread_id = ? ", array($id));
             $rows = $db->rows('SELECT * FROM comment WHERE thread_id = ?', array($id));
             foreach ($rows as $row) {
                 $this->deleteComment($row['id']);
             }
-            $db->query("DELETE FROM follow WHERE thread_id = ? ", array($id));
             $db->query("DELETE FROM thread WHERE id = ? ", array($id));
             $db->commit();
             return true;
@@ -261,5 +261,20 @@ class User extends AppModel
             $recent[] = $table === 'thread' ? new Thread(objectToArray(Thread::getThreadInfo($row['id']))) : new Comment(objectToArray(Comment::getCommentInfo($row['id'])));
         }
         return $recent;
+    }
+
+    public static function getAvatar($id)
+    {
+        $db = DB::conn();
+        $avatar = (string) $db->value('SELECT avatar FROM user WHERE id = ?', array($id));
+        return empty($avatar) ? '/public_images/default.jpg' : $avatar;
+    }
+
+    public function isUnchanged($username, $first_name, $last_name, $email)
+    {
+        $db = DB::conn();
+        $count = $db->value('SELECT COUNT(*) FROM user WHERE username = ? AND first_name = ?
+            AND last_name = ? AND email = ?', array($username, $first_name, $last_name, $email));
+        return ($count > 0);
     }
 }

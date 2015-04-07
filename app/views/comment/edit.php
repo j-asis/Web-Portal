@@ -1,19 +1,8 @@
-<?php if (isset($error)): ?>
-<div class="alert alert-danger">
-    <h4 class="alert-heading"><?php echo $error; ?></h4>
-        return to <a href="/">home page</a><br />
-</div>
-<?php return; endif; ?>
 <h1>Edit Comment</h1>
 
 <?php if (isset($comment->error)): ?>
-<div class="alert alert-block">
-    <h4 class="alert-heading"><?php echo $comment->error; ?></h4>
-        return to <a href="/">home page</a><br />
-</div>
-<?php elseif (isset($comment->auth_error)): ?>
 <div class="alert alert-danger">
-    <h4 class="alert-heading"><?php echo $comment->auth_error; ?></h4>
+    <h4 class="alert-heading"><?php echo $comment->error; ?></h4>
         return to <a href="/">home page</a><br />
 </div>
 <?php return; elseif ($check !== false): ?>

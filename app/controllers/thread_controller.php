@@ -26,19 +26,22 @@ class ThreadController extends AppController
         } catch (RecordNotFoundException $e) {
             $error = true;
         }
-        if (!isset($error)) {
-            $thread_id = Param::get('thread_id', 0);
-            $thread_info = objectToArray($thread->getThreadInfo($thread_id));
-            $comment = new Comment;
-            $comment->id = $thread_id;
-            $comment_page = Param::get('comment_page', 1);
-            $per_page = 5;
-            $pagination = new SimplePagination($comment_page, $per_page);
-            $comments = Comment::getByThreadId($thread_id, $pagination->start_index - 1, $pagination->count + 1);
-            $pagination->checkLastPage($comments);
-            $total = Comment::countAllComments($thread_id);
-            $pages = ceil($total / $per_page);
+        if (isset($error)) {
+            $this->set(get_defined_vars());
+            return;
         }
+
+        $thread_id = Param::get('thread_id', 0);
+        $thread_info = objectToArray($thread->getThreadInfo($thread_id));
+        $comment = new Comment;
+        $comment->id = $thread_id;
+        $comment_page = Param::get('comment_page', 1);
+        $per_page = 5;
+        $pagination = new SimplePagination($comment_page, $per_page);
+        $comments = Comment::getByThreadId($thread_id, $pagination->start_index - 1, $pagination->count + 1);
+        $pagination->checkLastPage($comments);
+        $total = Comment::countAllComments($thread_id);
+        $pages = ceil($total / $per_page);
         $this->set(get_defined_vars());
     }
 
@@ -100,31 +103,31 @@ class ThreadController extends AppController
         $check = Param::get('check', false);
         $title = " | Edit thread";
         $user = new User;
-        try {
-            $thread_content = Thread::get(Param::get('id', 0));
-        } catch (RecordNotFoundException $e) {
-            $error = "Not Exsisting Thread";
+        $params = array(
+            'thread_id' => Param::get('id', 0),
+            'user_id'   => $user->user_id,
+        );
+        $thread = new Thread($params);
+
+        $thread_content = Thread::get(Param::get('id', 0));
+        $thread->error = isset($thread_content->error) ? $thread_content->error : null;
+        if (isset($thread->error)) {
+            $this->set(get_defined_vars());
+            return;
         }
-        if (!isset($error)) {
-            if ($thread_content->user_id !== $user->user_id) {
-                $thread->error = 'Cannot edit other user\'s thread';
-            }
-            $params = array(
-                'thread_id' => Param::get('id'),
-                'user_id'   => $user->user_id,
-            );
-            if ($check) {
-                $params['title'] = Param::get('new_thread', '');
-                $thread = new Thread($params);
-                try {
-                    $thread->editThread();
-                } catch (ValidationException $e) {
-                    $thread->error = 'Input Error, Please enter at from 1 to 200 charcters';
-                } catch (Exception $e) {
-                    $thread->error = 'Unexpected Error occured';
-                }
-            } else {
-                $thread = new Comment($params);
+        if ($thread_content->user_id !== $user->user_id) {
+            $thread->error = 'Cannot edit other user\'s thread';
+            $this->set(get_defined_vars());
+            return;
+        }
+        if ($check) {
+            $thread->title = Param::get('new_thread', '');
+            try {
+                $thread->editThread();
+            } catch (ValidationException $e) {
+                $thread->error = 'Input Error, Please enter at from 1 to 200 charcters';
+            } catch (Exception $e) {
+                $thread->error = 'Unexpected Error occured';
             }
         }
         $this->set(get_defined_vars());
@@ -189,6 +192,6 @@ class ThreadController extends AppController
         } catch(Exception $e) {
             $error = true;
         }
-        $this->set(get_defined_vars());
+        redirect($back);
     }
 }
