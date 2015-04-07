@@ -29,11 +29,11 @@ class User extends AppModel
 
         );
 
-    public function __construct(array $data = array())
+    public function __construct($data)
     {
-        if (empty($data)) {
+        if (!is_array($data)) {
             securedPage();
-            $this->username         = $_SESSION['username'];
+            $this->username         = $data;
             $this->user_id          = $this->getUserId($this->username);
             $this->user_details     = objectToArray($this->getUserDetail($this->user_id));
             $this->followed_threads = $this->followedThreads();

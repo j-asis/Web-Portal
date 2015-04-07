@@ -13,7 +13,7 @@ class UserController extends AppController
 
     public function profile()
     {
-        $user = new User;
+        $user = new User($_SESSION['username']);
         $home = '/user/profile';
         $user_id = Param::get('user_id', $user->user_id);
         $user_info = objectToArray($user->getUserDetail($user_id));
@@ -25,7 +25,7 @@ class UserController extends AppController
 
     public function update()
     {
-        $user = new User;
+        $user = new User($_SESSION['username']);
         $update = Param::get('update', false);
         $params = array(
             'new_username'   => Param::get('username', ''),
@@ -68,13 +68,13 @@ class UserController extends AppController
         if (!isset($error) && !isset($db_error)) {
             $_SESSION['username'] = $new_user->new_username;
         }
-        $user = new User;
+        $user = new User($_SESSION['username']);
         $this->set(get_defined_vars());
     }
 
     public function change_password()
     {
-        $user = new User;
+        $user = new User($_SESSION['username']);
         $check = Param::get('check', false);
         if (!$check) {
             $this->set(get_defined_vars());
@@ -110,7 +110,7 @@ class UserController extends AppController
 
     public function delete()
     {
-        $user = new User;
+        $user = new User($_SESSION['username']);
         $type = Param::get('type', '');
         $id = Param::get('id', '');
         $url_back = urldecode(Param::get('url_back', '/'));
@@ -145,13 +145,13 @@ class UserController extends AppController
 
     public function upload_image()
     {
-        $user = new User;
+        $user = new User($_SESSION['username']);
         $this->set(get_defined_vars());
     }
 
     public function upload()
     {
-        $user = new User;
+        $user = new User($_SESSION['username']);
         if (!isset($_FILES['avatar'])) {
             redirect(url('user/profile'));
         }
@@ -197,7 +197,7 @@ class UserController extends AppController
         if (!$type || !$query) {
             redirect(url('user/profile'));
         }
-        $user = new User;
+        $user = new User($_SESSION['username']);
         switch ($type) {
             case ('user'):
                 $render_page = '/user/search';

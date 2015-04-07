@@ -4,7 +4,7 @@ class ThreadController extends AppController
 {
     public function index()
     {
-        $user = new User;
+        $user = new User($_SESSION['username']);
         $title = 'Most Recent Threads';
         $url_params = '?';
         $page = Param::get('page', 1);
@@ -20,7 +20,7 @@ class ThreadController extends AppController
 
     public function view()
     {
-        $user = new User;
+        $user = new User($_SESSION['username']);
         try {
             $thread = Thread::get(Param::get('thread_id', 0));
         } catch (RecordNotFoundException $e) {
@@ -47,7 +47,7 @@ class ThreadController extends AppController
 
     public function write()
     {
-        $user = new User;
+        $user = new User($_SESSION['username']);
         $thread = Thread::get(Param::get('thread_id', 0));
         $comment = new Comment;
         $page = Param::get('page_next', 'write');
@@ -73,7 +73,7 @@ class ThreadController extends AppController
 
     public function create()
     {
-        $user = new User;
+        $user = new User($_SESSION['username']);
         $thread = new Thread;
         $comment = new Comment;
         $page = Param::get('page_next', 'create');
@@ -102,7 +102,7 @@ class ThreadController extends AppController
     {
         $check = Param::get('check', false);
         $title = " | Edit thread";
-        $user = new User;
+        $user = new User($_SESSION['username']);
         $params = array(
             'thread_id' => Param::get('id', 0),
             'user_id'   => $user->user_id,
@@ -151,9 +151,9 @@ class ThreadController extends AppController
             default:
                 break;
         }
-        $user = new User;
+        $user = new User($_SESSION['username']);
         $thread = new Thread;
-        $top_threads = $thread->topThreads($type);
+        $top_threads = $thread->top($type);
         $sub_title = sprintf($sub_title, count($top_threads));
         $this->set(get_defined_vars());
         $this->render('top_threads');
@@ -161,7 +161,7 @@ class ThreadController extends AppController
 
     public function user_thread()
     {
-        $user = new User;
+        $user = new User($_SESSION['username']);
         $user_id = Param::get('user_id', $user->user_id);
         $url_params = '?user_id='.$user_id.'&';
         $title = $user->username . '\'s Threads';
@@ -179,7 +179,7 @@ class ThreadController extends AppController
     
     public function follow()
     {
-        $user = new User;
+        $user = new User($_SESSION['username']);
         $params = array(
             'follow_id'   => Param::get('id', 0),
             'user_id'     => $user->user_id,

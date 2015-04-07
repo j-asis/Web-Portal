@@ -4,7 +4,7 @@ class CommentController extends AppController
 {
     public function edit()
     {
-        $user = new User;
+        $user = new User($_SESSION['username']);
         $check = Param::get('check', false);
         $title = " | Edit comment";
         $params = array(
@@ -40,7 +40,7 @@ class CommentController extends AppController
 
     public function like()
     {
-        $user = new User;
+        $user = new User($_SESSION['username']);
         $params = array(
             'comment_id' => Param::get('comment_id', 0),
             'type'       => Param::get('type', 'like'),
@@ -58,7 +58,7 @@ class CommentController extends AppController
     
     public function most_liked()
     {
-        $user = new User;
+        $user = new User($_SESSION['username']);
         $comments = Comment::getMostLiked();
         $title = "Most Liked Comment";
         $sub_title = sprintf("Showing top %d most liked comments", count($comments));
