@@ -277,4 +277,5 @@ class User extends AppModel
             AND last_name = ? AND email = ?', array($username, $first_name, $last_name, $email));
         return ($count > 0);
     }
+
 }

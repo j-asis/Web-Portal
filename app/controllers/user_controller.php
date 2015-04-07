@@ -200,23 +200,15 @@ class UserController extends AppController
         $user = new User;
         switch ($type) {
             case ('user'):
-                $url_params = "?type=user&query={$query}";
-                $title = sprintf("Search for '%s' in users", $query);
                 $render_page = '/user/search';
-                $query_results = $user->search($type, $query);
                 $varname = 'query_results';
                 break;
             case ('thread'):
-                $url_params = "?type=thread&query={$query}";
-                $title = sprintf("Search for '%s' in threads", $query);
-                $query_results = $user->search($type, $query);
                 $render_page = '/thread/index';
                 $varname = 'threads';
                 break;
             case ('comment'):
-                $url_params = "?type=comment&query={$query}";
-                $query_results = $user->search($type, $query);
-                $title = sprintf("Search for '%s' in comments", $query);
+                
                 $render_page = '/comment/view';
                 $varname = 'comments';
                 break;
@@ -224,6 +216,9 @@ class UserController extends AppController
                 redirect(url('user/profile'));
                 break;
         }
+        $title = sprintf("Search for '%s' in %s", $query, $type);
+        $url_params = "?type={$type}&query={$query}";
+        $query_results = $user->search($type, $query);
         $page = Param::get('page', 1);
         $page = (int) $page;
         $per_page = 5;
