@@ -1,3 +1,10 @@
+<?php if (isset($user->auth_error)): ?>
+<div class="alert alert-danger">
+<h3><?php echo $user->auth_error ?></h3>
+</div>
+<?php 
+return;
+endif; ?>
 <?php if ($is_success): ?>
 <div class="alert alert-success">
 Successfully deleted <?php echo $type; ?>!

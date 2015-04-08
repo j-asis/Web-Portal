@@ -5,7 +5,11 @@
     <h4 class="alert-heading"><?php echo $comment->error; ?></h4>
         return to <a href="/">home page</a><br />
 </div>
-<?php return; elseif ($check !== false): ?>
+<?php
+    if (!preg_match('/Input Error/', $comment->error)):
+        return;
+    endif;
+elseif ($check !== false): ?>
 <div class="alert alert-success">
     <h4 class="alert-heading">Successfully Edited your comment!</h4>
         return to <a href="<?php echo url('thread/view', array('thread_id'=>$comment->thread_id)); ?>">thread</a><br />

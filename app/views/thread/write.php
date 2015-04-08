@@ -17,7 +17,7 @@
 
 <form class="well" method="post" action="<?php readable_text(url('thread/write')) ?>">
     <label>Comment</label>
-    <textarea name="body"><?php readable_text(Param::get('body')) ?></textarea>
+    <textarea name="body" style="padding:1%; width:98%; height:100px;"><?php readable_text(Param::get('body')) ?></textarea>
     <br />
     <input type="hidden" name="thread_id" value="<?php readable_text($thread->id) ?>">
     <input type="hidden" name="page_next" value="write_end">

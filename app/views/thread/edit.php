@@ -6,7 +6,9 @@
         return to <a href="/">home page</a><br />
 </div>
 <?php
-return;
+    if (!preg_match('/Input Error/', $thread->error)):
+        return;
+    endif;
 elseif ($check !== false): ?>
 <div class="alert alert-success">
     <h4 class="alert-heading">Successfully Edited your comment!</h4>

@@ -130,6 +130,11 @@ class UserController extends AppController
         }
         if ($type === 'user') {
             $check = Param::get('check', false);
+            if ($id !== $user->user_id) {
+                $user->auth_error = "Cannot Delete Other User's Account!";
+                $this->set(get_defined_vars());
+                return;
+            }
             if (!$check) {
                 $this->set(get_defined_vars());
                 return;
