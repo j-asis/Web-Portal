@@ -26,8 +26,7 @@ class LoginController extends AppController
                 $_SESSION['username'] = $login->username;
             }
         }
-        $is_logged = isset($_SESSION['username']);
-        if ($is_logged) {
+        if (isset($_SESSION['username'])) {
             redirect(url('user/profile'));
         }
         $this->set(get_defined_vars());

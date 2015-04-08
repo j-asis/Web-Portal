@@ -4,7 +4,11 @@ class CommentController extends AppController
 {
     public function edit()
     {
-        $user = new User($_SESSION['username']);
+        if (!isset($_SESSION['username'])) {
+            redirect(url('/'));
+        }
+        $user = new User;
+        $user->setInfoByUsername($_SESSION['username']);
         $check = Param::get('check', false);
         $title = " | Edit comment";
         $params = array(
@@ -40,7 +44,11 @@ class CommentController extends AppController
 
     public function like()
     {
-        $user = new User($_SESSION['username']);
+        if (!isset($_SESSION['username'])) {
+            redirect(url('/'));
+        }
+        $user = new User;
+        $user->setInfoByUsername($_SESSION['username']);
         $type = Param::get('type', 'like');
         $comment_id = Param::get('comment_id', 0);
         $back_url = Param::get('back', '/');
@@ -64,8 +72,12 @@ class CommentController extends AppController
     
     public function most_liked()
     {
+        if (!isset($_SESSION['username'])) {
+            redirect(url('/'));
+        }
         $limit = getLimit(Likes::getCommentsByLikeCount());
-        $user = new User($_SESSION['username']);
+        $user = new User;
+        $user->setInfoByUsername($_SESSION['username']);
         $comments = Comment::getMostLiked($limit);
         $title = "Most Liked Comment";
         $sub_title = sprintf("Showing top %d most liked comments", count($comments));

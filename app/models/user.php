@@ -38,18 +38,13 @@ class User extends AppModel
 
     );
 
-    public function __construct($data)
+    public function setInfoByUsername($username)
     {
-        if (!is_array($data)) {
-            securedPage();
-            $this->username         = $data;
-            $this->user_id          = $this->getUserId($this->username);
-            $this->user_details     = objectToArray($this->getUserDetail($this->user_id));
-            $this->followed_threads = $this->followedThreads();
-            $this->liked_comments   = $this->likedComments();
-        } else {
-            $this->set($data);
-        }
+        $this->username         = $username;
+        $this->user_id          = $this->getUserId($this->username);
+        $this->user_details     = objectToArray($this->getUserDetail($this->user_id));
+        $this->followed_threads = $this->followedThreads();
+        $this->liked_comments   = $this->likedComments();
     }
 
     public static function getUserDetail($id)

@@ -14,11 +14,3 @@ function objectToArray($obj)
     }
     return $array;
 }
-
-function securedPage()
-{
-    $is_logged = isset($_SESSION['username']);
-    if (!$is_logged) {
-        redirect('/');
-    }
-}
