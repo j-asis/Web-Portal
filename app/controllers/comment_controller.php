@@ -17,9 +17,7 @@ class CommentController extends AppController
             'user_id'    => $user->user_id,
         );
         $comment = new Comment($params);
-
         $comment_content = Comment::getContent(Param::get('id', 0));
-        $comment->error = isset($comment_content->error) ? $comment_content->error : null;
         if (isset($comment_content->error)) {
             $comment->error = $comment_content->error;
             $this->set(get_defined_vars());

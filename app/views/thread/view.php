@@ -12,7 +12,7 @@ endif;
                 </a><br>
     Date : <?php readable_text($thread_info['date']); ?>
     <br />
-    <em class="faded">followed by <?php readable_text($thread_info['num_follow']); ?> People</em>
+    <em class="faded">followed by <?php readable_text($thread_info['follow_count']); ?> People</em>
     <br />
     <?php if (isset($user->followed_threads[$thread_info['id']])): ?>
     <a class="btn btn-small btn-success" href="<?php echo '/thread/follow?id='.$thread_info['id'].'&type=unfollow&back='.urlencode($_SERVER['REQUEST_URI']); ?>">

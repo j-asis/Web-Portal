@@ -36,13 +36,13 @@ class Comment extends AppModel
         return $comments;
     }
 
-    public static function countAllComments($thread_id)
+    public static function countAll($thread_id)
     {
         $db = DB::conn();
         return (int) $db->value("SELECT COUNT(*) FROM comment WHERE thread_id = ?", array($thread_id));
     }
 
-    public static function getCommentContent($id)
+    public static function getContent($id)
     {
         $db = DB::conn();
         $row = $db->row('SELECT * FROM comment WHERE id = ? ', array($id));
@@ -68,7 +68,7 @@ class Comment extends AppModel
         }
     }
 
-    public static function getCommentInfo($id)
+    public static function getInfo($id)
     {
         $db = DB::conn();
         $row = $db->row('SELECT * FROM comment WHERE id = ? ', array($id));
@@ -89,7 +89,7 @@ class Comment extends AppModel
         $comment_ids = Likes::getTopComments($limit);
         $comments = array();
         foreach ($comment_ids as $comment_id) {
-            $comments[] = self::getCommentInfo($comment_id['id']);
+            $comments[] = self::getInfo($comment_id['id']);
         }
         return $comments;
     }

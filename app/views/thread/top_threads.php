@@ -14,9 +14,9 @@
                 </a><br />
             Date: <?php echo time_difference($thread->date); ?><br />
             
-            <em class="faded"><?php readable_text($thread->num_comment); ?> Comments</em>
+            <em class="faded"><?php readable_text($thread->comment_count); ?> Comments</em>
             <br />
-            <em class="faded">followed by <?php readable_text($thread->num_follow); ?> people</em>
+            <em class="faded">followed by <?php readable_text($thread->follow_count); ?> people</em>
             <br />
             <?php if (isset($user->followed_threads[$thread->id])): ?>
             <a class="btn btn-small btn-success follow-link" href="<?php echo '/thread/follow?id='.$thread->id.'&type=unfollow&back='.urlencode($_SERVER['REQUEST_URI']); ?>">

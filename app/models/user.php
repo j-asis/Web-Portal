@@ -262,7 +262,7 @@ class User extends AppModel
         $db = DB::conn();
         $rows = $db->rows("SELECT * FROM {$table} WHERE user_id = ? ORDER BY created DESC LIMIT 0, 3 ", array($id));
         foreach ($rows as $row) {
-            $recent[] = $table === 'thread' ? new Thread(objectToArray(Thread::getThreadInfo($row['id']))) : new Comment(objectToArray(Comment::getCommentInfo($row['id'])));
+            $recent[] = $table === 'thread' ? new Thread(objectToArray(Thread::getThreadInfo($row['id']))) : new Comment(objectToArray(Comment::getInfo($row['id'])));
         }
         return $recent;
     }

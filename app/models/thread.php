@@ -69,14 +69,14 @@ class Thread extends AppModel
         $db = DB::conn();
         $row = $db->row('SELECT * FROM thread WHERE id = ?', array($id));
         $returns = array(
-            'id'          => $id,
-            'username'    => User::getUserName($row['user_id']),
-            'date'        => $row['created'],
-            'user_id'     => $row['user_id'],
-            'num_comment' => Comment::countAllComments($id),
-            'avatar'      => User::getAvatar($row['user_id']),
-            'num_follow'  => Follow::count($id),
-            'title'       => $row['title'],
+            'id'            => $id,
+            'username'      => User::getUserName($row['user_id']),
+            'date'          => $row['created'],
+            'user_id'       => $row['user_id'],
+            'comment_count' => Comment::countAll($id),
+            'avatar'        => User::getAvatar($row['user_id']),
+            'follow_count'  => Follow::count($id),
+            'title'         => $row['title'],
         );
         return new self($returns);
     }
