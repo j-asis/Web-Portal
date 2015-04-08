@@ -97,28 +97,6 @@ class Thread extends AppModel
         }
     }
 
-    public function top($table)
-    {
-        $top_threads = array();
-        $db = DB::conn();
-        $nums = $db->rows("SELECT COUNT(*) as num FROM {$table} GROUP BY thread_id ORDER BY num DESC");
-        $last = 0;
-        $limit = 0;
-        $max_thread = 10;
-        foreach ($nums as $num) {
-            if ($limit < $max_thread || $last === $num['num']) {
-                $limit++;
-                $last = $num['num'];
-            }
-        }
-        $rows = $db->rows("SELECT thread_id, COUNT(*) as num FROM {$table} GROUP BY thread_id ORDER BY num DESC LIMIT 0, {$limit}");
-        foreach ($rows as $row) {
-            $info = objectToArray(self::getThreadInfo($row['thread_id']));
-            $top_threads[] = new self($info);
-        }
-        return $top_threads;
-    }
-
     public static function userThread($id, $offset, $limit)
     {
         $threads = array();
@@ -136,5 +114,25 @@ class Thread extends AppModel
         $db = DB::conn();
         $value = $db->value('SELECT COUNT(*) FROM thread WHERE user_id = ?', array($user_id));
         return $value;
+    }
+
+    public static function getMostCommented($limit)
+    {
+        $threads = array();
+        $thread_ids = Comment::getTopThreads($limit);
+        foreach ($thread_ids as $thread_id) {
+            $threads[] = self::getThreadInfo($thread_id['id']);
+        }
+        return $threads;
+    }
+
+    public static function getMostFollowed($limit)
+    {
+        $threads = array();
+        $thread_ids = Follow::getTopThreads($limit);
+        foreach ($thread_ids as $thread_id) {
+            $threads[] = self::getThreadInfo($thread_id['id']);
+        }
+        return $threads;
     }
 }

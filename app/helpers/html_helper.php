@@ -47,3 +47,17 @@ function time_difference($date)
     }
     return date("Y-m-d h:ia", $date);
 }
+
+function getLimit($nums = array())
+{
+    $last = 0;
+    $limit = 0;
+    $max_thread = 10;
+    foreach ($nums as $num) {
+        if ($limit < $max_thread || $last === $num['num']) {
+            $limit++;
+            $last = $num['num'];
+        }
+    }
+    return $limit;
+}

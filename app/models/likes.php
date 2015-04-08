@@ -1,6 +1,6 @@
 <?php
 
-class Like extends AppModel
+class Likes extends AppModel
 {
     public static function count($comment_id)
     {
@@ -35,5 +35,17 @@ class Like extends AppModel
         } catch (Exception $e) {
             throw $e;
         }
+    }
+
+    public static function getCommentsByLikeCount()
+    {
+        $db = DB::conn();
+        return (array) $db->rows("SELECT COUNT(*) as num FROM likes GROUP BY comment_id ORDER BY num DESC");
+    }
+
+    public static function getTopComments($limit)
+    {
+        $db = DB::conn();
+        return (array) $db->rows("SELECT comment_id as id, COUNT(*) as num FROM likes GROUP BY comment_id ORDER BY num DESC LIMIT 0, {$limit}");
     }
 }

@@ -6,37 +6,37 @@ class User extends AppModel
     const MAX_STRING_LENGTH = 80;
 
     public $validation = array(
-            'new_username' => array(
-                'length' => array(
-                    'validate_between', self::MIN_STRING_LENGTH, self::MAX_STRING_LENGTH
-                ),
-                'valid' => array(
-                    'validate_username'
-                ),
+        'new_username' => array(
+            'length' => array(
+                'validate_between', self::MIN_STRING_LENGTH, self::MAX_STRING_LENGTH
             ),
-            'new_first_name' => array(
-                'length' => array(
-                    'validate_between', self::MIN_STRING_LENGTH, self::MAX_STRING_LENGTH
-                ),
-                'valid' => array(
-                    'validate_name'
-                ),
+            'valid' => array(
+                'validate_username'
             ),
-            'new_last_name' => array(
-                'length' => array(
-                    'validate_between', self::MIN_STRING_LENGTH, self::MAX_STRING_LENGTH
-                ),
-                'valid' => array(
-                    'validate_name'
-                ),
+        ),
+        'new_first_name' => array(
+            'length' => array(
+                'validate_between', self::MIN_STRING_LENGTH, self::MAX_STRING_LENGTH
             ),
-            'new_email' => array(
-                'length' => array(
-                    'validate_between', self::MIN_STRING_LENGTH, self::MAX_STRING_LENGTH
-                ),
+            'valid' => array(
+                'validate_name'
             ),
+        ),
+        'new_last_name' => array(
+            'length' => array(
+                'validate_between', self::MIN_STRING_LENGTH, self::MAX_STRING_LENGTH
+            ),
+            'valid' => array(
+                'validate_name'
+            ),
+        ),
+        'new_email' => array(
+            'length' => array(
+                'validate_between', self::MIN_STRING_LENGTH, self::MAX_STRING_LENGTH
+            ),
+        ),
 
-        );
+    );
 
     public function __construct($data)
     {

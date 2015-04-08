@@ -139,24 +139,27 @@ class ThreadController extends AppController
         if ($type === '') {
             redirect(url('/'));
         }
+        if ($type === 'comment') {
+            $limit = getLimit(Comment::getThreadsByCommentCount()); 
+        } else {
+            $limit = getLimit(Follow::getThreadsByFollowCount()); 
+        }
         switch ($type) {
             case 'comment':
+                $top_threads = Thread::getMostCommented($limit);
                 $title = 'Most Commented Thread';
-                $sub_title = 'Showing top %d most commented threads';
+                $sub_title = "Showing top {$limit} most commented threads";
                 break;
             case 'follow':
+                $top_threads = Thread::getMostFollowed($limit);
                 $title = 'Most Followed Thread';
-                $sub_title = 'Showing top %d most followed threads';
+                $sub_title = "Showing top {$limit} most followed threads";
                 break;
             default:
                 break;
         }
         $user = new User($_SESSION['username']);
-        $thread = new Thread;
-        $top_threads = $thread->top($type);
-        $sub_title = sprintf($sub_title, count($top_threads));
         $this->set(get_defined_vars());
-        $this->render('top_threads');
     }
 
     public function user_thread()

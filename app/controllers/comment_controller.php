@@ -50,10 +50,10 @@ class CommentController extends AppController
         }
         switch ($type) {
             case 'like':
-                Like::add($comment_id, $user->user_id);
+                Likes::add($comment_id, $user->user_id);
                 break;
             case 'unlike':
-                Like::remove($comment_id, $user->user_id);
+                Likes::remove($comment_id, $user->user_id);
                 break;
             default:
                 redirect(url('/'));
@@ -64,8 +64,9 @@ class CommentController extends AppController
     
     public function most_liked()
     {
+        $limit = getLimit(Likes::getCommentsByLikeCount());
         $user = new User($_SESSION['username']);
-        $comments = Comment::getMostLiked();
+        $comments = Comment::getMostLiked($limit);
         $title = "Most Liked Comment";
         $sub_title = sprintf("Showing top %d most liked comments", count($comments));
         $this->set(get_defined_vars());

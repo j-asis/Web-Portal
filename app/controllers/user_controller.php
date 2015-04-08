@@ -236,6 +236,7 @@ class UserController extends AppController
         }
         $total = count($query_results);
         ${$varname} = $results;
+        $this->set($varname, $results);
         $pages = (int) ceil($total / $per_page);
         $pagination->is_last_page = $pages === $page ? true : false;
         $sub_title = sprintf("Showing %d results found", $total);

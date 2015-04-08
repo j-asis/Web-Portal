@@ -34,4 +34,17 @@ class Follow extends AppModel
             throw $e;
         }
     }
+
+    public static function getTopThreads($limit)
+    {
+        $db = DB::conn();
+        return (array) $db->rows("SELECT thread_id as id, COUNT(*) as num FROM follow GROUP BY thread_id ORDER BY num DESC LIMIT 0, {$limit}");
+    }
+
+    public static function getThreadsByFollowCount()
+    {
+        $db = DB::conn();
+        return (array) $db->rows("SELECT COUNT(*) as num FROM follow GROUP BY thread_id ORDER BY num DESC");
+    }
+
 }
