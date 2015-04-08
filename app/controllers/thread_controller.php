@@ -185,10 +185,10 @@ class ThreadController extends AppController
             'user_id'     => $user->user_id,
             'follow_type' => Param::get('type', ''),
         );
-        $thread = new Thread($params);
+        $follow = new Follow($params);
         $back = Param::get('back', '/');
         try{
-            $thread->follow();
+            $follow->thread();
         } catch(Exception $e) {
             $error = true;
         }

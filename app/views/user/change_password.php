@@ -17,19 +17,19 @@
         <div class="control-group">
             <label class="control-label" for="inputEmail">Old Password</label>
             <div class="controls">
-                <input type="password" name="old_password" placeholder="Old Password">
+                <input type="password" name="old_password" placeholder="Old Password" required>
             </div>
         </div>
         <div class="control-group">
             <label class="control-label" for="inputEmail">New Password</label>
             <div class="controls">
-                <input type="password" name="new_password" placeholder="New Password">
+                <input type="password" name="new_password" placeholder="New Password" required>
             </div>
         </div>
         <div class="control-group">
             <label class="control-label" for="inputEmail">Confirm New Password</label>
             <div class="controls">
-                <input type="password" name="cnew_password" placeholder="Confirm New Password">
+                <input type="password" name="cnew_password" placeholder="Confirm New Password" required>
             </div>
         </div>
         <div class="control-group">

@@ -4,6 +4,9 @@ class RegisterController extends AppController
 {
     public function index()
     {
+        if (isset($_SESSION['username'])) {
+            redirect(url('user/profile'));
+        }
         $check = Param::get('call', false);
         $error = false;
         if ($check) {

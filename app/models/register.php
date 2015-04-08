@@ -16,15 +16,24 @@ class Register extends AppModel
             'length' => array(
                 'validate_between', self::MIN_STRING_LENGTH, self::MAX_STRING_LENGTH
             ),
+            'valid' => array(
+                'validate_username'
+            ),
         ),
         'first_name' => array(
             'length' => array(
                 'validate_between', self::MIN_STRING_LENGTH, self::MAX_STRING_LENGTH
             ),
+            'valid' => array(
+                'validate_name'
+            ),
         ),
         'last_name' => array(
             'length' => array(
                 'validate_between', self::MIN_STRING_LENGTH, self::MAX_STRING_LENGTH
+            ),
+            'valid' => array(
+                'validate_name'
             ),
         ),
         'email' => array(

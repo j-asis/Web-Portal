@@ -12,6 +12,18 @@
         <div><em>Email Already Taken!</em></div>
         <?php endif ?>
 
+        <?php if (!empty($new_user->validation_errors['new_username']['valid'])): ?>
+        <div><em>Username may only consist of letter, number, and characters like _ and .</em></div>
+        <?php endif ?>
+
+        <?php if (!empty($new_user->validation_errors['new_first_name']['valid'])): ?>
+        <div><em>First Name may only consist of letters, space and a hyphen</em></div>
+        <?php endif ?>
+
+        <?php if (!empty($new_user->validation_errors['new_last_name']['valid'])): ?>
+        <div><em>Last Name may only consist of letters, space and a hyphen</em></div>
+        <?php endif ?>
+
         <?php if (!empty($new_user->validation_errors['new_first_name']['length'])): ?>
         <div><em>First Name</em> must be between
             <?php readable_text($new_user->validation['new_first_name']['length'][1]) ?> and
@@ -66,7 +78,7 @@ Avatar : <br />
     <label>Last Name :</label>
     <input type='text' name='last_name' value='<?php echo $user->user_details['last_name']; ?>' />
     <label>Email :</label>
-    <input type='text' name='email' value='<?php echo $user->user_details['email']; ?>' />
+    <input type='email' name='email' value='<?php echo $user->user_details['email']; ?>' />
     <br />
     <input type='hidden' name='update' value='true'>
     <input class="btn btn-success" type='submit' value='update profile' >

@@ -51,9 +51,9 @@ class CommentController extends AppController
             redirect(url('/'));
             return;
         }
-        $comment = new Comment($params);
-        $comment->like();
-        redirect($comment->back);
+        $like = new Like($params);
+        $like->comment();
+        redirect($like->back);
     }
     
     public function most_liked()

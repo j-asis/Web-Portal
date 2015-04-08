@@ -5,7 +5,6 @@
 <?php 
 return;
 endif;
-//Exit and return since we do not need the form
 ?>
 <?php endif; ?>
 
@@ -24,6 +23,16 @@ endif;
     <?php endif ?>
     <?php if (!empty($register->validation_errors['email']['exists'])): ?>
     <div><em>Email Already Registered!</em></div>
+    <?php endif ?>
+    
+    <?php if (!empty($register->validation_errors['username']['valid'])): ?>
+    <div><em>username may only consist of letter, number, and characters like _ and .</em></div>
+    <?php endif ?>
+    <?php if (!empty($register->validation_errors['first_name']['valid'])): ?>
+    <div><em>first name may only consist of letters, space and a hyphen</em></div>
+    <?php endif ?>
+    <?php if (!empty($register->validation_errors['last_name']['valid'])): ?>
+    <div><em>last name may only consist of letters, space and a hyphen</em></div>
     <?php endif ?>
 
     <?php if (!empty($register->validation_errors['password']['length'])): ?>
