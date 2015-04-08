@@ -8,45 +8,31 @@ class Like extends AppModel
         return (int) $db->value('SELECT COUNT(*) FROM likes WHERE comment_id = ?', array($comment_id));
     }
 
-    public function comment()
+    public static function add($comment_id, $user_id)
     {
         $db = DB::conn();
-        $like_id = (int) $db->value('SELECT id FROM likes
-        WHERE user_id = ? AND comment_id = ?', array($this->user_id, $this->comment_id));
-        if ($this->type === 'like' && $like_id === 0) {
-            self::addLike($this->user_id, $this->comment_id);
-        }
-        if ($this->type === 'unlike') {
-            self::removeLike($like_id);
-        }
-    }
-
-    public static function addLike($user_id, $comment_id)
-    {
-        $db = DB::conn();
-        $db->begin();
         $params = array(
             'user_id' => $user_id,
             'comment_id' => $comment_id,
         );
+        $id = (int) $db->value('SELECT id FROM likes WHERE user_id = ? AND comment_id = ?',array($user_id, $comment_id));
+        if ($id !== 0) {
+            return;
+        }
         try {
             $db->insert('likes', $params);
-            $db->commit();
         } catch (Exception $e) {
-            $db->rollback();
             throw $e;
         }
     }
     
-    public static function removeLike($id)
+    public static function remove($comment_id, $user_id)
     {
         $db = DB::conn();
-        $db->begin();
+        $id = (int) $db->value('SELECT id FROM likes WHERE user_id = ? AND comment_id = ?',array($user_id, $comment_id));
         try {
             $db->query('DELETE FROM likes WHERE id = ?', array($id));
-            $db->commit();
         } catch (Exception $e) {
-            $db->rollback();
             throw $e;
         }
     }

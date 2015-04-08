@@ -180,17 +180,23 @@ class ThreadController extends AppController
     public function follow()
     {
         $user = new User($_SESSION['username']);
-        $params = array(
-            'follow_id'   => Param::get('id', 0),
-            'user_id'     => $user->user_id,
-            'follow_type' => Param::get('type', ''),
-        );
-        $follow = new Follow($params);
+        $thread_id = Param::get('id', 0);
         $back = Param::get('back', '/');
-        try{
-            $follow->thread();
-        } catch(Exception $e) {
-            $error = true;
+        $type = Param::get('type', 'follow');
+        if ($thread_id === 0) {
+            redirect(url('/'));
+            return;
+        }
+        switch ($type) {
+            case 'follow':
+                Follow::add($thread_id, $user->user_id);
+                break;
+            case 'unfollow':
+                Follow::remove($thread_id, $user->user_id);
+                break;
+            default:
+                redirect(url('/'));
+                break;
         }
         redirect($back);
     }

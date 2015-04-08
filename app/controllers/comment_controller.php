@@ -41,19 +41,25 @@ class CommentController extends AppController
     public function like()
     {
         $user = new User($_SESSION['username']);
-        $params = array(
-            'comment_id' => Param::get('comment_id', 0),
-            'type'       => Param::get('type', 'like'),
-            'back'       => Param::get('back', '/'),
-            'user_id'    => $user->user_id,
-        );
-        if ($params['comment_id'] === 0) {
+        $type = Param::get('type', 'like');
+        $comment_id = Param::get('comment_id', 0);
+        $back_url = Param::get('back', '/');
+        if ($comment_id === 0) {
             redirect(url('/'));
             return;
         }
-        $like = new Like($params);
-        $like->comment();
-        redirect($like->back);
+        switch ($type) {
+            case 'like':
+                Like::add($comment_id, $user->user_id);
+                break;
+            case 'unlike':
+                Like::remove($comment_id, $user->user_id);
+                break;
+            default:
+                redirect(url('/'));
+                break;
+        }
+        redirect($back_url);
     }
     
     public function most_liked()
