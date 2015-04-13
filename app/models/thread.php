@@ -56,11 +56,6 @@ class Thread extends AppModel
 
     public function create(Comment $comment)
     {
-        $this->validate();
-        $comment->validate();
-        if ($this->hasError() || $comment->hasError()) {
-            throw new ValidationException('invalid thread or comment');
-        }
         $db = DB::conn();
         $db->begin();
         $params = array(
@@ -95,16 +90,10 @@ class Thread extends AppModel
 
     public function editThread()
     {
-        if (!$this->validate()) {
-            throw new ValidationException('invalid comment');
-        }
         $db = DB::conn();
         try {
-            $db->begin();
             $db->update('thread', array('title'=>$this->title), array('id'=>$this->thread_id));
-            $db->commit();
         } catch (Exception $e) {
-            $db->rollback();
             throw $e;
         }
     }

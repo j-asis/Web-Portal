@@ -19,19 +19,21 @@ class RegisterController extends AppController
                 'cpassword'  => Param::get('cpassword', ''),
             );
             $register = new Register($params);
-            $register->validatePassword();
+            if (!($register->password === $register->cpassword)) {
+                $register->validation_errors['password']['match'] = true;
+            }
             if ($register->userExists($register->username)) {
                 $register->validation_errors['username']['exists'] = true;
             }
             if ($register->emailExists($register->email)) {
                 $register->validation_errors['email']['exists'] = true;
             }
-            try {
-                $register->create();
-            } catch (ValidationException $e) {
+            $register->validate();
+            if ($register->hasError()) {                    
                 $error = true;
+            } else {
+                $register->create();
             }
-
         }
         $this->set(get_defined_vars());
         if ($error) {

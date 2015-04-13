@@ -86,33 +86,23 @@ class User extends AppModel
     {
         try {
             $db = DB::conn();
-            $db->begin();
             $db->update('user', array('avatar' => $dir), array('id' => $this->user_id));
-            $db->commit();
         } catch(Exception $e) {
-            $db->rollback();
             throw $e;
         }
     }
 
     public function updateUser()
     {
-        $this->validate();
-        if ($this->hasError()) {
-            throw new ValidationException('invalid Input');
-        }
         try {
             $db = DB::conn();
-            $db->begin();
             $params = array(
                 'username'   => $this->new_username,
                 'first_name' => $this->new_first_name,
                 'last_name'  => $this->new_last_name,
                 'email'      => $this->new_email,
-                );
+            );
             $db->update('user', $params, array('id' => $this->user_id));
-            $db->commit();
-
         } catch(Exception $e) {
             $db->rollback();
             throw $e;
@@ -122,12 +112,9 @@ class User extends AppModel
     public function changePassword()
     {
         try {
-        $db = DB::conn();
-        $db->begin();
-        $db->update('user', array('password' => md5($this->new_password)), array('id' => $this->user_id));
-        $db->commit();
+            $db = DB::conn();
+            $db->update('user', array('password' => md5($this->new_password)), array('id' => $this->user_id));
         } catch (Exception $e) {
-            $db->rollback();
             throw $e;
         }
     }

@@ -30,12 +30,14 @@ class CommentController extends AppController
         }
         if ($check) {
             $comment->body = Param::get('new_comment', '');
-            try {
-                $comment->edit();
-            } catch (ValidationException $e) {
+            if (!$this->validate()) {
                 $comment->error = 'Input Error, Please enter at from 1 to 200 charcters';
-            } catch (Exception $e) {
-                $comment->error = 'Unexpected Error occured';
+            } else {
+                try {
+                    $comment->edit();
+                } catch (Exception $e) {
+                    $comment->error = 'Unexpected Error occured';
+                }
             }
         }
         $this->set(get_defined_vars());

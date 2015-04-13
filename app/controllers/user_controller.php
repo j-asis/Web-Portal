@@ -64,12 +64,15 @@ class UserController extends AppController
         if (!$is_same_email && $email_exists) {
             $new_user->validation_errors['new_email']['exists'] = true;
         }
-        try {
-            $new_user->updateUser();
-        } catch (ValidationException $e) {
+        $new_user->validate();
+        if ($new_user->hasError()) {
             $error = true;
-        } catch (Exception $e) {
-            $db_error = true; 
+        } else {
+            try {
+                $new_user->updateUser();
+            } catch (Exception $e) {
+                $db_error = true; 
+            }
         }
 
         if (!isset($error) && !isset($db_error)) {
@@ -181,11 +184,13 @@ class UserController extends AppController
         }
         $user = new User();
         $user->setInfoByUsername($_SESSION['username']);
-        if (!isset($_FILES['avatar'])) {
-            redirect(url('user/profile'));
-        }
         if (UploadImg::MAX_POST_SIZE < $_SERVER['CONTENT_LENGTH']) {
             $error = "Error! File Size too big! Can only upload 2 Mega Bytes";
+            $this->set(get_defined_vars());
+            return;
+        }
+        if (!isset($_FILES['avatar']) && !isset($error)) {
+            redirect(url('user/profile'));
         }
         if ($_FILES['avatar']['error'] === UploadImg::NO_FILE_UPLOAD_ERROR && !isset($error)) {
             $error = "No File was Selected";

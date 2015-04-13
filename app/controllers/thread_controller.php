@@ -67,10 +67,10 @@ class ThreadController extends AppController
             case Thread::WRITE_END:
                 $comment->user_id = User::getUserId($user->username);
                 $comment->body    = Param::get('body', '');
-                try {
-                    $comment->write($thread);
-                } catch (ValidationException $e) {
+                if (!$comment->validate()) {
                     $page = 'write';
+                } else {
+                    $comment->write($thread);
                 }
                 break;
             default:
@@ -98,10 +98,12 @@ class ThreadController extends AppController
                 $thread->title    = Param::get('title', '');
                 $comment->user_id = User::getUserId($user->username);
                 $comment->body    = Param::get('body', '');
-                try {
-                    $thread->create($comment);
-                } catch (ValidationException $e) {
+                $thread->validate();
+                $comment->validate();
+                if ($thread->hasError() || $comment->hasError()) {
                     $page = 'create';
+                } else {
+                    $thread->create($comment);
                 }
                 break;
             default:
@@ -140,10 +142,11 @@ class ThreadController extends AppController
         }
         if ($check) {
             $thread->title = Param::get('new_thread', '');
+            if (!$thread->validate()) {
+                $thread->error = 'Input Error, Please enter at from 1 to 200 charcters';
+            }
             try {
                 $thread->editThread();
-            } catch (ValidationException $e) {
-                $thread->error = 'Input Error, Please enter at from 1 to 200 charcters';
             } catch (Exception $e) {
                 $thread->error = 'Unexpected Error occured';
             }

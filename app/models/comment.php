@@ -20,9 +20,6 @@ class Comment extends AppModel
 
     public function write($thread)
     {
-        if (!$this->validate()) {
-            throw new ValidationException('invalid comment');
-        }
         $db = DB::conn();
         $db->query('INSERT INTO comment SET thread_id = ?, user_id = ?, body = ?, created = NOW()', array($thread->id, $this->user_id, $this->body));
     }
@@ -60,16 +57,10 @@ class Comment extends AppModel
 
     public function edit()
     {
-        if (!$this->validate()) {
-            throw new ValidationException('invalid comment');
-        }
         $db = DB::conn();
         try {
-            $db->begin();
             $db->update('comment', array('body'=>$this->body), array('id'=>$this->comment_id));
-            $db->commit();
         } catch (Exception $e) {
-            $db->rollback();
             throw $e;
         }
     }
