@@ -4,6 +4,9 @@ class User extends AppModel
 {
     const MIN_STRING_LENGTH = 1;
     const MAX_STRING_LENGTH = 80;
+    const USER_SEARCH_KEY = 'user';
+    const THREAD_SEARCH_KEY = 'thread';
+    const COMMENT_SEARCH_KEY = 'comment';
 
     public $validation = array(
         'new_username' => array(
@@ -43,8 +46,8 @@ class User extends AppModel
         $this->username         = $username;
         $this->user_id          = $this->getUserId($this->username);
         $this->user_details     = objectToArray($this->getUserDetail($this->user_id));
-        $this->followed_threads = $this->followedThreads();
-        $this->liked_comments   = $this->likedComments();
+        $this->followed_threads = Follow::getFollowedByUserId($this->user_id);
+        $this->liked_comments   = Likes::getLikedByUserId($this->user_id);
     }
 
     public static function getUserDetail($id)
@@ -127,127 +130,31 @@ class User extends AppModel
         }
     }
 
-    public function deleteComment($id)
+    public static function deleteById($id)
     {
-        $is_authenticated = false;
+        Thread::deleteByUserId($id);
         $db = DB::conn();
-        $db->begin();
-        $row = $db->row("SELECT * FROM comment WHERE id = ? ", array($id));
-        if ($this->user_id === $row['user_id']) {
-            $is_authenticated = true;
+        try {
+            $db->query('DELETE FROM user WHERE id = ? ', array($id));
+        } catch (Exception $e) {
+            throw $e;
         }
-        if ($is_authenticated) {
-            $db->query("DELETE FROM likes WHERE comment_id = ? ", array($id));
-            $db->query("DELETE FROM comment WHERE id = ? ", array($id));
-            $db->commit();
-            return true;
-        } else {
-            $this->error_message = "Authentication Failed! You are not allowed to delete this Comment!";
-            return false;
-        }
-    }
-
-    public function deleteThread($id)
-    {
-        $is_authenticated = false;
-        $db = DB::conn();
-        $db->begin();
-        $row = $db->row("SELECT * FROM thread WHERE id = ? ", array($id));
-        if ($this->user_id === $row['user_id']) {
-            $is_authenticated = true;
-        }
-        if ($is_authenticated) {
-            $db->query("DELETE FROM follow WHERE thread_id = ? ", array($id));
-            $rows = $db->rows('SELECT * FROM comment WHERE thread_id = ?', array($id));
-            foreach ($rows as $row) {
-                $this->deleteComment($row['id']);
-            }
-            $db->query("DELETE FROM thread WHERE id = ? ", array($id));
-            $db->commit();
-            return true;
-        } else {
-            $this->error_message = "Authentication Failed! You are not allowed to delete this thread!";
-            return false;
-        }
-    }
-
-    public function deleteUser($id)
-    {
-        $is_authenticated = false;
-        $db = DB::conn();
-        $db->begin();
-        $row = $db->row("SELECT * FROM user WHERE id = ? ", array($id));
-        if ($this->user_id === $row['id']) {
-            $is_authenticated = true;
-        }
-        if ($is_authenticated) {
-            $threads = $db->rows("SELECT id FROM thread WHERE user_id = ? ", array($id));
-            foreach ($threads as $thread) {
-                $this->deleteThread($thread['id']);
-            }
-            $db->query("DELETE FROM follow WHERE user_id = ? ", array($id));
-            $db->query("DELETE FROM likes WHERE user_id = ? ", array($id));
-            $db->query("DELETE FROM thread WHERE user_id = ? ", array($id));
-            $db->query("DELETE FROM comment WHERE user_id = ? ", array($id));
-            $db->query("DELETE FROM user WHERE id = ? ", array($id));
-            $db->commit();
-            return true;
-        } else {
-            $this->error_message = "Authentication Failed! You are not allowed to delete this User!";
-            return false;
-        }
-    }
-
-    public function followedThreads()
-    {
-        $followed = array();
-        $db = DB::conn();
-        $rows = $db->rows('SELECT * FROM follow WHERE user_id = ?', array($this->user_id));
-        foreach ($rows as $row) {
-            $followed[$row['thread_id']] = true;
-        }
-        return $followed;
-    }
-
-    public function likedComments()
-    {
-        $liked = array();
-        $db = DB::conn();
-        $rows = $db->rows('SELECT * FROM likes WHERE user_id = ?', array($this->user_id));
-        foreach ($rows as $row) {
-            $liked[$row['comment_id']] = true;
-        }
-        return $liked;
+        return true;
     }
 
     public static function search($type, $query)
     {
         $results = array();
         $query = "%{$query}%";
-        $db = DB::conn();
         switch ($type) {
-            case ('user'):
-                $rows = $db->rows('SELECT * FROM user
-                    WHERE username LIKE ? OR first_name LIKE ? OR last_name LIKE ? OR email LIKE ? ',
-                    array($query, $query, $query, $query) );
-                foreach ($rows as $row) {
-                    $row['avatar'] = empty($row['avatar']) ? '/public_images/default.jpg' : $row['avatar'];
-                    $results[] = $row;
-                }
+            case self::USER_SEARCH_KEY:
+                $results = self::searchByQuery($query);
                 break;
-            case ('thread'):
-                $rows = $db->rows('SELECT * FROM thread WHERE title LIKE ? ', array($query));
-                foreach ($rows as $row) {
-                    $thread_info = objectToArray(Thread::getThreadInfo($row['id']));
-                    $row = array_merge($row, $thread_info);
-                    $results[] = new Thread($row);
-                }
+            case self::THREAD_SEARCH_KEY:
+                $results = Thread::searchByQuery($query);
                 break;
-            case ('comment'):
-                $rows = $db->rows('SELECT * FROM comment WHERE body LIKE ? ', array($query));
-                foreach ($rows as $row) {
-                    $results[] = new Comment(objectToArray(Comment::getCommentInfo($row['id'])));
-                }
+            case self::COMMENT_SEARCH_KEY:
+                $results = Comment::searchByQuery($query);
                 break;
             default:
                 throw new NotFoundException("{$type} is not found");
@@ -256,15 +163,18 @@ class User extends AppModel
         return $results;
     }
     
-    public function getRecent($table, $id)
+    public static function searchByQuery($query)
     {
-        $recent = array();
+        $results = array();
         $db = DB::conn();
-        $rows = $db->rows("SELECT * FROM {$table} WHERE user_id = ? ORDER BY created DESC LIMIT 0, 3 ", array($id));
+        $rows = $db->rows('SELECT * FROM user
+            WHERE username LIKE ? OR first_name LIKE ? OR last_name LIKE ? OR email LIKE ? ',
+            array($query, $query, $query, $query) );
         foreach ($rows as $row) {
-            $recent[] = $table === 'thread' ? new Thread(objectToArray(Thread::getThreadInfo($row['id']))) : new Comment(objectToArray(Comment::getInfo($row['id'])));
+            $row['avatar'] = empty($row['avatar']) ? '/public_images/default.jpg' : $row['avatar'];
+            $results[] = $row;
         }
-        return $recent;
+        return $results;
     }
 
     public static function getAvatar($id)

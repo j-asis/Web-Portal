@@ -21,8 +21,8 @@ class UserController extends AppController
         $home = '/user/profile';
         $user_id = Param::get('user_id', $user->user_id);
         $user_info = objectToArray($user->getUserDetail($user_id));
-        $recent_threads = $user->getRecent('thread', $user_info['id']);
-        $recent_comments = $user->getRecent('comment', $user_info['id']);
+        $recent_threads = Thread::getLatestByUserId($user_info['id']);
+        $recent_comments = Comment::getLatestByUserId($user_info['id']);
         $title = $user_info['username'];
         $this->set(get_defined_vars());
     }
@@ -135,12 +135,12 @@ class UserController extends AppController
         $is_success = false;
         
         if (($type === 'comment') && $confirm === 'true') {
-            $is_success = $user->deleteComment($id);
+            $is_success = Comment::deleteById($id);
             $this->set(get_defined_vars());
             return;
         }
         if (($type === 'thread') && $confirm === 'true') {
-            $is_success = $user->deleteThread($id);
+            $is_success = Thread::deleteById($id);
             $this->set(get_defined_vars());
             return;
         }
@@ -157,7 +157,7 @@ class UserController extends AppController
             }
             $password = Param::get('password', '');
             if ( md5($password) === $user->user_details['password'] ) {
-                $is_success = $user->deleteUser($id);
+                $is_success = User::deleteById($id);
                 $url_back = '/user/logout';
             }
         }

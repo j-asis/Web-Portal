@@ -191,7 +191,8 @@ class ThreadController extends AppController
         if (!isset($_SESSION['username'])) {
             redirect(url('/'));
         }
-        $user = new User($_SESSION['username']);
+        $user = new User;
+        $user->setInfoByUsername($_SESSION['username']);
         $user_id = Param::get('user_id', $user->user_id);
         $url_params = '?user_id='.$user_id.'&';
         $title = $user->username . '\'s Threads';
@@ -212,7 +213,8 @@ class ThreadController extends AppController
         if (!isset($_SESSION['username'])) {
             redirect(url('/'));
         }
-        $user = new User($_SESSION['username']);
+        $user = new User;
+        $user->setInfoByUsername($_SESSION['username']);
         $thread_id = Param::get('id', 0);
         $back = Param::get('back', '/');
         $type = Param::get('type', 'follow');

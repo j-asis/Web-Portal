@@ -105,4 +105,51 @@ class Comment extends AppModel
         $db = DB::conn();
         return (array) $db->rows("SELECT COUNT(*) as num FROM comment GROUP BY thread_id ORDER BY num DESC");
     }
+
+    public static function deleteByThreadId($thread_id)
+    {
+        $db = DB::conn();
+        try {
+            $rows = $db->rows('SELECT * FROM comment WHERE thread_id = ?', array($thread_id));
+            foreach ($rows as $comment) {
+                self::deleteById($comment['id']);
+            }
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
+    public static function deleteById($id)
+    {
+        Likes::deleteByCommentId($id);
+        $db = DB::conn();
+        try {
+            $db->query('DELETE FROM comment WHERE id = ? ', array($id));
+        } catch (Exception $e) {
+            throw $e;
+        }
+        return true;
+    }
+
+    public static function searchByQuery($query)
+    {
+        $results = array();
+        $db = DB::conn();
+        $rows = $db->rows('SELECT * FROM comment WHERE body LIKE ? ', array($query));
+        foreach ($rows as $row) {
+            $results[] = self::getInfo($row['id']);
+        }
+        return $results;
+    }
+
+    public static function getLatestByUserId($user_id)
+    {
+        $recent = array();
+        $db = DB::conn();
+        $rows = $db->rows("SELECT * FROM comment WHERE user_id = ? ORDER BY created DESC LIMIT 0, 3 ", array($user_id));
+        foreach ($rows as $row) {
+            $recent[] = Comment::getInfo($row['id']);
+        }
+        return $recent;
+    }
 }

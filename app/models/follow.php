@@ -47,4 +47,25 @@ class Follow extends AppModel
         return (array) $db->rows("SELECT COUNT(*) as num FROM follow GROUP BY thread_id ORDER BY num DESC");
     }
 
+    public static function deleteByThreadId($thread_id)
+    {
+        $db = DB::conn();
+        try {
+            $db->query('DELETE FROM follow WHERE thread_id = ? ', array($thread_id));
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
+    public static function getFollowedByUserId($user_id)
+    {
+        $followed = array();
+        $db = DB::conn();
+        $rows = $db->rows('SELECT * FROM follow WHERE user_id = ?', array($user_id));
+        foreach ($rows as $row) {
+            $followed[$row['thread_id']] = true;
+        }
+        return $followed;
+    }
+
 }

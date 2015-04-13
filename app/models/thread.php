@@ -135,4 +135,54 @@ class Thread extends AppModel
         }
         return $threads;
     }
+
+    public static function deleteById($id)
+    {
+        Follow::deleteByThreadId($id);
+        Comment::deleteByThreadId($id);
+        $db = DB::conn();
+        try {
+            $db->query('DELETE FROM thread WHERE id = ? ', array($id));
+        } catch (Exception $e) {
+            throw $e;
+        }
+        return true;
+    }
+
+    public static function deleteByUserId($user_id)
+    {
+        $db = DB::conn();
+        try {
+            $rows = $db->rows('SELECT * FROM thread WHERE user_id = ?', array($user_id));
+            foreach ($rows as $thread) {
+                self::deleteById($thread['id']);
+            }
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
+    public static function searchByQuery($query)
+    {
+        $results = array();
+        $db = DB::conn();
+        $rows = $db->rows('SELECT * FROM thread WHERE title LIKE ? ', array($query));
+        foreach ($rows as $row) {
+            $thread_info = objectToArray(Thread::getThreadInfo($row['id']));
+            $row = array_merge($row, $thread_info);
+            $results[] = new Thread($row);
+        }
+        return $results;
+    }
+
+    public static function getLatestByUserId($user_id)
+    {
+        $recent = array();
+        $db = DB::conn();
+        $rows = $db->rows("SELECT * FROM thread WHERE user_id = ? ORDER BY created DESC LIMIT 0, 3 ", array($user_id));
+        foreach ($rows as $row) {
+            $recent[] = Thread::getThreadInfo($row['id']);
+        }
+        return $recent;
+    }
 }

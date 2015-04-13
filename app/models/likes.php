@@ -48,4 +48,25 @@ class Likes extends AppModel
         $db = DB::conn();
         return (array) $db->rows("SELECT comment_id as id, COUNT(*) as num FROM likes GROUP BY comment_id ORDER BY num DESC LIMIT 0, {$limit}");
     }
+
+    public static function deleteByCommentId($comment_id)
+    {
+        $db = DB::conn();
+        try {
+            $db->query('DELETE FROM likes WHERE comment_id = ? ', array($comment_id));
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
+    public static function getLikedByUserId($user_id)
+    {
+        $liked = array();
+        $db = DB::conn();
+        $rows = $db->rows('SELECT * FROM likes WHERE user_id = ?', array($user_id));
+        foreach ($rows as $row) {
+            $liked[$row['comment_id']] = true;
+        }
+        return $liked;
+    }
 }
