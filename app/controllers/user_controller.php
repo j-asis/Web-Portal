@@ -16,7 +16,7 @@ class UserController extends AppController
         if (!isset($_SESSION['username'])) {
             redirect(url('/'));
         }
-        $user = new User;
+        $user = new User();
         $user->setInfoByUsername($_SESSION['username']);
         $home = '/user/profile';
         $user_id = Param::get('user_id', $user->user_id);
@@ -32,7 +32,7 @@ class UserController extends AppController
         if (!isset($_SESSION['username'])) {
             redirect(url('/'));
         }
-        $user = new User;
+        $user = new User();
         $user->setInfoByUsername($_SESSION['username']);
         $update = Param::get('update', false);
         $params = array(
@@ -76,7 +76,8 @@ class UserController extends AppController
         if (!isset($error) && !isset($db_error)) {
             $_SESSION['username'] = $new_user->new_username;
         }
-        $user = new User($_SESSION['username']);
+        $user = new User();
+        $user->setInfoByUsername($_SESSION['username']);
         $this->set(get_defined_vars());
     }
 
@@ -85,7 +86,7 @@ class UserController extends AppController
         if (!isset($_SESSION['username'])) {
             redirect(url('/'));
         }
-        $user = new User;
+        $user = new User();
         $user->setInfoByUsername($_SESSION['username']);
         $check = Param::get('check', false);
         if (!$check) {
@@ -125,7 +126,7 @@ class UserController extends AppController
         if (!isset($_SESSION['username'])) {
             redirect(url('/'));
         }
-        $user = new User;
+        $user = new User();
         $user->setInfoByUsername($_SESSION['username']);
         $type = Param::get('type', '');
         $id = Param::get('id', '');
@@ -169,7 +170,7 @@ class UserController extends AppController
         if (!isset($_SESSION['username'])) {
             redirect(url('/'));
         }
-        $user = new User;
+        $user = new User();
         $user->setInfoByUsername($_SESSION['username']);
         $this->set(get_defined_vars());
     }
@@ -179,7 +180,7 @@ class UserController extends AppController
         if (!isset($_SESSION['username'])) {
             redirect(url('/'));
         }
-        $user = new User;
+        $user = new User();
         $user->setInfoByUsername($_SESSION['username']);
         if (!isset($_FILES['avatar'])) {
             redirect(url('user/profile'));
@@ -229,7 +230,7 @@ class UserController extends AppController
         if (!$type || !$query) {
             redirect(url('user/profile'));
         }
-        $user = new User;
+        $user = new User();
         $user->setInfoByUsername($_SESSION['username']);
         switch ($type) {
             case ('user'):

@@ -7,7 +7,7 @@ class ThreadController extends AppController
         if (!isset($_SESSION['username'])) {
             redirect(url('/'));
         }
-        $user = new User;
+        $user = new User();
         $user->setInfoByUsername($_SESSION['username']);
         $title = 'Most Recent Threads';
         $url_params = '?';
@@ -27,7 +27,7 @@ class ThreadController extends AppController
         if (!isset($_SESSION['username'])) {
             redirect(url('/'));
         }
-        $user = new User;
+        $user = new User();
         $user->setInfoByUsername($_SESSION['username']);
         try {
             $thread = Thread::get(Param::get('thread_id', 0));
@@ -41,7 +41,7 @@ class ThreadController extends AppController
 
         $thread_id = Param::get('thread_id', 0);
         $thread_info = objectToArray($thread->getThreadInfo($thread_id));
-        $comment = new Comment;
+        $comment = new Comment();
         $comment->id = $thread_id;
         $comment_page = Param::get('comment_page', 1);
         $per_page = 5;
@@ -58,10 +58,10 @@ class ThreadController extends AppController
         if (!isset($_SESSION['username'])) {
             redirect(url('/'));
         }
-        $user = new User;
+        $user = new User();
         $user->setInfoByUsername($_SESSION['username']);
         $thread = Thread::get(Param::get('thread_id', 0));
-        $comment = new Comment;
+        $comment = new Comment();
         $page = Param::get('page_next', 'write');
         switch ($page) {
             case 'write':
@@ -88,10 +88,10 @@ class ThreadController extends AppController
         if (!isset($_SESSION['username'])) {
             redirect(url('/'));
         }
-        $user = new User;
+        $user = new User();
         $user->setInfoByUsername($_SESSION['username']);
-        $thread = new Thread;
-        $comment = new Comment;
+        $thread = new Thread();
+        $comment = new Comment();
         $page = Param::get('page_next', 'create');
         switch ($page) {
             case 'create':
@@ -121,7 +121,7 @@ class ThreadController extends AppController
         }
         $check = Param::get('check', false);
         $title = " | Edit thread";
-        $user = new User;
+        $user = new User();
         $user->setInfoByUsername($_SESSION['username']);
         $params = array(
             'thread_id' => Param::get('id', 0),
@@ -181,7 +181,7 @@ class ThreadController extends AppController
             default:
                 break;
         }
-        $user = new User;
+        $user = new User();
         $user->setInfoByUsername($_SESSION['username']);
         $this->set(get_defined_vars());
     }
@@ -191,7 +191,7 @@ class ThreadController extends AppController
         if (!isset($_SESSION['username'])) {
             redirect(url('/'));
         }
-        $user = new User;
+        $user = new User();
         $user->setInfoByUsername($_SESSION['username']);
         $user_id = Param::get('user_id', $user->user_id);
         $url_params = '?user_id='.$user_id.'&';
@@ -213,7 +213,7 @@ class ThreadController extends AppController
         if (!isset($_SESSION['username'])) {
             redirect(url('/'));
         }
-        $user = new User;
+        $user = new User();
         $user->setInfoByUsername($_SESSION['username']);
         $thread_id = Param::get('id', 0);
         $back = Param::get('back', '/');

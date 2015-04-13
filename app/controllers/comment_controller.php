@@ -7,7 +7,7 @@ class CommentController extends AppController
         if (!isset($_SESSION['username'])) {
             redirect(url('/'));
         }
-        $user = new User;
+        $user = new User();
         $user->setInfoByUsername($_SESSION['username']);
         $check = Param::get('check', false);
         $title = " | Edit comment";
@@ -46,7 +46,7 @@ class CommentController extends AppController
         if (!isset($_SESSION['username'])) {
             redirect(url('/'));
         }
-        $user = new User;
+        $user = new User();
         $user->setInfoByUsername($_SESSION['username']);
         $type = Param::get('type', 'like');
         $comment_id = Param::get('comment_id', 0);
@@ -75,7 +75,7 @@ class CommentController extends AppController
             redirect(url('/'));
         }
         $limit = getLimit(Likes::getCommentsByLikeCount());
-        $user = new User;
+        $user = new User();
         $user->setInfoByUsername($_SESSION['username']);
         $comments = Comment::getMostLiked($limit);
         $title = "Most Liked Comment";
