@@ -3,6 +3,12 @@ class Comment extends AppModel
 {
     const MIN_STRING_LENGTH = 1;
     const MAX_STRING_LENGTH = 200;
+    const MAX_PER_PAGE = 5;
+    const DEFAULT_PAGE = 1;
+    const ERROR_COMMENT_ID = 0;
+    
+    const LIKE = 'like';
+    const UNLIKE = 'unlike';
     
     public $validation = array(
         'body' => array(
@@ -134,6 +140,7 @@ class Comment extends AppModel
     public static function searchByQuery($query)
     {
         $results = array();
+        $query = "%{$query}%";
         $db = DB::conn();
         $rows = $db->rows('SELECT * FROM comment WHERE body LIKE ? ', array($query));
         foreach ($rows as $row) {

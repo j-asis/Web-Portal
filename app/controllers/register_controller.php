@@ -11,12 +11,12 @@ class RegisterController extends AppController
         $error = false;
         if ($check) {
             $params = array(
-                'username'   => Param::get('username'),
-                'first_name' => Param::get('first_name'),
-                'last_name'  => Param::get('last_name'),
-                'email'      => Param::get('email'),
-                'password'   => Param::get('password'),
-                'cpassword'  => Param::get('cpassword'),
+                'username'   => Param::get('username', ''),
+                'first_name' => Param::get('first_name', ''),
+                'last_name'  => Param::get('last_name', ''),
+                'email'      => Param::get('email', ''),
+                'password'   => Param::get('password', ''),
+                'cpassword'  => Param::get('cpassword', ''),
             );
             $register = new Register($params);
             $register->validatePassword();

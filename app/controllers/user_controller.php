@@ -2,7 +2,6 @@
 
 class UserController extends AppController 
 {
-    const MAX_POST_SIZE = 8000000;
 
     public function logout()
     {
@@ -185,13 +184,13 @@ class UserController extends AppController
         if (!isset($_FILES['avatar'])) {
             redirect(url('user/profile'));
         }
-        if (self::MAX_POST_SIZE < $_SERVER['CONTENT_LENGTH']) {
+        if (UploadImg::MAX_POST_SIZE < $_SERVER['CONTENT_LENGTH']) {
             $error = "Error! File Size too big! Can only upload 2 Mega Bytes";
         }
-        if ($_FILES['avatar']['error'] === 4 && !isset($error)) {
+        if ($_FILES['avatar']['error'] === UploadImg::NO_FILE_UPLOAD_ERROR && !isset($error)) {
             $error = "No File was Selected";
         }
-        if ($_FILES['avatar']['error'] > 0 && !isset($error)) {
+        if ($_FILES['avatar']['error'] > UploadImg::NO_ERROR && !isset($error)) {
             $error = "Upload Error Occured";
         }
         if (isset($error)) {
@@ -233,18 +232,20 @@ class UserController extends AppController
         $user = new User();
         $user->setInfoByUsername($_SESSION['username']);
         switch ($type) {
-            case ('user'):
+            case User::USER_SEARCH_KEY:
                 $render_page = '/user/search';
                 $varname = 'query_results';
+                $query_results = User::searchByQuery($query);
                 break;
-            case ('thread'):
+            case User::THREAD_SEARCH_KEY:
                 $render_page = '/thread/index';
                 $varname = 'threads';
+                $query_results = Thread::searchByQuery($query);
                 break;
-            case ('comment'):
-                
+            case User::COMMENT_SEARCH_KEY:
                 $render_page = '/comment/view';
                 $varname = 'comments';
+                $query_results = Comment::searchByQuery($query);
                 break;
             default:
                 redirect(url('user/profile'));
@@ -252,8 +253,7 @@ class UserController extends AppController
         }
         $title = sprintf("Search for '%s' in %s", $query, $type);
         $url_params = "?type={$type}&query={$query}";
-        $query_results = $user->search($type, $query);
-        $page = Param::get('page', 1);
+        $page = Param::get('page', User::DEFAULT_SEARCH_PAGE);
         $page = (int) $page;
         $per_page = 5;
         $pagination = new SimplePagination($page, $per_page);

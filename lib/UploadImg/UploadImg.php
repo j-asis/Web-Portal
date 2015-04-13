@@ -3,6 +3,9 @@
 class UploadImg
 {
     const MAX_FILE_SIZE = 2000000;
+    const MAX_POST_SIZE = 8000000;
+    const NO_FILE_UPLOAD_ERROR = 4;
+    const NO_ERROR = 0;
 
     public function __construct($file)
     {

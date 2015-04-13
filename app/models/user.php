@@ -4,6 +4,8 @@ class User extends AppModel
 {
     const MIN_STRING_LENGTH = 1;
     const MAX_STRING_LENGTH = 80;
+    const DEFAULT_SEARCH_PAGE = 1;
+
     const USER_SEARCH_KEY = 'user';
     const THREAD_SEARCH_KEY = 'thread';
     const COMMENT_SEARCH_KEY = 'comment';
@@ -141,31 +143,11 @@ class User extends AppModel
         }
         return true;
     }
-
-    public static function search($type, $query)
-    {
-        $results = array();
-        $query = "%{$query}%";
-        switch ($type) {
-            case self::USER_SEARCH_KEY:
-                $results = self::searchByQuery($query);
-                break;
-            case self::THREAD_SEARCH_KEY:
-                $results = Thread::searchByQuery($query);
-                break;
-            case self::COMMENT_SEARCH_KEY:
-                $results = Comment::searchByQuery($query);
-                break;
-            default:
-                throw new NotFoundException("{$type} is not found");
-                break;
-        }
-        return $results;
-    }
     
     public static function searchByQuery($query)
     {
         $results = array();
+        $query = "%{$query}%";
         $db = DB::conn();
         $rows = $db->rows('SELECT * FROM user
             WHERE username LIKE ? OR first_name LIKE ? OR last_name LIKE ? OR email LIKE ? ',

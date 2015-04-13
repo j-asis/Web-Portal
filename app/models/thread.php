@@ -4,6 +4,18 @@ class Thread extends AppModel
 {
     const MIN_STRING_LENGTH = 1;
     const MAX_STRING_LENGTH = 80;
+    const MAX_PER_PAGE = 5;
+    const DEFAULT_PAGE = 1;
+    const ERROR_THREAD_ID = 0;
+
+    const WRITE = 'write';
+    const WRITE_END = 'write_end';
+    const CREATE = 'create';
+    const CREATE_END = 'create_end';
+    const TOP_COMMENTED = 'comment';
+    const TOP_FOLLOWED = 'follow';
+    const FOLLOW = 'follow';
+    const UNFOLLOW = 'unfollow';
 
     public $validation = array(
        'title' => array(
@@ -165,6 +177,7 @@ class Thread extends AppModel
     public static function searchByQuery($query)
     {
         $results = array();
+        $query = "%{$query}%";
         $db = DB::conn();
         $rows = $db->rows('SELECT * FROM thread WHERE title LIKE ? ', array($query));
         foreach ($rows as $row) {

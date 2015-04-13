@@ -17,7 +17,7 @@ class CommentController extends AppController
             'user_id'    => $user->user_id,
         );
         $comment = new Comment($params);
-        $comment_content = Comment::getContent(Param::get('id', 0));
+        $comment_content = Comment::getContent(Param::get('id', Comment::ERROR_COMMENT_ID));
         if (isset($comment_content->error)) {
             $comment->error = $comment_content->error;
             $this->set(get_defined_vars());
@@ -49,17 +49,17 @@ class CommentController extends AppController
         $user = new User();
         $user->setInfoByUsername($_SESSION['username']);
         $type = Param::get('type', 'like');
-        $comment_id = Param::get('comment_id', 0);
+        $comment_id = Param::get('comment_id', Comment::ERROR_COMMENT_ID);
         $back_url = Param::get('back', '/');
         if ($comment_id === 0) {
             redirect(url('/'));
             return;
         }
         switch ($type) {
-            case 'like':
+            case Comment::LIKE:
                 Likes::add($comment_id, $user->user_id);
                 break;
-            case 'unlike':
+            case Comment::UNLIKE:
                 Likes::remove($comment_id, $user->user_id);
                 break;
             default:

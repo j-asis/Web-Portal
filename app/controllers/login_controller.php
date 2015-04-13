@@ -9,8 +9,8 @@ class LoginController extends AppController
         $message = 'Welcome, please log in';
         if ($check) {
             $params = array(
-                'username' => Param::get('username'),
-                'password' => Param::get('password'),
+                'username' => Param::get('username', ''),
+                'password' => Param::get('password', ''),
                 'error'    => false,
             );
             $login = new Login($params);
