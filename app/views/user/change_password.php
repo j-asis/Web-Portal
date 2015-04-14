@@ -29,7 +29,7 @@
         <div class="control-group">
             <label class="control-label" for="inputEmail">Confirm New Password</label>
             <div class="controls">
-                <input type="password" name="cnew_password" placeholder="Confirm New Password" required>
+                <input type="password" name="confirm_new_password" placeholder="Confirm New Password" required>
             </div>
         </div>
         <div class="control-group">

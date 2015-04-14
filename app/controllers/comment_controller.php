@@ -30,7 +30,7 @@ class CommentController extends AppController
         }
         if ($check) {
             $comment->body = Param::get('new_comment', '');
-            if (!$this->validate()) {
+            if (!$comment->validate()) {
                 $comment->error = 'Input Error, Please enter at from 1 to 200 charcters';
             } else {
                 try {

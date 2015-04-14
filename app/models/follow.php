@@ -58,6 +58,16 @@ class Follow extends AppModel
         }
     }
 
+    public static function deleteByUserId($user_id)
+    {
+        $db = DB::conn();
+        try {
+            $db->query('DELETE FROM follow WHERE user_id = ? ', array($user_id));
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
     public static function getFollowedByUserId($user_id)
     {
         $followed = array();

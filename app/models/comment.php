@@ -118,6 +118,20 @@ class Comment extends AppModel
         }
     }
 
+    public static function deleteByUserId($user_id)
+    {
+        $db = DB::conn();
+        $rows = $db->rows('SELECT id FROM comment WHERE user_id = ?', array($user_id));
+        foreach ($rows as $comment) {
+            Likes::deleteByCommentId($comment['id']);
+        }
+        try {
+            $db->query('DELETE FROM comment WHERE user_id = ? ', array($user_id));
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
     public static function deleteById($id)
     {
         Likes::deleteByCommentId($id);

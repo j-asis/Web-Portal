@@ -82,11 +82,11 @@ class User extends AppModel
         return $row['id'];
     }
 
-    public function saveAvatar($dir)
+    public function saveAvatar($directory)
     {
         try {
             $db = DB::conn();
-            $db->update('user', array('avatar' => $dir), array('id' => $this->user_id));
+            $db->update('user', array('avatar' => $directory), array('id' => $this->user_id));
         } catch(Exception $e) {
             throw $e;
         }
@@ -121,6 +121,9 @@ class User extends AppModel
 
     public static function deleteById($id)
     {
+        Follow::deleteByUserId($id);
+        Likes::deleteByUserId($id);
+        Comment::deleteByUserId($id);
         Thread::deleteByUserId($id);
         $db = DB::conn();
         try {

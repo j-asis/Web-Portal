@@ -60,6 +60,16 @@ class Likes extends AppModel
         }
     }
 
+    public static function deleteByUserId($user_id)
+    {
+        $db = DB::conn();
+        try {
+            $db->query('DELETE FROM likes WHERE user_id = ? ', array($user_id));
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
     public static function getLikedByUserId($user_id)
     {
         $liked = array();

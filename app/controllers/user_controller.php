@@ -97,19 +97,19 @@ class UserController extends AppController
         }
         $password = Param::get('old_password', '');
         $new_password = Param::get('new_password', '');
-        $cnew_password = Param::get('cnew_password', '');
+        $confirm_new_password = Param::get('confirm_new_password', '');
 
         if (md5($password) !== $user->user_details['password']) {
             $error_message = "Wrong Password!";
             $this->set(get_defined_vars());
             return;
         }
-        if ($new_password === '' || $cnew_password === '') {
+        if ($new_password === '' || $confirm_new_password === '') {
             $error_message = "Please enter new password";
             $this->set(get_defined_vars());
             return;
         }
-        if ($new_password === $cnew_password) {
+        if ($new_password === $confirm_new_password) {
             $user->new_password = $new_password;
             try {
                 $user->changePassword();
