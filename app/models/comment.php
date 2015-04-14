@@ -70,7 +70,7 @@ class Comment extends AppModel
     {
         $db = DB::conn();
         $row = $db->row('SELECT * FROM comment WHERE id = ? ', array($id));
-        $user_detail = objectToArray(User::getUserDetail($row['user_id']));
+        $user_detail = objectToArray(User::getInfoById($row['user_id']));
         $like_count = Likes::count($row['id']);
         $returns = array(
             'username' => $user_detail['username'],

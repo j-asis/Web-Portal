@@ -39,7 +39,7 @@ class ThreadController extends AppController
         }
 
         $thread_id = Param::get('thread_id', Thread::ERROR_THREAD_ID);
-        $thread_info = objectToArray($thread->getThreadInfo($thread_id));
+        $thread_info = objectToArray($thread->getInfoById($thread_id));
         $comment = new Comment();
         $comment->id = $thread_id;
         $comment_page = Param::get('comment_page', Comment::DEFAULT_PAGE);
@@ -146,7 +146,7 @@ class ThreadController extends AppController
                 $thread->error = 'Input Error, Please enter at from 1 to 200 charcters';
             }
             try {
-                $thread->editThread();
+                $thread->edit();
             } catch (Exception $e) {
                 $thread->error = 'Unexpected Error occured';
             }
@@ -199,7 +199,7 @@ class ThreadController extends AppController
         $title = $user->username . '\'s Threads';
         $page = Param::get('page', Thread::DEFAULT_PAGE);
         $pagination = new SimplePagination($page, Thread::MAX_PER_PAGE);
-        $threads = Thread::userThread($user_id, $pagination->start_index - 1, $pagination->count + 1);
+        $threads = Thread::getByUserId($user_id, $pagination->start_index - 1, $pagination->count + 1);
         $pagination->checkLastPage($threads);
         $total = Thread::countByUser($user_id);
         $pages = ceil($total / Thread::MAX_PER_PAGE);

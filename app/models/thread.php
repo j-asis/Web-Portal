@@ -33,7 +33,7 @@ class Thread extends AppModel
         $limit = (int) $limit;
         $rows = $db->rows("SELECT * FROM thread ORDER BY created DESC LIMIT {$offset}, {$limit}");
         foreach ($rows as $row) {
-            $thread_info = objectToArray(self::getThreadInfo($row['id']));
+            $thread_info = objectToArray(self::getInfoById($row['id']));
             $row = array_merge($row, $thread_info);
             $threads[] = new self($row);
         }
@@ -70,7 +70,7 @@ class Thread extends AppModel
         $db->commit();
     }
 
-    public static function getThreadInfo($id = NULL)
+    public static function getInfoById($id = NULL)
     {
         if (empty($id)) {
             return false;
@@ -90,7 +90,7 @@ class Thread extends AppModel
         return new self($returns);
     }
 
-    public function editThread()
+    public function edit()
     {
         $db = DB::conn();
         try {
@@ -100,7 +100,7 @@ class Thread extends AppModel
         }
     }
 
-    public static function userThread($id, $offset, $limit)
+    public static function getByUserId($id, $offset, $limit)
     {
         $threads = array();
         $db = DB::conn();
@@ -108,7 +108,7 @@ class Thread extends AppModel
         $limit = (int) $limit;
         $rows = $db->rows("SELECT * FROM thread WHERE user_id = ? ORDER BY created DESC LIMIT {$offset}, {$limit}", array($id));
         foreach ($rows as $row) {
-            $thread_info = objectToArray(self::getThreadInfo($row['id']));
+            $thread_info = objectToArray(self::getInfoById($row['id']));
             $threads[] = new self(array_merge($row,$thread_info));
         }
         return $threads;
@@ -126,7 +126,7 @@ class Thread extends AppModel
         $threads = array();
         $thread_ids = Comment::getTopThreads($limit);
         foreach ($thread_ids as $thread_id) {
-            $threads[] = self::getThreadInfo($thread_id['id']);
+            $threads[] = self::getInfoById($thread_id['id']);
         }
         return $threads;
     }
@@ -136,7 +136,7 @@ class Thread extends AppModel
         $threads = array();
         $thread_ids = Follow::getTopThreads($limit);
         foreach ($thread_ids as $thread_id) {
-            $threads[] = self::getThreadInfo($thread_id['id']);
+            $threads[] = self::getInfoById($thread_id['id']);
         }
         return $threads;
     }
@@ -174,9 +174,9 @@ class Thread extends AppModel
         $db = DB::conn();
         $rows = $db->rows('SELECT * FROM thread WHERE title LIKE ? ', array($query));
         foreach ($rows as $row) {
-            $thread_info = objectToArray(Thread::getThreadInfo($row['id']));
+            $thread_info = objectToArray(self::getInfoById($row['id']));
             $row = array_merge($row, $thread_info);
-            $results[] = new Thread($row);
+            $results[] = new self($row);
         }
         return $results;
     }
@@ -187,7 +187,7 @@ class Thread extends AppModel
         $db = DB::conn();
         $rows = $db->rows("SELECT * FROM thread WHERE user_id = ? ORDER BY created DESC LIMIT 0, 3 ", array($user_id));
         foreach ($rows as $row) {
-            $recent[] = Thread::getThreadInfo($row['id']);
+            $recent[] = self::getInfoById($row['id']);
         }
         return $recent;
     }

@@ -19,7 +19,7 @@ class UserController extends AppController
         $user->setInfoByUsername($_SESSION['username']);
         $home = '/user/profile';
         $user_id = Param::get('user_id', $user->user_id);
-        $user_info = objectToArray($user->getUserDetail($user_id));
+        $user_info = objectToArray($user->getInfoById($user_id));
         $recent_threads = Thread::getLatestByUserId($user_info['id']);
         $recent_comments = Comment::getLatestByUserId($user_info['id']);
         $title = $user_info['username'];
@@ -69,7 +69,7 @@ class UserController extends AppController
             $error = true;
         } else {
             try {
-                $new_user->updateUser();
+                $new_user->update();
             } catch (Exception $e) {
                 $db_error = true; 
             }

@@ -16,7 +16,7 @@ class LoginController extends AppController
             $login = new Login($params);
             try {
                 $login->checkInput();
-                $login->loginAction();
+                $login->accept();
             } catch (ValidationException $e) {
                 $error = true;
             } catch (RecordNotFoundException $e) {

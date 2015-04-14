@@ -47,12 +47,12 @@ class User extends AppModel
     {
         $this->username         = $username;
         $this->user_id          = $this->getUserId($this->username);
-        $this->user_details     = objectToArray($this->getUserDetail($this->user_id));
+        $this->user_details     = objectToArray($this->getInfoById($this->user_id));
         $this->followed_threads = Follow::getFollowedByUserId($this->user_id);
         $this->liked_comments   = Likes::getLikedByUserId($this->user_id);
     }
 
-    public static function getUserDetail($id)
+    public static function getInfoById($id)
     {
         try {
             $db = DB::conn();
@@ -68,7 +68,7 @@ class User extends AppModel
 
     public static function getUserName($user_id)
     {
-        $data = self::getUserDetail($user_id);
+        $data = self::getInfoById($user_id);
         return $data->username;
     }
 
@@ -92,7 +92,7 @@ class User extends AppModel
         }
     }
 
-    public function updateUser()
+    public function update()
     {
         try {
             $db = DB::conn();

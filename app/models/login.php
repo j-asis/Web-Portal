@@ -27,7 +27,7 @@ class Login extends AppModel
         }
     }
 
-    public function loginAction()
+    public function accept()
     {
         $db = DB::conn();
         $db->begin();
