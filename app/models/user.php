@@ -104,7 +104,6 @@ class User extends AppModel
             );
             $db->update('user', $params, array('id' => $this->user_id));
         } catch(Exception $e) {
-            $db->rollback();
             throw $e;
         }
     }
