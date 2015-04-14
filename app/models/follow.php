@@ -38,6 +38,7 @@ class Follow extends AppModel
     public static function getTopThreads($limit)
     {
         $db = DB::conn();
+        $limit = (int) $limit;
         return (array) $db->rows("SELECT thread_id as id, COUNT(*) as num FROM follow GROUP BY thread_id ORDER BY num DESC LIMIT 0, {$limit}");
     }
 

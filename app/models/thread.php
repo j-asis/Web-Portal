@@ -29,6 +29,8 @@ class Thread extends AppModel
     {
         $threads = array();
         $db = DB::conn();
+        $offset = (int) $offset;
+        $limit = (int) $limit;
         $rows = $db->rows("SELECT * FROM thread ORDER BY created DESC LIMIT {$offset}, {$limit}");
         foreach ($rows as $row) {
             $thread_info = objectToArray(self::getThreadInfo($row['id']));
@@ -102,6 +104,8 @@ class Thread extends AppModel
     {
         $threads = array();
         $db = DB::conn();
+        $offset = (int) $offset;
+        $limit = (int) $limit;
         $rows = $db->rows("SELECT * FROM thread WHERE user_id = ? ORDER BY created DESC LIMIT {$offset}, {$limit}", array($id));
         foreach ($rows as $row) {
             $thread_info = objectToArray(self::getThreadInfo($row['id']));

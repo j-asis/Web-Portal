@@ -28,8 +28,9 @@ class Comment extends AppModel
     {
         $comments = array();
         $db = DB::conn();
-        $query = sprintf("SELECT * FROM comment WHERE thread_id = ? ORDER BY created DESC LIMIT %d, %d", $offset, $limit);
-        $rows = $db->rows($query, array($id));
+        $offset = (int) $offset;
+        $limit = (int) $limit;
+        $rows = $db->rows("SELECT * FROM comment WHERE thread_id = ? ORDER BY created DESC LIMIT {$offset}, {$limit}", array($id));
         foreach ($rows as $row) {
             $row['username'] = User::getUserName($row['user_id']);
             $row['avatar'] = User::getAvatar($row['user_id']);
@@ -94,6 +95,7 @@ class Comment extends AppModel
     public static function getTopThreads($limit)
     {
         $db = DB::conn();
+        $limit = (int) $limit;
         return (array) $db->rows("SELECT thread_id as id, COUNT(*) as num FROM comment GROUP BY thread_id ORDER BY num DESC LIMIT 0, {$limit}");
     }
 

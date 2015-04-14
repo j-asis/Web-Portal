@@ -37,36 +37,36 @@ endif;
 
     <?php if (!empty($register->validation_errors['password']['length'])): ?>
     <div><em>Password</em> must be between
-        <?php $register->validation['password']['length'][1] ?> and
-        <?php $register->validation['password']['length'][2] ?> characters in length.
+        <?php echo $register->validation['password']['length'][1] ?> and
+        <?php echo $register->validation['password']['length'][2] ?> characters in length.
     </div>
     <?php endif ?>
 
     <?php if (!empty($register->validation_errors['first_name']['length'])): ?>
     <div><em>First Name</em> must be between
-        <?php $register->validation['first_name']['length'][1] ?> and
-        <?php $register->validation['first_name']['length'][2] ?> characters in length.
+        <?php echo $register->validation['first_name']['length'][1] ?> and
+        <?php echo $register->validation['first_name']['length'][2] ?> characters in length.
     </div>
     <?php endif ?>
 
     <?php if (!empty($register->validation_errors['last_name']['length'])): ?>
     <div><em>Last Name</em> must be between
-        <?php $register->validation['last_name']['length'][1] ?> and
-        <?php $register->validation['last_name']['length'][2] ?> characters in length.
+        <?php echo $register->validation['last_name']['length'][1] ?> and
+        <?php echo $register->validation['last_name']['length'][2] ?> characters in length.
     </div>
     <?php endif ?>
 
     <?php if (!empty($register->validation_errors['username']['length'])): ?>
     <div><em>Username</em> must be between
-        <?php $register->validation['username']['length'][1] ?> and
-        <?php $register->validation['username']['length'][2] ?> characters in length.
+        <?php echo $register->validation['username']['length'][1] ?> and
+        <?php echo $register->validation['username']['length'][2] ?> characters in length.
     </div>
     <?php endif ?>
 
     <?php if (!empty($register->validation_errors['email']['length'])): ?>
     <div><em>Email</em> must be between
-        <?php $register->validation['email']['length'][1] ?> and
-        <?php $register->validation['email']['length'][2] ?> characters in length.
+        <?php echo $register->validation['email']['length'][1] ?> and
+        <?php echo $register->validation['email']['length'][2] ?> characters in length.
     </div>
     <?php endif ?>
 <?php endif ?>

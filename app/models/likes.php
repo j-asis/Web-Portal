@@ -46,6 +46,7 @@ class Likes extends AppModel
     public static function getTopComments($limit)
     {
         $db = DB::conn();
+        $limit = (int) $limit;
         return (array) $db->rows("SELECT comment_id as id, COUNT(*) as num FROM likes GROUP BY comment_id ORDER BY num DESC LIMIT 0, {$limit}");
     }
 
