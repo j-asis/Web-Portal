@@ -2,14 +2,14 @@
 
 <?php if(!empty($comment->validation_errors['comment_id']['exists'])): ?>
 <div class="alert alert-danger">
-    <h4 class="alert-heading"><?php echo $comment->validation_errors['comment_id']['exists']; ?></h4>
+    <h4 class="alert-heading">Comment does not Exists!</h4>
         return to <a href="/">home page</a><br />
 </div>
 <?php endif ?>
 
 <?php if(!empty($comment->validation_errors['authenticate']['valid'])): ?>
 <div class="alert alert-danger">
-    <h4 class="alert-heading"><?php echo $comment->validation_errors['authenticate']['valid']; ?></h4>
+    <h4 class="alert-heading">Cannot edit other user's comment</h4>
         return to <a href="/">home page</a><br />
 </div>
 <?php

@@ -2,14 +2,14 @@
 
 <?php if(!empty($thread->validation_errors['thread_id']['exists'])): ?>
 <div class="alert alert-danger">
-    <h4 class="alert-heading"><?php echo $thread->validation_errors['thread_id']['exists']; ?></h4>
+    <h4 class="alert-heading">Thread does not Exists!</h4>
         return to <a href="/">home page</a><br />
 </div>
 <?php endif ?>
 
 <?php if(!empty($thread->validation_errors['authenticate']['valid'])): ?>
 <div class="alert alert-danger">
-    <h4 class="alert-heading"><?php echo $thread->validation_errors['authenticate']['valid']; ?></h4>
+    <h4 class="alert-heading">Cannot edit other user's thread</h4>
         return to <a href="/">home page</a><br />
 </div>
 <?php

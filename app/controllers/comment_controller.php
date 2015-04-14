@@ -21,12 +21,12 @@ class CommentController extends AppController
         try {
             $comment_content = Comment::getContent(Param::get('id', Comment::ERROR_COMMENT_ID));
         } catch (CommentNotFoundException $e) {
-            $comment->validation_errors['comment_id']['exists'] = 'Comment does not Exists!';
+            $comment->validation_errors['comment_id']['exists'] = true;
             $this->set(get_defined_vars());
             return;
         }
         if ($comment_content->user_id !== $user->user_id) {
-            $comment->validation_errors['authenticate']['valid'] = 'Cannot edit other user\'s comment';
+            $comment->validation_errors['authenticate']['valid'] = true;
             $this->set(get_defined_vars());
             return;
         }
