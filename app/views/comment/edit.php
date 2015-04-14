@@ -1,14 +1,19 @@
 <h1>Edit Comment</h1>
 
-<?php if (isset($comment->error)): ?>
+<?php if(!empty($comment->validation_errors['comment_id']['exists'])): ?>
 <div class="alert alert-danger">
-    <h4 class="alert-heading"><?php echo $comment->error; ?></h4>
+    <h4 class="alert-heading"><?php echo $comment->validation_errors['comment_id']['exists']; ?></h4>
+        return to <a href="/">home page</a><br />
+</div>
+<?php endif ?>
+
+<?php if(!empty($comment->validation_errors['authenticate']['valid'])): ?>
+<div class="alert alert-danger">
+    <h4 class="alert-heading"><?php echo $comment->validation_errors['authenticate']['valid']; ?></h4>
         return to <a href="/">home page</a><br />
 </div>
 <?php
-    if (!preg_match('/Input Error/', $comment->error)):
-        return;
-    endif;
+return;
 elseif ($check !== false): ?>
 <div class="alert alert-success">
     <h4 class="alert-heading">Successfully Edited your comment!</h4>
@@ -16,6 +21,7 @@ elseif ($check !== false): ?>
 </div>
 <?php return; endif; ?>
 
+<?php if (isset($comment_content->body)): ?>
 <br /><br />
 <form action="<?php readable_text(url('')); ?>" class="form-horizontal" method="post">
         <div class="control-group">
@@ -31,3 +37,4 @@ elseif ($check !== false): ?>
             </div>
         </div>
 </form>
+<?php endif; ?>

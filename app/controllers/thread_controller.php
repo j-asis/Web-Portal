@@ -128,15 +128,16 @@ class ThreadController extends AppController
             'user_id'   => $user->user_id,
         );
         $thread = new Thread($params);
-
-        $thread_content = Thread::get(Param::get('id', Thread::ERROR_THREAD_ID));
-        if (isset($thread_content->error)) {
-            $thread->error = $thread_content->error;
+        $thread->error = '';
+        try {
+            $thread_content = Thread::get(Param::get('id', Thread::ERROR_THREAD_ID));
+        } catch (ThreadNotFoundException $e) {
+            $thread->validation_errors['thread_id']['exists'] = 'Thread does not Exists!';
             $this->set(get_defined_vars());
             return;
         }
         if ($thread_content->user_id !== $user->user_id) {
-            $thread->error = 'Cannot edit other user\'s thread';
+            $thread->validation_errors['authenticate']['valid'] = 'Cannot edit other user\'s thread';
             $this->set(get_defined_vars());
             return;
         }

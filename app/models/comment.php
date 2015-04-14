@@ -15,7 +15,7 @@ class Comment extends AppModel
             'length' => array(
                 'validate_between', self::MIN_STRING_LENGTH, self::MAX_STRING_LENGTH,
             ),
-        ),
+        )
     );
 
     public function write($thread)
@@ -51,7 +51,7 @@ class Comment extends AppModel
         $db = DB::conn();
         $row = $db->row('SELECT * FROM comment WHERE id = ? ', array($id));
         if (!$row) {
-            $row = array('error'=>'Not Exsisting Comment');
+            throw new CommentNotFoundException('no comment found');
         }
         return new self($row);
     }

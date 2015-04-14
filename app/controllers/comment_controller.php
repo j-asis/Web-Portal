@@ -17,14 +17,16 @@ class CommentController extends AppController
             'user_id'    => $user->user_id,
         );
         $comment = new Comment($params);
-        $comment_content = Comment::getContent(Param::get('id', Comment::ERROR_COMMENT_ID));
-        if (isset($comment_content->error)) {
-            $comment->error = $comment_content->error;
+        $comment->error = '';
+        try {
+            $comment_content = Comment::getContent(Param::get('id', Comment::ERROR_COMMENT_ID));
+        } catch (CommentNotFoundException $e) {
+            $comment->validation_errors['comment_id']['exists'] = 'Comment does not Exists!';
             $this->set(get_defined_vars());
             return;
         }
         if ($comment_content->user_id !== $user->user_id) {
-            $comment->error = 'Cannot edit other user\'s comment';
+            $comment->validation_errors['authenticate']['valid'] = 'Cannot edit other user\'s comment';
             $this->set(get_defined_vars());
             return;
         }

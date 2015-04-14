@@ -51,7 +51,7 @@ class Thread extends AppModel
         $db = DB::conn();
         $row = $db->row('SELECT * FROM thread WHERE id = ?', array($id));
         if (!$row) {
-            $row = array('error'=>'Not Exsisting Thread');
+            throw new ThreadNotFoundException('no thread found');
         }
         return new self($row);
     }
