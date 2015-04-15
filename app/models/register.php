@@ -10,68 +10,91 @@ class Register extends AppModel
         'password' => array(
             'length' => array(
                 'validate_between', self::MIN_PASSWORD_LENGTH, self::MAX_PASSWORD_LENGTH
-                ),
             ),
+            'match' => array(
+                'isPasswordMatch'
+            ),
+        ),
         'username' => array(
             'length' => array(
                 'validate_between', self::MIN_STRING_LENGTH, self::MAX_STRING_LENGTH
-                ),
             ),
+            'valid' => array(
+                'validate_username'
+            ),
+            'exists' => array(
+                'userExists'
+            ),
+        ),
         'first_name' => array(
             'length' => array(
                 'validate_between', self::MIN_STRING_LENGTH, self::MAX_STRING_LENGTH
-                ),
             ),
+            'valid' => array(
+                'validate_name'
+            ),
+        ),
         'last_name' => array(
             'length' => array(
                 'validate_between', self::MIN_STRING_LENGTH, self::MAX_STRING_LENGTH
-                ),
             ),
+            'valid' => array(
+                'validate_name'
+            ),
+        ),
         'email' => array(
             'length' => array(
                 'validate_between', self::MIN_STRING_LENGTH, self::MAX_STRING_LENGTH
-                ),
             ),
+            'exists' => array(
+                'emailExists'
+            ),
+        ),
     );
 
     public function create()
     {
-        $this->validate();
-        if ($this->hasError()) {                    
-            throw new ValidationException('invalid Input');
+        if (!$this->validate()) {
+            throw new ValidationException('Invalid Input');
         }
         try {
             $db = DB::conn();
-            $db->begin();
             $params = array(
-                'username' => $this->username,
+                'username'   => $this->username,
                 'first_name' => $this->first_name,
-                'last_name' => $this->last_name,
-                'email' => $this->email,
-                'password' => md5($this->password)
+                'last_name'  => $this->last_name,
+                'email'      => $this->email,
+                'password'   => md5($this->password)
             );
             $db->insert('user', $params);
-            $db->commit();
             $this->created = true;
         } catch (Exception $e) {
-            $db->rollback();
             throw $e;
         }
     }
 
-    public function validatePassword()
-    {
-        if (!($this->password === $this->cpassword)) {
-            $this->validation_errors['password']['match'] = true;
-        }
-    }
-
-    public function userExists()
+    public function userExists($username)
     {
         $db = DB::conn();
-        $row = $db->row('SELECT * FROM user WHERE username = ? ', array($this->username));
-        if ($row) {
-            $this->validation_errors['username']['exists'] = true;
+        $row = $db->row('SELECT * FROM user WHERE username = ? ', array($username));
+        if (!$row) {
+            return true;
         }
+        return false;
+    }
+    
+    public function emailExists($email)
+    {
+        $db = DB::conn();
+        $row = $db->row('SELECT * FROM user WHERE email = ? ', array($email));
+        if (!$row) {
+            return true;
+        }
+        return false;
+    }
+
+    public function isPasswordMatch($password)
+    {
+        return ($password === $this->confirm_password);
     }
 }

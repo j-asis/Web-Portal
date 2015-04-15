@@ -9,14 +9,14 @@ class LoginController extends AppController
         $message = 'Welcome, please log in';
         if ($check) {
             $params = array(
-                'username' => Param::get('username'),
-                'password' => Param::get('password'),
+                'username' => Param::get('username', ''),
+                'password' => Param::get('password', ''),
                 'error'    => false,
             );
             $login = new Login($params);
             try {
                 $login->checkInput();
-                $login->loginAction();
+                $login->accept();
             } catch (ValidationException $e) {
                 $error = true;
             } catch (RecordNotFoundException $e) {
@@ -26,9 +26,8 @@ class LoginController extends AppController
                 $_SESSION['username'] = $login->username;
             }
         }
-        $is_logged = isset($_SESSION['username']);
-        if ($is_logged) {
-            redirect(url('user/index'));
+        if (isset($_SESSION['username'])) {
+            redirect(url('user/profile'));
         }
         $this->set(get_defined_vars());
     }

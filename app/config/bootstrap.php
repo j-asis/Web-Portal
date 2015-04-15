@@ -1,4 +1,7 @@
 <?php
+//session start
+session_start();
+
 // application
 require_once APP_DIR.'app_controller.php';
 require_once APP_DIR.'app_model.php';
@@ -15,6 +18,7 @@ require_once VENDOR_DIR.'SimpleDBI/SimpleDBI.php';
 
 // library
 require_once LIB_DIR.'SimplePagination/SimplePagination.php';
+require_once LIB_DIR.'UploadImg/UploadImg.php';
 
 // config
 require_once CONFIG_DIR.'log.php';

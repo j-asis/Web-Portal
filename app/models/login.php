@@ -27,10 +27,9 @@ class Login extends AppModel
         }
     }
 
-    public function loginAction()
+    public function accept()
     {
         $db = DB::conn();
-        $db->begin();
         $params = array(
             $this->username,
             md5($this->password)
