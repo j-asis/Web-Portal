@@ -9,6 +9,7 @@ class User extends AppModel
     const USER_SEARCH_KEY = 'user';
     const THREAD_SEARCH_KEY = 'thread';
     const COMMENT_SEARCH_KEY = 'comment';
+    const DELETE = 'user';
 
     public $validation = array(
         'new_username' => array(

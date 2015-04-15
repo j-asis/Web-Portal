@@ -79,7 +79,7 @@
                                     <li><a href="<?php readable_text(url('user/change_password')) ?>"><i class="icon-lock"></i> Change Password</a></li>
                                     <li class="divider"></li>
                                     <li>
-                                    <a href="<?php readable_text(url('user/delete', array('type'=>'user', 'url_back'=>'/', 'id'=> $user->user_id))) ?>">
+                                    <a href="<?php readable_text(url('user/delete', array('url_back'=>'/', 'id'=> $user->user_id))) ?>">
                                     <i class="icon-remove-sign"></i> Delete Account</a></li>
                                 </ul>
                                 

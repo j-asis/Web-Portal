@@ -41,7 +41,7 @@ class CommentController extends AppController
         $type = Param::get('type', 'like');
         $comment_id = Param::get('comment_id', Comment::ERROR_COMMENT_ID);
         $back_url = Param::get('back', '/');
-        if ($comment_id === 0) {
+        if ($comment_id === Comment::ERROR_COMMENT_ID) {
             redirect(url('/'));
             return;
         }
@@ -72,5 +72,24 @@ class CommentController extends AppController
         $sub_title = sprintf("Showing top %d most liked comments", count($comments));
         $this->set(get_defined_vars());
         $this->render('view');
+    }
+
+    public function delete()
+    {
+        if (!isset($_SESSION['username'])) {
+            redirect(url('/'));
+        }
+        $user = new User();
+        $user->setInfoByUsername($_SESSION['username']);
+        $id = Param::get('id', '');
+        $url_back = urldecode(Param::get('url_back', '/'));
+        $confirm = Param::get('confirm', 'false');
+        $is_success = false;
+        $type = "Comment";
+        if ($confirm === 'true') {
+            $is_success = Comment::deleteById($id);
+        }
+        $this->set(get_defined_vars());
+        $this->render('user/delete');
     }
 }

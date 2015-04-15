@@ -16,6 +16,7 @@ class Thread extends AppModel
     const TOP_FOLLOWED = 'follow';
     const FOLLOW = 'follow';
     const UNFOLLOW = 'unfollow';
+    const DELETE = 'thread';
 
     public $validation = array(
        'title' => array(

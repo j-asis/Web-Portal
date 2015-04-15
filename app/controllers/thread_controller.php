@@ -151,18 +151,15 @@ class ThreadController extends AppController
         if ($type === '') {
             redirect(url('/'));
         }
-        if ($type === 'comment') {
-            $limit = getLimit(Comment::getThreadsByCommentCount()); 
-        } else {
-            $limit = getLimit(Follow::getThreadsByFollowCount()); 
-        }
         switch ($type) {
             case Thread::TOP_COMMENTED:
+                $limit = getLimit(Comment::getThreadsByCommentCount());
                 $top_threads = Thread::getMostCommented($limit);
                 $title = 'Most Commented Thread';
                 $sub_title = "Showing top {$limit} most commented threads";
                 break;
             case Thread::TOP_FOLLOWED:
+                $limit = getLimit(Follow::getThreadsByFollowCount()); 
                 $top_threads = Thread::getMostFollowed($limit);
                 $title = 'Most Followed Thread';
                 $sub_title = "Showing top {$limit} most followed threads";
@@ -206,7 +203,7 @@ class ThreadController extends AppController
         $thread_id = Param::get('id', Thread::ERROR_THREAD_ID);
         $back = Param::get('back', '/');
         $type = Param::get('type', 'follow');
-        if ($thread_id === 0) {
+        if ($thread_id === Thread::ERROR_THREAD_ID) {
             redirect(url('/'));
             return;
         }
@@ -222,5 +219,25 @@ class ThreadController extends AppController
                 break;
         }
         redirect($back);
+    }
+
+    public function delete()
+    {
+        if (!isset($_SESSION['username'])) {
+            redirect(url('/'));
+        }
+        $user = new User();
+        $user->setInfoByUsername($_SESSION['username']);
+        $id = Param::get('id', '');
+        $url_back = urldecode(Param::get('url_back', '/'));
+        $confirm = Param::get('confirm', 'false');
+        $is_success = false;
+        $type = "Thread";
+        
+        if ($confirm === 'true') {
+            $is_success = Thread::deleteById($id);
+        }
+        $this->set(get_defined_vars());
+        $this->render('user/delete');
     }
 }

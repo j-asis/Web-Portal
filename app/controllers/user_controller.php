@@ -92,37 +92,24 @@ class UserController extends AppController
         }
         $user = new User();
         $user->setInfoByUsername($_SESSION['username']);
-        $type = Param::get('type', '');
         $id = Param::get('id', '');
         $url_back = urldecode(Param::get('url_back', '/'));
         $password = Param::get('password','');
         $confirm = Param::get('confirm', 'false');
         $is_success = false;
-        
-        if (($type === 'comment') && $confirm === 'true') {
-            $is_success = Comment::deleteById($id);
+        $type = "User";
+        $check = Param::get('check', false);
+        if (!$check) {
             $this->set(get_defined_vars());
             return;
         }
-        if (($type === 'thread') && $confirm === 'true') {
-            $is_success = Thread::deleteById($id);
-            $this->set(get_defined_vars());
-            return;
-        }
-        if ($type === 'user') {
-            $check = Param::get('check', false);
-            if (!$check) {
-                $this->set(get_defined_vars());
-                return;
-            }
-            $user->old_password = Param::get('password', '');
-            $user->current_user_id = $id;
-            $url_back = '/user/logout';
-            try {
-                $is_success = $user->deleteById($id);
-            } catch (ValidationException $e) {
-                $user->error = true;
-            }
+        $user->old_password = Param::get('password', '');
+        $user->current_user_id = $id;
+        $url_back = '/user/logout';
+        try {
+            $is_success = $user->deleteById($id);
+        } catch (ValidationException $e) {
+            $user->error = true;
         }
         $this->set(get_defined_vars());
     }

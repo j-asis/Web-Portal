@@ -9,6 +9,7 @@ class Comment extends AppModel
     
     const LIKE = 'like';
     const UNLIKE = 'unlike';
+    const DELETE = 'comment';
     
     public $validation = array(
         'body' => array(

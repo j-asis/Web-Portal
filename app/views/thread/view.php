@@ -26,7 +26,7 @@ endif;
     </a>
     <?php endif; ?>
     <?php if ($user->user_id === $thread->user_id): ?>
-        <a class="btn btn-small" href='/user/delete?type=thread&url_back=<?php echo urlencode('/'); ?>&id=<?php echo $comment->id; ?>'>
+        <a class="btn btn-small" href='/thread/delete?url_back=<?php echo urlencode('/'); ?>&id=<?php echo $comment->id; ?>'>
         <span class='icon-trash'></span> Delete
         </a>
         <a class="btn btn-small" href="<?php echo url('thread/edit', array('id'=>$thread->id)); ?>">
@@ -58,7 +58,7 @@ endif;
         </a>
     <?php endif; ?>
     <?php if ($user->user_id === $comment->user_id): ?>
-        <a class="btn btn-small" href='/user/delete?type=comment&url_back=<?php echo urlencode($_SERVER['REQUEST_URI']); ?>&id=<?php echo $comment->id; ?>'>
+        <a class="btn btn-small" href='/comment/delete?url_back=<?php echo urlencode($_SERVER['REQUEST_URI']); ?>&id=<?php echo $comment->id; ?>'>
             <span class='icon-trash'></span> Delete
         </a>
         <a class="btn btn-small" href="<?php echo url('comment/edit', array('id'=>$comment->id, 'thread_id'=>$comment->thread_id)); ?>">
