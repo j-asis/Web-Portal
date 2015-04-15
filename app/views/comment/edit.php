@@ -5,9 +5,21 @@
     <h4 class="alert-heading">Comment does not Exists!</h4>
         return to <a href="/">home page</a><br />
 </div>
-<?php endif ?>
 
-<?php if(!empty($comment->validation_errors['authenticate']['valid'])): ?>
+<?php elseif(!empty($comment->validation_errors['new_body']['length'])): ?>
+<div class="alert alert-danger">
+    <h4 class="alert-heading">
+        <em>Comment </em>
+        must be between 
+        <?php echo $comment->validation['new_body']['length'][1]; ?>
+        and 
+        <?php echo $comment->validation['new_body']['length'][2]; ?>
+        characters in length.
+    </h4>
+        return to <a href="/">home page</a><br />
+</div>
+
+<?php elseif(!empty($comment->validation_errors['current_user_id']['authenticate'])): ?>
 <div class="alert alert-danger">
     <h4 class="alert-heading">Cannot edit other user's comment</h4>
         return to <a href="/">home page</a><br />
@@ -21,13 +33,13 @@ elseif ($check !== false): ?>
 </div>
 <?php return; endif; ?>
 
-<?php if (isset($comment_content->body)): ?>
+<?php if (isset($comment->body)): ?>
 <br /><br />
 <form action="<?php readable_text(url('')); ?>" class="form-horizontal" method="post">
         <div class="control-group">
             <label class="control-label">New Comment: </label>
             <div class="controls">
-                <textarea name="new_comment" placeholder="New Comment" class="input-block-level"><?php readable_text($comment_content->body); ?></textarea>
+                <textarea name="new_comment" placeholder="New Comment" class="input-block-level"><?php readable_text($comment->body); ?></textarea>
             </div>
         </div>
         <div class="control-group">

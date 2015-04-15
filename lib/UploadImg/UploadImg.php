@@ -6,9 +6,32 @@ class UploadImg
     const MAX_POST_SIZE = 8000000;
     const NO_FILE_UPLOAD_ERROR = 4;
     const NO_ERROR = 0;
+    const SIZE_ERROR = 1;
 
-    public function __construct($file)
+
+    public function __construct()
     {
+        $this->error = array();
+        $this->error['fatal'] = false;
+        $this->error['no_file'] = false;
+        $this->error['upload'] = false;
+        $this->error['file_exists'] = false;
+        $this->error['file'] = false;
+        $this->error['size'] = false;
+        $this->error['type'] = false;
+        if (UploadImg::MAX_POST_SIZE < $_SERVER['CONTENT_LENGTH']) {
+            $this->error['fatal'] = true;
+        }
+    }
+
+    public function set($file)
+    {
+        if ($file['error'] === self::NO_FILE_UPLOAD_ERROR) {
+            $this->error['no_file'] = true;
+        }
+        if ($file['error'] > self::NO_ERROR) {
+            $this->error['upload'] = true;
+        }
         $this->file_type = pathinfo($file['name'],PATHINFO_EXTENSION);
         $this->file = $file;
         $this->filename = $file['name'];
@@ -22,8 +45,7 @@ class UploadImg
     public function save($destination)
     {
         if (file_exists($destination . $this->filename)) {
-            $this->error++;
-            $this->error_message[] = "File already exists!";
+            $this->error['file_exists'] = true;
         } else {
             if (move_uploaded_file($this->file["tmp_name"], APP_DIR . $destination . $this->filename)) {
                 return str_replace('webroot','',$destination . $this->filename);
@@ -35,7 +57,6 @@ class UploadImg
 
     public function isFileAccepted()
     {
-        $this->error = 0;
         $type_check = 0;
         $file_types = array('jpg','jpeg','png','gif');
         foreach ($file_types as $type) {
@@ -45,23 +66,31 @@ class UploadImg
         }
         
         if (getimagesize($this->file['tmp_name']) === false) {
-            $this->error++;
-            $this->error_message[] = "File is not an image!";
+            $this->error['file'] = true;
         }
         if ($this->file['size'] > self::MAX_FILE_SIZE) {
-            $this->error++;
-            $this->error_message[] = "File size too big, can only upload 2000 bytes";
+            $this->error['size'] = true;
         }
         if (!($type_check > 0)) {
-            $this->error++;
-            $this->error_message[] = "Wrong File type, can only upload jpeg, jpg, png, or gif";
+            $this->error['type'] = true;
         }
-        if ($this->error === 0) {
+        if (!$this->hasError()) {
             return true;
         } else {
             return false;
         }
         return false;
+    }
+
+    public function hasError()
+    {
+        $count = 0;
+        foreach ($this->error as $error) {
+            if ($error) {
+                $count++;
+            }
+        } 
+        return ($count > 0);
     }
 
 }

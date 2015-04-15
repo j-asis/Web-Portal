@@ -34,52 +34,31 @@ class UserController extends AppController
         $user = new User();
         $user->setInfoByUsername($_SESSION['username']);
         $update = Param::get('update', false);
-        $params = array(
-            'new_username'   => Param::get('username', ''),
-            'new_first_name' => Param::get('first_name', ''),
-            'new_last_name'  => Param::get('last_name', ''),
-            'new_email'      => Param::get('email', ''),
-            'user_id'        => $user->user_id,
-        );
-        $is_same_data = $user->isUnchanged(
-            $params['new_username'],
-            $params['new_first_name'],
-            $params['new_last_name'],
-            $params['new_email']
-        );
-        if (!$update && !$is_same_data) {
+        $is_same_data = true;
+        if (!$update) {
             $this->set(get_defined_vars());
             return;
         }
-        $new_user = new User($params);
-        $is_same_user = ($new_user->new_username === $user->username);
-        $user_exists = Register::userExists($new_user->new_username);
-        
-        if (!$is_same_user && $user_exists) {
-            $new_user->validation_errors['new_username']['exists'] = true;
+        $user->new_username    = Param::get('username', '');
+        $user->new_first_name  = Param::get('first_name', '');
+        $user->new_last_name   = Param::get('last_name', '');
+        $user->new_email       = Param::get('email', '');
+        $is_same_data = $user->isUnchanged();
+        if ($is_same_data) {
+            $this->set(get_defined_vars());
+            return;
         }
-        $is_same_email = ($new_user->new_email === $user->user_details['email']);
-        $email_exists = Register::emailExists($new_user->new_email);
-        
-        if (!$is_same_email && $email_exists) {
-            $new_user->validation_errors['new_email']['exists'] = true;
+        try {
+            $user->update();
+            $success = true;
+        } catch (ValidationException $e) {
+            $success = false;
         }
-        $new_user->validate();
-        if ($new_user->hasError()) {
-            $error = true;
-        } else {
-            try {
-                $new_user->update();
-            } catch (Exception $e) {
-                $db_error = true; 
-            }
+        if ($success) {
+            $_SESSION['username'] = $user->new_username;
+            $user = new User();
+            $user->setInfoByUsername($_SESSION['username']);
         }
-
-        if (!isset($error) && !isset($db_error)) {
-            $_SESSION['username'] = $new_user->new_username;
-        }
-        $user = new User();
-        $user->setInfoByUsername($_SESSION['username']);
         $this->set(get_defined_vars());
     }
 
@@ -95,30 +74,13 @@ class UserController extends AppController
             $this->set(get_defined_vars());
             return;
         }
-        $password = Param::get('old_password', '');
-        $new_password = Param::get('new_password', '');
-        $confirm_new_password = Param::get('confirm_new_password', '');
-
-        if (md5($password) !== $user->user_details['password']) {
-            $error_message = "Wrong Password!";
-            $this->set(get_defined_vars());
-            return;
-        }
-        if ($new_password === '' || $confirm_new_password === '') {
-            $error_message = "Please enter new password";
-            $this->set(get_defined_vars());
-            return;
-        }
-        if ($new_password === $confirm_new_password) {
-            $user->new_password = $new_password;
-            try {
-                $user->changePassword();
-                $change_success = true;
-            } catch(Exception $e) {
-                $error_message = "Unexpected Error!";
-            }
-        } else {
-            $error_message = "New Password did not match!";
+        $user->old_password = Param::get('old_password', '');
+        $user->new_password = Param::get('new_password', '');
+        $user->confirm_new_password = Param::get('confirm_new_password', '');
+        try {
+            $user->changePassword();
+        } catch (ValidationException $e) {
+            $user->error = true;
         }
         $this->set(get_defined_vars());
     }
@@ -184,28 +146,13 @@ class UserController extends AppController
         }
         $user = new User();
         $user->setInfoByUsername($_SESSION['username']);
-        if (UploadImg::MAX_POST_SIZE < $_SERVER['CONTENT_LENGTH']) {
-            $error = "Error! File Size too big! Can only upload 2 Mega Bytes";
-            $this->set(get_defined_vars());
-            return;
-        }
-        if (!isset($_FILES['avatar']) && !isset($error)) {
+        $upload = new UploadImg();
+        if (!isset($_FILES['avatar']) || $upload->error['fatal']) {
             redirect(url('user/profile'));
         }
-        if ($_FILES['avatar']['error'] === UploadImg::NO_FILE_UPLOAD_ERROR && !isset($error)) {
-            $error = "No File was Selected";
-        }
-        if ($_FILES['avatar']['error'] > UploadImg::NO_ERROR && !isset($error)) {
-            $error = "Upload Error Occured";
-        }
-        if (isset($error)) {
-            $this->set(get_defined_vars());
-            return;
-        }
         $file = $_FILES['avatar'];
-        $upload = new UploadImg($file);
+        $upload->set($file);
         if (!$upload->isFileAccepted()) {
-            $error = "File Upload Error";
             $this->set(get_defined_vars());
             return;
         }

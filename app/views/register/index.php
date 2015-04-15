@@ -18,10 +18,12 @@ endif;
     <?php if (!empty($register->validation_errors['password']['match'])): ?>
     <div><em>Password Did Not Match!</em></div>
     <?php endif ?>
-    <?php if (!empty($register->validation_errors['username']['exists'])): ?>
+    <?php if (!empty($register->validation_errors['username']['exists']) && 
+               empty($register->validation_errors['username']['length']) ): ?>
     <div><em>Username Already Taken!</em></div>
     <?php endif ?>
-    <?php if (!empty($register->validation_errors['email']['exists'])): ?>
+    <?php if (!empty($register->validation_errors['email']['exists']) && 
+               empty($register->validation_errors['email']['length']) ): ?>
     <div><em>Email Already Registered!</em></div>
     <?php endif ?>
     
@@ -80,25 +82,29 @@ endif;
     <div class="control-group">
         <label class="control-label">First Name: </label>
         <div class="controls">
-            <input type='text' placeholder='First Name' name='first_name'>
+            <input type='text' placeholder='First Name' name='first_name'
+            value="<?php if ($check) { readable_text($register->first_name); } ?>">
         </div>
     </div>
     <div class="control-group">
         <label class="control-label">Last Name: </label>
         <div class="controls">
-            <input type='text' placeholder='Last Name' name='last_name'>
+            <input type='text' placeholder='Last Name' name='last_name'
+            value="<?php if ($check) { readable_text($register->last_name); } ?>">
         </div>
     </div>
     <div class="control-group">
         <label class="control-label">Username: </label>
         <div class="controls">
-            <input type='text' placeholder='Username' name='username'>
+            <input type='text' placeholder='Username' name='username'
+            value="<?php if ($check) { readable_text($register->username); } ?>">
         </div>
     </div>
     <div class="control-group">
         <label class="control-label">Email: </label>
         <div class="controls">
-            <input type='email' placeholder='Email' name='email'>
+            <input type='email' placeholder='Email' name='email'
+            value="<?php if ($check) { readable_text($register->email); } ?>">
         </div>
     </div>
     <div class="control-group">
@@ -110,7 +116,7 @@ endif;
     <div class="control-group">
         <label class="control-label">Confirm Password: </label>
         <div class="controls">
-            <input type='password' placeholder='Confirm Password' name='cpassword'>
+            <input type='password' placeholder='Confirm Password' name='confirm_password'>
         </div>
     </div>
     <div class="control-group">

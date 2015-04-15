@@ -1,10 +1,14 @@
-<?php if(isset($error_message)): ?>
-<div class="alert alert-danger">
-    <h4>Error!</h4>
-    <em><?php readable_text($error_message); ?></em>
-</div>
-<?php endif; ?>
-<?php if(isset($change_success)): ?>
+<?php if($user->hasError()): ?>
+    <div class="alert alert-danger">
+    <?php if (!empty($user->validation_errors['new_password']['match'])): ?>
+    <div><em>Password did not match!</em></div>
+    <?php endif ?>
+
+    <?php if (!empty($user->validation_errors['old_password']['correct'])): ?>
+    <div><em>Wrong Password!</em></div>
+    <?php endif ?>
+    </div>
+<?php elseif($check): ?>
 <div class="alert alert-success">
     <h4>Success!</h4>
     <em>You have successfully changed your password.</em>

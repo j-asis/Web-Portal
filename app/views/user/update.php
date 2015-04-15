@@ -1,62 +1,59 @@
-<?php if (isset($new_user)): ?>
-    <?php if ($new_user->hasError()): ?>
-
+<?php if ($user->hasError()): ?>
     <div class="alert alert-block">
         <h4 class="alert-heading">Validation error!</h4>
 
-        <?php if (!empty($new_user->validation_errors['new_username']['exists'])): ?>
+        <?php if (!empty($user->validation_errors['new_username']['exists'])): ?>
         <div><em>Username Already Taken!</em></div>
         <?php endif ?>
 
-        <?php if (!empty($new_user->validation_errors['new_email']['exists'])): ?>
+        <?php if (!empty($user->validation_errors['new_email']['exists'])): ?>
         <div><em>Email Already Taken!</em></div>
         <?php endif ?>
 
-        <?php if (!empty($new_user->validation_errors['new_username']['valid'])): ?>
+        <?php if (!empty($user->validation_errors['new_username']['valid'])): ?>
         <div><em>Username may only consist of letter, number, and characters like _ and .</em></div>
         <?php endif ?>
 
-        <?php if (!empty($new_user->validation_errors['new_first_name']['valid'])): ?>
+        <?php if (!empty($user->validation_errors['new_first_name']['valid'])): ?>
         <div><em>First Name may only consist of letters, space and a hyphen</em></div>
         <?php endif ?>
 
-        <?php if (!empty($new_user->validation_errors['new_last_name']['valid'])): ?>
+        <?php if (!empty($user->validation_errors['new_last_name']['valid'])): ?>
         <div><em>Last Name may only consist of letters, space and a hyphen</em></div>
         <?php endif ?>
 
-        <?php if (!empty($new_user->validation_errors['new_first_name']['length'])): ?>
+        <?php if (!empty($user->validation_errors['new_first_name']['length'])): ?>
         <div><em>First Name</em> must be between
-            <?php readable_text($new_user->validation['new_first_name']['length'][1]) ?> and
-            <?php readable_text($new_user->validation['new_first_name']['length'][2]) ?> characters in length.
+            <?php readable_text($user->validation['new_first_name']['length'][1]) ?> and
+            <?php readable_text($user->validation['new_first_name']['length'][2]) ?> characters in length.
         </div>
         <?php endif ?>
 
-        <?php if (!empty($new_user->validation_errors['new_last_name']['length'])): ?>
+        <?php if (!empty($user->validation_errors['new_last_name']['length'])): ?>
         <div><em>Last Name</em> must be between
-            <?php readable_text($new_user->validation['new_last_name']['length'][1]) ?> and
-            <?php readable_text($new_user->validation['new_last_name']['length'][2]) ?> characters in length.
+            <?php readable_text($user->validation['new_last_name']['length'][1]) ?> and
+            <?php readable_text($user->validation['new_last_name']['length'][2]) ?> characters in length.
         </div>
         <?php endif ?>
 
-        <?php if (!empty($new_user->validation_errors['new_username']['length'])): ?>
+        <?php if (!empty($user->validation_errors['new_username']['length'])): ?>
         <div><em>Username</em> must be between
-            <?php readable_text($new_user->validation['new_username']['length'][1]) ?> and
-            <?php readable_text($new_user->validation['new_username']['length'][2]) ?> characters in length.
+            <?php readable_text($user->validation['new_username']['length'][1]) ?> and
+            <?php readable_text($user->validation['new_username']['length'][2]) ?> characters in length.
         </div>
         <?php endif ?>
 
-        <?php if (!empty($new_user->validation_errors['new_email']['length'])): ?>
+        <?php if (!empty($user->validation_errors['new_email']['length'])): ?>
         <div><em>Email</em> must be between
-            <?php readable_text($new_user->validation['new_email']['length'][1]) ?> and
-            <?php readable_text($new_user->validation['new_email']['length'][2]) ?> characters in length.
+            <?php readable_text($user->validation['new_email']['length'][1]) ?> and
+            <?php readable_text($user->validation['new_email']['length'][2]) ?> characters in length.
         </div>
         <?php endif ?>
 
 
     </div>
-    <?php endif; ?>
 <?php endif; ?>
-<?php if ($update === 'true' && !isset($error) && !isset($db_error) && !$is_same_data): ?>
+<?php if (!$user->hasError() && !$is_same_data): ?>
     <div class="alert alert-success">
         Successfully Updated profile!
     </div>

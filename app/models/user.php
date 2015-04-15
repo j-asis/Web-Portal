@@ -18,6 +18,9 @@ class User extends AppModel
             'valid' => array(
                 'validate_username'
             ),
+            'exists' => array(
+                'userExists'
+            ),
         ),
         'new_first_name' => array(
             'length' => array(
@@ -39,9 +42,61 @@ class User extends AppModel
             'length' => array(
                 'validate_between', self::MIN_STRING_LENGTH, self::MAX_STRING_LENGTH
             ),
+            'exists' => array(
+                'emailExists'
+            ),
+        ),
+        'new_password' => array(
+            'length' => array(
+                'validate_between', self::MIN_STRING_LENGTH, self::MAX_STRING_LENGTH
+            ),
+            'match' => array(
+                'isPasswordMatch'
+            ),
+        ),
+        'old_password' => array(
+            'correct' => array(
+                'checkPassword'
+            ),
         ),
 
     );
+
+    public function isPasswordMatch($password)
+    {
+        return ($password === $this->confirm_new_password);
+    }
+
+    public function checkPassword($password)
+    {
+        return ($this->user_details['password'] === md5($password));
+    }
+
+    public function userExists($username)
+    {
+        if ($this->user_details['username'] === $username) {
+            return true;
+        }
+        $db = DB::conn();
+        $row = $db->row('SELECT * FROM user WHERE username = ? ', array($username));
+        if (!$row) {
+            return true;
+        }
+        return false;
+    }
+    
+    public function emailExists($email)
+    {
+        if ($this->user_details['email'] === $email) {
+            return true;
+        }
+        $db = DB::conn();
+        $row = $db->row('SELECT * FROM user WHERE email = ? ', array($email));
+        if (!$row) {
+            return true;
+        }
+        return false;
+    }
 
     public function setInfoByUsername($username)
     {
@@ -94,6 +149,9 @@ class User extends AppModel
 
     public function update()
     {
+        if (!$this->validate()) {
+            throw new ValidationException('invalid input');
+        }
         try {
             $db = DB::conn();
             $params = array(
@@ -110,6 +168,9 @@ class User extends AppModel
 
     public function changePassword()
     {
+        if (!$this->validate()) {
+            throw new ValidationException('invalid input');
+        }
         try {
             $db = DB::conn();
             $db->update('user', array('password' => md5($this->new_password)), array('id' => $this->user_id));
@@ -155,11 +216,17 @@ class User extends AppModel
         return empty($avatar) ? '/public_images/default.jpg' : $avatar;
     }
 
-    public function isUnchanged($username, $first_name, $last_name, $email)
+    public function isUnchanged()
     {
         $db = DB::conn();
+        $params = array(
+            $this->new_username,
+            $this->new_first_name,
+            $this->new_last_name,
+            $this->new_email,
+        );
         $count = $db->value('SELECT COUNT(*) FROM user WHERE username = ? AND first_name = ?
-            AND last_name = ? AND email = ?', array($username, $first_name, $last_name, $email));
+            AND last_name = ? AND email = ?', $params);
         return ($count > 0);
     }
 

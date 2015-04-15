@@ -16,23 +16,13 @@ class RegisterController extends AppController
                 'last_name'  => Param::get('last_name', ''),
                 'email'      => Param::get('email', ''),
                 'password'   => Param::get('password', ''),
-                'cpassword'  => Param::get('cpassword', ''),
+                'confirm_password'  => Param::get('confirm_password', ''),
             );
             $register = new Register($params);
-            $register->validate();
-            if (!($register->password === $register->cpassword)) {
-                $register->validation_errors['password']['match'] = true;
-            }
-            if ($register->userExists($register->username)) {
-                $register->validation_errors['username']['exists'] = true;
-            }
-            if ($register->emailExists($register->email)) {
-                $register->validation_errors['email']['exists'] = true;
-            }
-            if ($register->hasError()) {                    
-                $error = true;
-            } else {
+            try {
                 $register->create();
+            } catch (ValidationException $e) {
+                $error = true;
             }
         }
         $this->set(get_defined_vars());

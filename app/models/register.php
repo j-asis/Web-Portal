@@ -11,6 +11,9 @@ class Register extends AppModel
             'length' => array(
                 'validate_between', self::MIN_PASSWORD_LENGTH, self::MAX_PASSWORD_LENGTH
             ),
+            'match' => array(
+                'isPasswordMatch'
+            ),
         ),
         'username' => array(
             'length' => array(
@@ -18,6 +21,9 @@ class Register extends AppModel
             ),
             'valid' => array(
                 'validate_username'
+            ),
+            'exists' => array(
+                'userExists'
             ),
         ),
         'first_name' => array(
@@ -40,11 +46,17 @@ class Register extends AppModel
             'length' => array(
                 'validate_between', self::MIN_STRING_LENGTH, self::MAX_STRING_LENGTH
             ),
+            'exists' => array(
+                'emailExists'
+            ),
         ),
     );
 
     public function create()
     {
+        if (!$this->validate()) {
+            throw new ValidationException('Invalid Input');
+        }
         try {
             $db = DB::conn();
             $params = array(
@@ -61,23 +73,28 @@ class Register extends AppModel
         }
     }
 
-    public static function userExists($username){
+    public function userExists($username)
+    {
         $db = DB::conn();
         $row = $db->row('SELECT * FROM user WHERE username = ? ', array($username));
-        if (!empty($row)) {
+        if (!$row) {
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
     
-    public static function emailExists($email){
+    public function emailExists($email)
+    {
         $db = DB::conn();
         $row = $db->row('SELECT * FROM user WHERE email = ? ', array($email));
-        if (!empty($row)) {
+        if (!$row) {
             return true;
-        } else {
-            return false;
         }
+        return false;
+    }
+
+    public function isPasswordMatch($password)
+    {
+        return ($password === $this->confirm_password);
     }
 }

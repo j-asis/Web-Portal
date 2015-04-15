@@ -15,11 +15,47 @@ class Comment extends AppModel
             'length' => array(
                 'validate_between', self::MIN_STRING_LENGTH, self::MAX_STRING_LENGTH,
             ),
-        )
+        ),
+        'comment_id' => array(
+            'exists' => array(
+                'exists'
+            ),
+        ),
+        'current_user_id' => array(
+            'authenticate' => array(
+                'authenticateUser'
+            ),
+        ),
+        'new_body' => array(
+            'length' => array(
+                'validate_between', self::MIN_STRING_LENGTH, self::MAX_STRING_LENGTH,
+            ),
+        ), 
     );
+
+    public function authenticateUser($user_id)
+    {
+        if (!isset($this->user_id)) {
+            return false;
+        }
+        return ($user_id === $this->user_id);
+    }
+
+    public function exists($id)
+    {
+        $db = DB::conn();
+        $row = $db->row('SELECT * FROM comment WHERE id = ?', array($id));
+        if (!$row) {
+            return false;
+        }
+        return true;
+    }
 
     public function write($thread)
     {
+        if (!$this->validate()) {
+            throw new ValidationException('Invalid Input');
+        }
         $db = DB::conn();
         $db->query('INSERT INTO comment SET thread_id = ?, user_id = ?, body = ?, created = NOW()', array($thread->id, $this->user_id, $this->body));
     }
@@ -51,16 +87,19 @@ class Comment extends AppModel
         $db = DB::conn();
         $row = $db->row('SELECT * FROM comment WHERE id = ? ', array($id));
         if (!$row) {
-            throw new CommentNotFoundException('no comment found');
+            throw New CommentNotFoundException('no comment found');
         }
         return new self($row);
     }
 
     public function edit()
     {
-        $db = DB::conn();
+        if (!$this->validate()) {
+            throw new ValidationException('invalid input');
+        }
         try {
-            $db->update('comment', array('body'=>$this->body), array('id'=>$this->comment_id));
+            $db = DB::conn();
+            $db->update('comment', array('body'=>$this->new_body), array('id'=>$this->id));
         } catch (Exception $e) {
             throw $e;
         }

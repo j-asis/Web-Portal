@@ -11,35 +11,21 @@ class CommentController extends AppController
         $user->setInfoByUsername($_SESSION['username']);
         $check = Param::get('check', false);
         $title = " | Edit comment";
-        $params = array(
-            'comment_id' => Param::get('id', ''),
-            'thread_id'  => Param::get('thread_id', ''),
-            'user_id'    => $user->user_id,
-        );
-        $comment = new Comment($params);
-        $comment->error = '';
+        $comment_id = Param::get('id', Comment::ERROR_COMMENT_ID);
         try {
-            $comment_content = Comment::getContent(Param::get('id', Comment::ERROR_COMMENT_ID));
+            $comment = Comment::getContent($comment_id);
         } catch (CommentNotFoundException $e) {
-            $comment->validation_errors['comment_id']['exists'] = true;
-            $this->set(get_defined_vars());
-            return;
+            $comment = new Comment(array('comment_id' => $comment_id));
         }
-        if ($comment_content->user_id !== $user->user_id) {
-            $comment->validation_errors['authenticate']['valid'] = true;
-            $this->set(get_defined_vars());
-            return;
-        }
+        $comment->current_user_id = $user->user_id;
+        $comment->validate();
+
         if ($check) {
-            $comment->body = Param::get('new_comment', '');
-            if (!$comment->validate()) {
-                $comment->error = 'Input Error, Please enter at from 1 to 200 charcters';
-            } else {
-                try {
-                    $comment->edit();
-                } catch (Exception $e) {
-                    $comment->error = 'Unexpected Error occured';
-                }
+            $comment->new_body = Param::get('new_comment', '');
+            try {
+                $comment->edit();
+            } catch (ValidationException $e) {
+                $comment->error = true;
             }
         }
         $this->set(get_defined_vars());

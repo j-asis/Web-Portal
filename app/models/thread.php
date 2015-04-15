@@ -23,7 +23,41 @@ class Thread extends AppModel
                'validate_between', self::MIN_STRING_LENGTH, self::MAX_STRING_LENGTH,
             ),
         ),
+        'thread_id' => array(
+            'exists' => array(
+                'exists'
+            ),
+        ),
+        'current_user_id' => array(
+            'authenticate' => array(
+                'authenticateUser'
+            ),
+        ),
+        'new_title' => array(
+            'length' => array(
+                'validate_between', self::MIN_STRING_LENGTH, self::MAX_STRING_LENGTH,
+            ),
+        ),
     );
+
+
+    public function authenticateUser($user_id)
+    {
+        if (!isset($this->user_id)) {
+            return false;
+        }
+        return ($user_id === $this->user_id);
+    }
+
+    public function exists($id)
+    {
+        $db = DB::conn();
+        $row = $db->row('SELECT * FROM thread WHERE id = ?', array($id));
+        if (!$row) {
+            return false;
+        }
+        return true;
+    }
 
     public static function getAll($offset, $limit)
     {
@@ -58,6 +92,9 @@ class Thread extends AppModel
 
     public function create(Comment $comment)
     {
+        if (!$this->validate()) {
+            throw new ValidationException('Invalid Input');
+        }
         $db = DB::conn();
         $db->begin();
         $params = array(
@@ -92,9 +129,12 @@ class Thread extends AppModel
 
     public function edit()
     {
+        if (!$this->validate()) {
+            throw new ValidationException('Invalid Input');
+        }
         $db = DB::conn();
         try {
-            $db->update('thread', array('title'=>$this->title), array('id'=>$this->thread_id));
+            $db->update('thread', array('title'=>$this->new_title), array('id'=>$this->id));
         } catch (Exception $e) {
             throw $e;
         }

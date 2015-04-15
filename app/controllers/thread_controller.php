@@ -67,11 +67,12 @@ class ThreadController extends AppController
             case Thread::WRITE_END:
                 $comment->user_id = User::getUserId($user->username);
                 $comment->body    = Param::get('body', '');
-                if (!$comment->validate()) {
-                    $page = 'write';
-                } else {
+                try {
                     $comment->write($thread);
+                } catch (ValidationException $e) {
+                    $page = Thread::WRITE;
                 }
+                print_r($comment->id);
                 break;
             default:
                 throw new NotFoundException("{$page} is not found");
@@ -98,12 +99,10 @@ class ThreadController extends AppController
                 $thread->title    = Param::get('title', '');
                 $comment->user_id = User::getUserId($user->username);
                 $comment->body    = Param::get('body', '');
-                $thread->validate();
-                $comment->validate();
-                if ($thread->hasError() || $comment->hasError()) {
-                    $page = 'create';
-                } else {
+                try {
                     $thread->create($comment);
+                } catch (ValidationException $e) {
+                    $page = 'create';
                 }
                 break;
             default:
@@ -123,33 +122,21 @@ class ThreadController extends AppController
         $title = " | Edit thread";
         $user = new User();
         $user->setInfoByUsername($_SESSION['username']);
-        $params = array(
-            'thread_id' => Param::get('id', Thread::ERROR_THREAD_ID),
-            'user_id'   => $user->user_id,
-        );
-        $thread = new Thread($params);
-        $thread->error = '';
+        $thread_id = Param::get('id', Thread::ERROR_THREAD_ID);
         try {
-            $thread_content = Thread::get(Param::get('id', Thread::ERROR_THREAD_ID));
+            $thread = Thread::get($thread_id);
         } catch (ThreadNotFoundException $e) {
-            $thread->validation_errors['thread_id']['exists'] = true;
-            $this->set(get_defined_vars());
-            return;
+            $thread = new Thread(array('thread_id' => $thread_id));
         }
-        if ($thread_content->user_id !== $user->user_id) {
-            $thread->validation_errors['authenticate']['valid'] = true;
-            $this->set(get_defined_vars());
-            return;
-        }
+        $thread->current_user_id = $user->user_id;
+        $thread->validate();
+
         if ($check) {
-            $thread->title = Param::get('new_thread', '');
-            if (!$thread->validate()) {
-                $thread->error = 'Input Error, Please enter at from 1 to 200 charcters';
-            }
+            $thread->new_title = Param::get('new_thread', '');
             try {
                 $thread->edit();
-            } catch (Exception $e) {
-                $thread->error = 'Unexpected Error occured';
+            } catch (ValidationException $e) {
+                $thread->error = true;
             }
         }
         $this->set(get_defined_vars());

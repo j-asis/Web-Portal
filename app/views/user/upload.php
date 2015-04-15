@@ -1,13 +1,27 @@
-<?php if(isset($error)): ?>
+<?php if($upload->hasError()): ?>
 <div class="alert alert-block">
-    <?php if($error): ?>
-        <h4 class="alert-heading"><?php readable_text($error); ?></h4>
-        return to <a href="/">home page</a><br />
+    <?php if ($upload->error['no_file']): ?>
+    <h3>No file was selected!</h3>
     <?php endif; ?>
-    <?php if(isset($upload->error_message)): ?>
-        <?php foreach ($upload->error_message as $message): ?>
-            <em><?php readable_text($message); ?></em><br />
-        <?php endforeach; ?>
+
+    <?php if ($upload->error['upload']): ?>
+    <h3>File Upload Error Occured!</h3>
+    <?php endif; ?>
+
+    <?php if ($upload->error['file_exists']): ?>
+    <h3>File already exists!</h3>
+    <?php endif; ?>
+
+    <?php if ($upload->error['file']): ?>
+    <h3>File is not an image!</h3>
+    <?php endif; ?>
+
+    <?php if ($upload->error['size']): ?>
+    <h3>File size too big, can only upload 2000 bytes</h3>
+    <?php endif; ?>
+
+    <?php if ($upload->error['type']): ?>
+    <h3>Wrong File type, can only upload jpeg, jpg, png, or gif</h3>
     <?php endif; ?>
 </div>
 
