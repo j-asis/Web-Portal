@@ -111,19 +111,17 @@ class UserController extends AppController
         }
         if ($type === 'user') {
             $check = Param::get('check', false);
-            if ($id !== $user->user_id) {
-                $user->auth_error = "Cannot Delete Other User's Account!";
-                $this->set(get_defined_vars());
-                return;
-            }
             if (!$check) {
                 $this->set(get_defined_vars());
                 return;
             }
-            $password = Param::get('password', '');
-            if ( md5($password) === $user->user_details['password'] ) {
-                $is_success = User::deleteById($id);
-                $url_back = '/user/logout';
+            $user->old_password = Param::get('password', '');
+            $user->current_user_id = $id;
+            $url_back = '/user/logout';
+            try {
+                $is_success = $user->deleteById($id);
+            } catch (ValidationException $e) {
+                $user->error = true;
             }
         }
         $this->set(get_defined_vars());
@@ -152,6 +150,10 @@ class UserController extends AppController
         }
         $file = $_FILES['avatar'];
         $upload->set($file);
+        if ($upload->error['no_file']) {
+            $this->set(get_defined_vars());
+            return;
+        }
         if (!$upload->isFileAccepted()) {
             $this->set(get_defined_vars());
             return;
@@ -162,7 +164,6 @@ class UserController extends AppController
         }
         $saved = $upload->save('webroot/public_images/');
         if (!$saved) {
-            $error = "Unexpected Error Occured";
             $this->set(get_defined_vars());
             return;
         }

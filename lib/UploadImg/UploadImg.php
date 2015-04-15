@@ -19,7 +19,7 @@ class UploadImg
         $this->error['file'] = false;
         $this->error['size'] = false;
         $this->error['type'] = false;
-        if (UploadImg::MAX_POST_SIZE < $_SERVER['CONTENT_LENGTH']) {
+        if (self::MAX_POST_SIZE < $_SERVER['CONTENT_LENGTH']) {
             $this->error['fatal'] = true;
         }
     }

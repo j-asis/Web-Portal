@@ -1,9 +1,14 @@
-<?php if (isset($user->auth_error)): ?>
-<div class="alert alert-danger">
-<h3><?php echo $user->auth_error ?></h3>
-</div>
+<?php if ($user->hasError()): ?>
+
+    <?php if (!empty($user->validation_errors['current_user_id']['authenticate'])): ?>
+    <div class="alert alert-danger">
+    <h3>Cannot Delete Other User's Account!</h3>
+    </div>
+    <?php
+    return;
+    endif;
+    ?>
 <?php 
-return;
 endif; ?>
 <?php if ($is_success): ?>
 <div class="alert alert-success">
@@ -20,7 +25,9 @@ Successfully deleted <?php echo $type; ?>!
 <?php if ($type === 'user'): ?>
     <h4>Are you sure? Please enter password for confirmation</h4>
     <?php if ($password !== ''): ?>
-        <h6>Wrong Password</h6>
+        <?php if (!empty($user->validation_errors['old_password']['correct'])): ?>
+            <h6>Wrong Password!</h6>
+        <?php endif; ?>
     <?php endif; ?>
     <br />
     <form action='<?php readable_text(url('')); ?>' method='post'>

@@ -59,8 +59,17 @@ class User extends AppModel
                 'checkPassword'
             ),
         ),
+        'current_user_id' => array(
+            'authenticate' => array(
+                'isAuthenticated'
+            ),
+        ),
 
     );
+    public function isAuthenticated($user_id)
+    {
+        return ($this->user_id === $user_id);
+    }
 
     public function isPasswordMatch($password)
     {
@@ -179,8 +188,11 @@ class User extends AppModel
         }
     }
 
-    public static function deleteById($id)
+    public function deleteById($id)
     {
+        if (!$this->validate()) {
+            throw new ValidationException('Invalid Input');
+        }
         Follow::deleteByUserId($id);
         Likes::deleteByUserId($id);
         Comment::deleteByUserId($id);

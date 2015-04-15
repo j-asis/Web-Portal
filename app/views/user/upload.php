@@ -24,7 +24,10 @@
     <h3>Wrong File type, can only upload jpeg, jpg, png, or gif</h3>
     <?php endif; ?>
 </div>
-
+<?php elseif(!$saved): ?>
+    <div class="alert alert-block">
+    <h4>Unexpected Error Occurred!</h4>
+    </div>
 <?php else: ?>
 <p class="alert alert-success">
   You successfully Uploaded your avatar!
