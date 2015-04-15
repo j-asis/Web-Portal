@@ -57,6 +57,9 @@ class UploadImg
 
     public function isFileAccepted()
     {
+        if ($hasError()) {
+            return false;
+        }
         $type_check = 0;
         $file_types = array('jpg','jpeg','png','gif');
         foreach ($file_types as $type) {

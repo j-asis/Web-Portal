@@ -137,10 +137,6 @@ class UserController extends AppController
         }
         $file = $_FILES['avatar'];
         $upload->set($file);
-        if ($upload->error['no_file']) {
-            $this->set(get_defined_vars());
-            return;
-        }
         if (!$upload->isFileAccepted()) {
             $this->set(get_defined_vars());
             return;
